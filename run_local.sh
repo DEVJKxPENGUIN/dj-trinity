@@ -1,0 +1,66 @@
+#!/bin/bash
+
+DEBUG=false
+CLEAN=""
+RUN_MODULE=""
+RUN_DIRECTORY=""
+MODE="local"
+RUN_TYPE="spring" ## spring or npm
+DB_HOST="localhost:53306"
+DB_USERNAME="root"
+DB_PASSWORD="develop"
+
+# parse arguments
+while (("$#")); do
+  if [ "-debug" = $1 ]; then
+    DEBUG=true
+    echo "DEBUG = ${DEBUG}"
+  fi
+  if [ "-clean" = $1 ]; then
+    CLEAN=clean
+    echo "CLEAN = true"
+  fi
+  if [ "-api" = $1 ]; then
+    RUN_MODULE=api
+  fi
+  if [ "-game" = $1 ]; then
+    RUN_MODULE=game
+  fi
+  if [ "-local" = $1 ]; then
+    MODE=local
+  fi
+  if [ "-dev" = $1 ]; then
+    MODE=dev
+  fi
+  shift
+done
+
+if [ ${RUN_TYPE} = "spring" ]; then
+
+  # process run options
+  ARGS="--stacktrace --debug"
+  if [ ${DEBUG} = true ]; then
+    ARGS="${ARGS} --debug-jvm"
+  fi
+  if [ -z ${RUN_MODULE} ]; then
+    echo 'you should choose module option (-api, -game)'
+    exit 1
+  fi
+
+  # make full args
+  # shellcheck disable=SC2089
+  FULL_ARGS="./gradlew ${CLEAN} $RUN_MODULE:bootRun ${ARGS} --args='--spring.profiles.active=${MODE}'"
+
+  echo RUN_MODULE : ${RUN_MODULE}
+  echo ARGS : "${ARGS}"
+  echo MODE : ${MODE}
+  echo FULL_ARGS : "${FULL_ARGS}"
+
+  # bootRun
+  # shellcheck disable=SC2090
+  export DB_HOST=${DB_HOST}
+  export DB_USERNAME=${DB_USERNAME}
+  export DB_PASSWORD=${DB_PASSWORD}
+  ${FULL_ARGS}
+  #./gradlew ${RUN_MODULE}:bootRun ${ARGS}
+fi

@@ -1,1 +1,4 @@
 rootProject.name = 'dj-trinity'
+include("core")
+include("api")
+include("game")
