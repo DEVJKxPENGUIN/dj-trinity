@@ -1,23 +1,29 @@
 package com.devjk.djtrinity.framework.rest
 
+import com.devjk.djtrinity.framework.error.ErrorCode
 import com.fasterxml.jackson.annotation.JsonInclude
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class ApiResponse(
-        val code: Int,
-        val message: String,
-        val data: Any? = null,
-) {
-    companion object {
-        fun success(data: Any? = null) = ApiResponse(
-                code = 0,
-                message = "OK",
-                data = data,
-        )
+class ApiResponse<T>(
+    status: HttpStatus,
+    private var code: Int = 0,
+    private var message: String? = "",
+    private var data: T? = null
+) : ResponseEntity<T>(status) {
 
-        fun error(code: Int, message: String) = ApiResponse(
-                code = code,
-                message = message,
-        )
+    companion object {
+        fun success(): ApiResponse<Unit> {
+            return ApiResponse(HttpStatus.OK)
+        }
+
+        fun <T> success(data: T): ApiResponse<T> {
+            return ApiResponse(HttpStatus.OK, 0, "OK", data)
+        }
+
+        fun <T> error(errorCode: ErrorCode, message: String?): ApiResponse<T> {
+            return ApiResponse(errorCode.httpStatus, errorCode.value, message)
+        }
     }
 }

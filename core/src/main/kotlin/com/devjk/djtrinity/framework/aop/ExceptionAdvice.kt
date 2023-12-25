@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class ExceptionAdvice {
 
     @ExceptionHandler(BaseException::class)
-    fun handleBaseException(e: BaseException): ApiResponse {
-        return handleResponse(e.errorCode, e.message)
+    fun handleBaseException(e: BaseException): ApiResponse<*> {
+        return handleResponse(e.errorCode)
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(e: Exception): ApiResponse {
-        return handleResponse(ErrorCode.UNKNOWN_ERROR, e.message)
+    fun handleException(e: Exception): ApiResponse<*> {
+        return handleResponse(ErrorCode.UNKNOWN)
     }
 
-    private fun handleResponse(errorCode: ErrorCode, message: String?): ApiResponse {
-        return ApiResponse.error(errorCode.value, message ?: errorCode.message)
+    private fun handleResponse(errorCode: ErrorCode): ApiResponse<Unit> {
+        return ApiResponse.error(errorCode, errorCode.message)
     }
 }

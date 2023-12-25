@@ -42,6 +42,8 @@ subprojects {
         developmentOnly("org.springframework.boot:spring-boot-devtools")
         runtimeOnly("com.h2database:h2")
         implementation("com.mysql:mysql-connector-j")
+        implementation("com.google.code.gson:gson")
+        implementation("org.apache.commons:commons-lang3")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
