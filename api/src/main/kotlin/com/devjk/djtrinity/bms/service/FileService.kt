@@ -29,11 +29,11 @@ class FileService(
             .mapNotNull { bmsNode ->
                 try {
                     val bms = readBms(bmsNode)
-                    bmsNode.id?.let { BmsHeaderResponse(it, bmsService.parseHeaderInfo(bms)) }
+                    BmsHeaderResponse(bmsNode.id!!, bmsService.parseHeaderInfo(bms))
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    null
                 }
-                null
             }
             .toList()
     }
@@ -41,25 +41,25 @@ class FileService(
     fun readBms(bmsNode: BmsNode): String {
         val file = File(bmsNode.fullPath())
         if (!file.exists() || file.isDirectory()) {
-            throw BaseException(ErrorCode.BMS_FILE_NOT_FOUND)
+            throw BaseException(ErrorCode.BMS_FILE_NOT_FOUND, "BMS file 경로 탐색 실패 : ${file.absolutePath}")
         }
         return read(file)
     }
 
     private fun read(file: File): String {
-        BufferedReader(FileReader(file)).use { fr ->
-            val sb = StringBuilder()
-            var line: String
-            while (fr.readLine().also { line = it } != null) {
+        val sb = StringBuilder()
+        BufferedReader(FileReader(file)).use { reader ->
+            var line: String?
+            while ((reader.readLine().also { line = it }) != null) {
                 sb.append(line).append("\n")
             }
-            return sb.toString()
         }
+        return sb.toString()
     }
 
     fun findAllBmsInDirectory(): List<BmsNode> {
         log.info(System.getProperty("user.dir"))
-        val root = File("../../bms")
+        val root = File("../bms")
         val bmsNodes = mutableListOf<BmsNode>()
         treeTraversal(root, bmsNodes)
         return bmsNodes
@@ -78,7 +78,7 @@ class FileService(
         val fileName = file.name
         for (bmsExtension in Bms.BMS_EXTENSIONS) {
             if (!fileName.endsWith(".${bmsExtension}")) {
-                return
+                continue
             }
 
             val bmsNode = BmsNode.of(fileName, file.canonicalFile.parent)
@@ -133,12 +133,12 @@ class FileService(
             }
         }
 
-        throw BaseException(ErrorCode.BMS_SOUND_NOT_FOUND)
+        throw BaseException(ErrorCode.BMS_SOUND_NOT_FOUND, "해당 fileName 의 사운드파일을 찾을 수 없습니다. : $fileName")
     }
 
     private fun findBmsByNodeId(nodeId: Long): BmsNode {
         return bmsNodeRepository
             .findById(nodeId)
-            .orElseThrow { BaseException(ErrorCode.BMS_FILE_NOT_FOUND) }
+            .orElseThrow { BaseException(ErrorCode.BMS_FILE_NOT_FOUND, "nodeId 에 해당하는 bms 를 찾을 수 없습니다. : $nodeId") }
     }
 }

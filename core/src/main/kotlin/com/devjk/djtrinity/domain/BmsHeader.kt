@@ -14,16 +14,16 @@ class BmsHeader private constructor(
     var title: String? = null,
     var artist: String? = null,
     var startBpm: Double? = null,
-    var playLevel: Int? = null,
-    var rank: Int? = null,
-    var total: Int? = null,
+    var playLevel: Double? = null,
+    var rank: Double? = null,
+    var total: Double? = null,
     var stageFile: String? = null,
     var bmp01: String? = null,
     var wav: Array<String?>? = null,
     var bpm: Array<Double?>? = null,
-    var stop: Array<Int?>? = null,
-    var difficulty: Int? = null,
-    var random: Int? = null,
+    var stop: Array<Double?>? = null,
+    var difficulty: Double? = null,
+    var random: Double? = null,
     header: String,
     parseWav: Boolean
 ) {
@@ -45,9 +45,9 @@ class BmsHeader private constructor(
 
             // set random
             BufferedReader(StringReader(header)).use { reader ->
-                var line: String
-                while (reader.readLine().also { line = it } != null) {
-                    Bms.readBmsLine(line)?.let {
+                var line: String?
+                while ((reader.readLine().also { line = it }) != null) {
+                    Bms.readBmsLine(line!!)?.let {
                         if (it.keys.first() == "#RANDOM") {
                             random = ThreadLocalRandom.current().nextInt(1, it.values.first().toInt() + 1)
                         }
@@ -56,9 +56,9 @@ class BmsHeader private constructor(
             }
 
             BufferedReader(StringReader(header)).use { reader ->
-                var line: String
-                while (reader.readLine().also { line = it } != null) {
-                    Bms.readBmsLine(line)?.let {
+                var line: String?
+                while ((reader.readLine().also { line = it }) != null) {
+                    Bms.readBmsLine(line!!)?.let {
                         isRead = processRandomAndIfState(it.keys.first(), it.values.first(), isRead, bmsData, random)
                     }
                 }
@@ -108,9 +108,9 @@ class BmsHeader private constructor(
 
     private fun process(header: String, parseWav: Boolean) {
         BufferedReader(StringReader(header)).use { reader ->
-            var line: String
-            while (reader.readLine().also { line = it } != null) {
-                Bms.readBmsLine(line)?.let { setByKey(it.keys.first(), it.values.first(), parseWav) }
+            var line: String?
+            while ((reader.readLine().also { line = it }) != null) {
+                Bms.readBmsLine(line!!)?.let { setByKey(it.keys.first(), it.values.first(), parseWav) }
             }
         }
     }
@@ -122,19 +122,19 @@ class BmsHeader private constructor(
             "#TITLE" -> title = value
             "#ARTIST" -> artist = value.lowercase()
             "#BPM" -> startBpm = value.toDouble()
-            "#PLAYLEVEL" -> playLevel = value.toInt()
-            "#RANK" -> rank = value.toInt()
-            "#TOTAL" -> total = value.toInt()
+            "#PLAYLEVEL" -> playLevel = value.toDouble()
+            "#RANK" -> rank = value.toDouble()
+            "#TOTAL" -> total = value.toDouble()
             "#STAGEFILE" -> stageFile = value
             "#BMP01" -> bmp01 = value
-            "#DIFFICULTY" -> difficulty = value.toInt()
+            "#DIFFICULTY" -> difficulty = value.toDouble()
             else -> {
                 if (!parseWav) {
                     return
                 }
                 if (key.startsWith("#WAV", ignoreCase = true)) {
                     val keyNo = TrinityUtils.base36ToDecimal(key.substring(4))
-                    wav?.set(keyNo, value)
+                    wav?.set(keyNo, value.lowercase())
                     return
                 }
                 if (key.startsWith("#BPM", ignoreCase = true)) {
@@ -144,7 +144,7 @@ class BmsHeader private constructor(
                 }
                 if (key.startsWith("#STOP", ignoreCase = true)) {
                     val keyNo = TrinityUtils.base36ToDecimal(key.substring(5))
-                    stop?.set(keyNo, value.toInt())
+                    stop?.set(keyNo, value.toDouble())
                     return
                 }
             }

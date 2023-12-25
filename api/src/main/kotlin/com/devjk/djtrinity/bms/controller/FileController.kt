@@ -3,7 +3,7 @@ package com.devjk.djtrinity.bms.controller
 import com.devjk.djtrinity.bms.response.BmsHeaderResponse
 import com.devjk.djtrinity.bms.response.BmsResponse
 import com.devjk.djtrinity.bms.service.FileService
-import com.devjk.djtrinity.framework.rest.ApiResponse
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @CrossOrigin
@@ -14,20 +14,20 @@ class FileController(
 ) {
 
     @PostMapping("/sync")
-    fun sync(): ApiResponse<*> {
+    fun sync(): ResponseEntity<Unit> {
         fileService.syncWithDb()
-        return ApiResponse.success()
+        return ResponseEntity.ok().build()
     }
 
     @GetMapping("/list")
-    fun listAll(): ApiResponse<List<BmsHeaderResponse>> {
+    fun listAll(): ResponseEntity<List<BmsHeaderResponse>> {
         val response = fileService.getBmsListAll()
-        return ApiResponse.success(response)
+        return ResponseEntity.ok().body(response)
     }
 
     @GetMapping("/{nodeId}")
-    fun parseBms(@PathVariable nodeId: Long): ApiResponse<BmsResponse> {
+    fun parseBms(@PathVariable nodeId: Long): ResponseEntity<BmsResponse> {
         val response = fileService.parseBms(nodeId)
-        return ApiResponse.success(response)
+        return ResponseEntity.ok().body(response)
     }
 }

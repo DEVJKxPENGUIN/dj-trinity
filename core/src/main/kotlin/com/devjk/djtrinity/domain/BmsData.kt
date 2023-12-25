@@ -18,9 +18,9 @@ class BmsData private constructor(
         fun of(data: String): List<BmsData> {
             val bmsData = ArrayList<BmsData>()
             BufferedReader(StringReader(data)).use { reader ->
-                var line: String
-                while (reader.readLine().also { line = it } != null) {
-                    Bms.readBmsLine(line)?.let {
+                var line: String?
+                while ((reader.readLine().also { line = it }) != null) {
+                    Bms.readBmsLine(line!!)?.let {
                         bmsData.addAll(of(it.keys.first(), it.values.first()))
                     }
                 }
@@ -65,9 +65,9 @@ class BmsData private constructor(
         if (position != null && other.position != null) {
             return position.compareTo(other.position)
         } else if (position != null) {
-            return -1 // nulls first
+            return 1
         } else if (other.position != null) {
-            return 1 // nulls first
+            return -1
         }
         return 0
     }
