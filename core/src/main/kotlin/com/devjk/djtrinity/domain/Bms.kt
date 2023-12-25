@@ -23,7 +23,7 @@ class Bms private constructor(header: String, data: String) {
             }
             val tokens = if (isLineDataType(line)) line.split(":") else line.split(" ")
             val key = tokens[0].uppercase()
-            val value = tokens.drop(1).joinToString(" ").uppercase()
+            val value = tokens.drop(1).joinToString(" ")
             return hashMapOf(key to value)
         }
 

@@ -118,9 +118,9 @@ class BmsHeader private constructor(
     private fun setByKey(key: String, value: String, parseWav: Boolean) {
         when (key) {
             "#PLAYER" -> player = value
-            "#GENRE" -> genre = value.lowercase()
+            "#GENRE" -> genre = value
             "#TITLE" -> title = value
-            "#ARTIST" -> artist = value.lowercase()
+            "#ARTIST" -> artist = value
             "#BPM" -> startBpm = value.toDouble()
             "#PLAYLEVEL" -> playLevel = value.toDouble()
             "#RANK" -> rank = value.toDouble()
@@ -134,7 +134,7 @@ class BmsHeader private constructor(
                 }
                 if (key.startsWith("#WAV", ignoreCase = true)) {
                     val keyNo = TrinityUtils.base36ToDecimal(key.substring(4))
-                    wav?.set(keyNo, value.lowercase())
+                    wav?.set(keyNo, value)
                     return
                 }
                 if (key.startsWith("#BPM", ignoreCase = true)) {
