@@ -1,0 +1,89 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: #0c0c0c;
+  font-family: "Andale Mono", serif;
+}
+
+.container {
+  display: none;
+}
+.modal {
+  background: rgb(30, 30, 30); /* 어두운 배경 색상 */
+  padding: 5px 40px;
+  width: 400px; /* 폼의 너비 */
+  border: 1px solid #000000;
+  /*margin: 100px auto; !* 페이지 중앙에 폼을 배치 *!*/
+  box-sizing: border-box;
+  opacity: 75%;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ment {
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  font-size: 20px;
+  color: white;
+}
+
+.ment2 {
+  margin-top: 40px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 15px;
+  color: white;
+}
+
+.elem {
+  margin-bottom: 20px; /* 요소들 사이의 간격 */
+  box-sizing: border-box;
+}
+
+.elem label {
+  color: rgba(231, 231, 231); /* 라벨 색상 */
+  display: block;
+  margin-bottom: 5px; /* 라벨과 인풋 사이의 간격 */
+}
+
+.elem input {
+  background: rgb(30, 30, 30); /* 인풋 배경 색상 */
+  border: none;
+  color: #fff; /* 인풋 내 텍스트 색상 */
+  border: 1px solid black;
+  padding: 10px;
+  width:320px;
+  box-sizing: border-box; /* box-sizing을 border-box로 설정 */
+  font-family: "Andale Mono", serif;
+  text-align: center;
+}
+
+.elem input:focus {
+  /*outline: none; !* 인풋 포커스 시 아웃라인 제거 *!*/
+  outline-color: white;
+  outline-width: 1px;
+}
+
+.login button {
+  background: rgba(0, 0, 0); /* 로그인 버튼 배경 색상 */
+  border: none;
+  color: #fff; /* 버튼 내 텍스트 색상 */
+  padding: 10px 20px;
+  width: 100%;
+  cursor: pointer; /* 버튼 호버 시 커서 변경 */
+}
+
+.login button:focus {
+  /*outline: none; !* 버튼 포커스 시 아웃라인 제거 *!*/
+  outline-color: white;
+  outline-width: 1px;
+}
+
+.login span.login {
+  font-weight: bold;
+}

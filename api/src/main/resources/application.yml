@@ -25,7 +25,7 @@ spring:
       enabled: always
 
 server:
-  port: ${http.port:5001}
+  port: ${http.port:5002}
   tomcat:
     protocol: org.apache.coyote.http11.Http11Protocol
     maxThreads: 200
