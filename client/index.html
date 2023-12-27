@@ -15,7 +15,7 @@
       <p>WELCOME BACK TO DJ-TRINITY</p>
     </div>
     <div class="login elem">
-      <button type="submit">
+      <button class="operation 0" type="submit">
         <span class="login">I'AM NEWBIE</span>
       </button>
     </div>
@@ -23,19 +23,36 @@
       <p>ALREADY HAVE ACCOUNT</p>
     </div>
     <div class="nickName elem">
-<!--      <label for="nickName">NICKNAME</label>-->
-      <input id="nickName" type="email" placeholder="NICKNAME"/>
+      <input class="operation 1" id="nickName" type="text" placeholder="NICKNAME"/>
     </div>
     <div class="password elem">
-<!--      <label for="password">PASSWORD</label>-->
-      <input id="password" type="password" placeholder="PASSWORD"/>
+      <input class="operation 2" id="password" type="password" placeholder="PASSWORD"/>
     </div>
     <div class="login elem">
-      <button type="submit">
+      <button class="operation 3" type="submit">
         <span class="login">LOGIN</span>
       </button>
     </div>
+  </div>
 
+  <div class="modal" id="signup">
+    <div class="ment">
+      <p>MAKE NEW ACCOUNT</p>
+    </div>
+    <div class="nickName elem">
+      <input class="operation 0" id="nickName-signup" type="text" placeholder="NICKNAME"/>
+    </div>
+    <div class="password elem">
+      <input class="operation 1" id="password-signup" type="password" placeholder="PASSWORD"/>
+    </div>
+    <div class="password elem">
+      <input class="operation 2" id="password-signup-check" type="password" placeholder="PASSWORD AGAIN"/>
+    </div>
+    <div class="login elem">
+      <button class="operation 3" type="submit">
+        <span class="login">MAKE MY ACCOUNT!</span>
+      </button>
+    </div>
   </div>
 </div>
 <script type="module" src="/src/main.js"></script>

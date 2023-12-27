@@ -1,6 +1,13 @@
 {
   "fonts": {
-    "Orbitron_Regular.json": null,
-    "Ubuntu_Regular.json": null
+    "font/Orbitron_Regular.json": null,
+    "font/Ubuntu_Regular.json": null
+  },
+  "sounds": {
+    "sound/beep1.wav": null,
+    "sound/beep2.wav": null,
+    "sound/select.wav": null,
+    "sound/start.m4a": null,
+    "sound/Refresh.mp3": null
   }
 }

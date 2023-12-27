@@ -1,4 +1,10 @@
-import {Color, OrthographicCamera, Scene, WebGLRenderer} from "three";
+import {
+  AudioListener,
+  Color,
+  OrthographicCamera,
+  Scene,
+  WebGLRenderer
+} from "three";
 import settings from "./settings/settings.json";
 import Stats from "three/addons/libs/stats.module";
 import {CSS3DRenderer} from "three/addons";
@@ -9,7 +15,10 @@ export default class Context {
     this.scene = new Scene()
     this.scene.background = new Color(0x111111)
 
-    this.renderer = new WebGLRenderer()
+    this.renderer = new WebGLRenderer({
+      antialias:true,
+      powerPreference: "high-performance",
+    })
     this.renderer.setSize(settings.width, settings.height)
     document.body.appendChild(this.renderer.domElement)
 
@@ -17,6 +26,8 @@ export default class Context {
     this.cssRenderer.setSize(settings.width, settings.height)
     this.cssRenderer.domElement.style.position = 'absolute'
     document.body.appendChild(this.cssRenderer.domElement)
+
+    this.listener = new AudioListener()
 
     this.aspect = settings.width / settings.height
     this.camera = new OrthographicCamera(
@@ -27,6 +38,7 @@ export default class Context {
     )
     this.camera.position.set(0, 0, 100)
     this.camera.lookAt(0, 0, 0)
+    this.camera.add(this.listener)
 
     if (this.isDebug) {
       // const cameraHelper = new CameraHelper(this.camera)

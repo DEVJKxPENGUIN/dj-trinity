@@ -13,6 +13,7 @@ body, html {
 .container {
   display: none;
 }
+
 .modal {
   background: rgb(30, 30, 30); /* 어두운 배경 색상 */
   padding: 5px 40px;
@@ -20,7 +21,7 @@ body, html {
   border: 1px solid #000000;
   /*margin: 100px auto; !* 페이지 중앙에 폼을 배치 *!*/
   box-sizing: border-box;
-  opacity: 75%;
+  opacity: 98%;
   font-weight: bold;
   text-align: center;
 }
@@ -57,7 +58,7 @@ body, html {
   color: #fff; /* 인풋 내 텍스트 색상 */
   border: 1px solid black;
   padding: 10px;
-  width:320px;
+  width: 320px;
   box-sizing: border-box; /* box-sizing을 border-box로 설정 */
   font-family: "Andale Mono", serif;
   text-align: center;

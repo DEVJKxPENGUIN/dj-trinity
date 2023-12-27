@@ -6,14 +6,24 @@ export default class IntroSceneKeyboard {
 
   init = () => {
     document.addEventListener("keydown", this.handleKeydown)
-
   }
 
   handleKeydown = (e) => {
+    console.log(e)
     if (e.key === "Enter") {
-      console.log('enter pressed')
       this.scene.nextState()
+    } else if(e.key === "ArrowUp") {
+      this.scene.prevFocus()
+    } else if(e.key === "ArrowDown") {
+      this.scene.nextFocus()
+    } else if(e.key === "ArrowRight") {
+    } else if(e.key === "ArrowLeft") {
+    } else if(e.key === "Backspace") {
+
+    }else if(e.key === "Escape") {
+      this.scene.prevState()
     }
+
   }
 
   destroy = () => {

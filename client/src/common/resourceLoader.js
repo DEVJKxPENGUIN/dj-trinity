@@ -1,4 +1,5 @@
 import {
+  AudioLoader,
   BufferGeometry,
   Line,
   LineBasicMaterial,
@@ -52,15 +53,21 @@ export default class ResourceLoader {
       this.loadLine = new Line(new BufferGeometry(), new LineBasicMaterial({
         color: 0x8c8c8c,
         linewidth: 5
-      }));
+      }))
       this.context.scene.add(this.loadLine)
 
-      const fontLoader = new FontLoader(this.manager);
+      const fontLoader = new FontLoader(this.manager)
       Object.keys(resources.fonts).forEach(fontPath => {
-        console.log('resource : ', fontPath)
         fontLoader.load(fontPath, function (font) {
           resources.fonts[fontPath] = font
-        });
+        })
+      })
+
+      const soundLoader = new AudioLoader(this.manager)
+      Object.keys(resources.sounds).forEach(soundPath => {
+        soundLoader.load(soundPath, function(buffer) {
+          resources.sounds[soundPath] = buffer
+        })
       })
 
       // todo other resources
