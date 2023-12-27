@@ -1,0 +1,24 @@
+{
+  "name": "dj-trinity-client",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev:vite": "DEBUG=true vite --port 5001",
+    "dev:electron": "ELECTRON=true vite",
+    "build": "tsc && vite build && electron-builder",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "electron": "^26.1.0",
+    "electron-builder": "^24.6.4",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9",
+    "vite-plugin-electron": "^0.14.0",
+    "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "main": "dist-electron/main.js",
+  "dependencies": {
+    "@tweenjs/tween.js": "^21.0.0",
+    "three": "^0.160.0"
+  }
+}
