@@ -1,5 +1,6 @@
 bms/
 docker/
+docker/**
 HELP.md
 .gradle
 build/
