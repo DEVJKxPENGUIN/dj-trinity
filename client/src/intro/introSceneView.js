@@ -1,4 +1,12 @@
-import {Mesh, MeshBasicMaterial} from "three";
+import {
+  BufferAttribute,
+  BufferGeometry,
+  DynamicDrawUsage,
+  Mesh,
+  MeshBasicMaterial,
+  Points,
+  PointsMaterial
+} from "three";
 import {CSS3DObject, TextGeometry} from "three/addons";
 import TWEEN, {Tween} from "@tweenjs/tween.js";
 
@@ -62,6 +70,32 @@ export default class IntroSceneView {
     this.signupForm = new CSS3DObject(signupFormElem)
     this.signupForm.position.x = 0
     this.signupForm.position.y = 0
+
+    // requesting - testing instanceBufferGeometry
+    const loadingCircleG = new BufferGeometry()
+    const loadingCircleM = new PointsMaterial({color: 0xffffff, size: 15})
+    loadingCircleM.transparent = true
+    const loadingCircleSize = 4
+    const loadingCirclePos = new Float32Array(loadingCircleSize * 3)
+    for (let i = 0; i < loadingCircleSize; i++) {
+      loadingCirclePos[i * 3] = i * 40    // x
+      loadingCirclePos[i * 3 + 1] = -40     // y
+      loadingCirclePos[i * 3 + 2] = 0     // z
+    }
+    loadingCircleG.setDrawRange(0, loadingCircleSize)
+    loadingCircleG.setAttribute('position',
+        new BufferAttribute(loadingCirclePos, 3).setUsage(DynamicDrawUsage))
+    loadingCircleG.computeBoundingBox()
+    this.loadingCircle = new Points(loadingCircleG, loadingCircleM)
+    this.loadingCircle.position.x = -0.5 * (loadingCircleG.boundingBox.max.x
+        - loadingCircleG.boundingBox.min.x)
+    this.loadingCircle.position.y = -200
+
+    // systemMessage
+    const systemMessageElem = document.getElementById("systemMessage")
+    this.systemMessage = new CSS3DObject(systemMessageElem)
+    this.systemMessage.position.x = 0
+    this.systemMessage.position.y = 0
   }
 
   clearCanvas = () => {
@@ -70,6 +104,16 @@ export default class IntroSceneView {
     this.manager.context.scene.remove(this.pressStart)
     this.manager.context.scene.remove(this.loginForm)
     this.manager.context.scene.remove(this.signupForm)
+    this.manager.context.scene.remove(this.loadingCircle)
+    this.manager.context.scene.remove(this.systemMessage)
+
+    this.loginForm.element.querySelector(".message").innerHTML = ''
+    this.loginForm.element.querySelectorAll(".input").forEach(
+        elem => elem.value = '')
+    this.signupForm.element.querySelector(".message").innerHTML = ''
+    this.signupForm.element.querySelectorAll(".input").forEach(
+        elem => elem.value = '')
+    this.systemMessage.element.querySelector(".message").innerHTML = ''
   }
 
   drawPressStart = () => {
@@ -119,8 +163,32 @@ export default class IntroSceneView {
     .start()
   }
 
-  getCurrentNeedUserLoginFocus = () => {
-    const elems = this.loginForm.element.querySelectorAll(".operation")
+  drawRequesting = () => {
+    this.manager.context.scene.add(this.mainTitle)
+    this.manager.context.scene.add(this.subTitle)
+    this.manager.context.scene.add(this.loadingCircle)
+
+    this.loadingCircle.material.opacity = 0
+    new Tween(this.loadingCircle.material)
+    .to({opacity: 1}, 600)
+    .yoyo(true)
+    .repeat(Infinity)
+    .start()
+  }
+
+  drawSystemMessage = () => {
+    this.manager.context.scene.add(this.mainTitle)
+    this.manager.context.scene.add(this.subTitle)
+    this.manager.context.scene.add(this.systemMessage)
+
+    setTimeout(() => {
+      const elems = this.systemMessage.element.querySelectorAll(".operation")
+      elems[0].focus()
+    }, 10)
+  }
+
+  getCurrentFocus = (target) => {
+    const elems = target.element.querySelectorAll(".operation")
     for (let i = 0; i < elems.length; i++) {
       const elem = elems[i]
       if (document.activeElement === elem) {
@@ -130,27 +198,29 @@ export default class IntroSceneView {
     return null
   }
 
-  getCurrentNeedUserLoginElemSize = () => {
-    return this.loginForm.element.querySelectorAll(".operation").length
+  getCurrentElemSize = (target) => {
+    return target.element.querySelectorAll(".operation").length
   }
 
-  getCurrentSignupFocus = () => {
-    const elems = this.signupForm.element.querySelectorAll(".operation")
-    for (let i = 0; i < elems.length; i++) {
-      const elem = elems[i]
-      if (document.activeElement === elem) {
-        return i
-      }
+  getLoginInfo = () => {
+    const elems = this.loginForm.element.querySelectorAll(".input")
+    return {
+      id: elems[0].value,
+      password: elems[1].value,
     }
-    return null
   }
 
-  getCurrentSignupElemSize = () => {
-    return this.signupForm.element.querySelectorAll(".operation").length
+  getSignupInfo = () => {
+    const elems = this.signupForm.element.querySelectorAll(".input")
+    return {
+      id: elems[0].value,
+      password: elems[1].value,
+      passwordCheck: elems[2].value
+    }
   }
 
-  focusNeedUserLogin = (index) => {
-    const elems = this.loginForm.element.querySelectorAll(".operation")
+  focusTarget = (target, index) => {
+    const elems = target.element.querySelectorAll(".operation")
     if (elems[index].tagName === "INPUT") {
       setTimeout(() => {
         elems[index].select()
@@ -159,14 +229,17 @@ export default class IntroSceneView {
     elems[index].focus()
   }
 
-  focusSignup = (index) => {
-    const elems = this.signupForm.element.querySelectorAll(".operation")
-    if (elems[index].tagName === "INPUT") {
-      setTimeout(() => {
-        elems[index].select()
-      }, 10)
-    }
-    elems[index].focus()
+  vibrate = (target, message) => {
+    const messageDiv = target.element.querySelector(".message")
+    messageDiv.innerHTML = `<p>${message}</p>`
+
+    target.position.x = -2
+    new Tween(target.position)
+    .to({x: 2}, 50)
+    .repeat(5)
+    .yoyo(true)
+    .onComplete(() => target.position.x = 0)
+    .start()
   }
 
   destroy = () => {

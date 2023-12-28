@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev:vite": "DEBUG=true vite --port 5001",
-    "dev:electron": "ELECTRON=true vite",
+    "local:vite": "DEBUG=true vite --port 5001",
+    "local:electron": "ELECTRON=true vite ",
     "build": "tsc && vite build && electron-builder",
     "preview": "vite preview"
   },

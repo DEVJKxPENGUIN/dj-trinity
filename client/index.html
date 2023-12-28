@@ -22,11 +22,18 @@
     <div class="ment2">
       <p>ALREADY HAVE ACCOUNT</p>
     </div>
-    <div class="nickName elem">
-      <input class="operation 1" id="nickName" type="text" placeholder="NICKNAME"/>
+    <div class="id elem">
+      <input class="input operation 1" id="id" type="text" placeholder="ID"
+             maxlength="20"
+             autocomplete="off"/>
     </div>
     <div class="password elem">
-      <input class="operation 2" id="password" type="password" placeholder="PASSWORD"/>
+      <input class="input operation 2" id="password" type="password" placeholder="PASSWORD"
+             maxlength="20"
+             autocomplete="off"/>
+    </div>
+    <div class="message">
+
     </div>
     <div class="login elem">
       <button class="operation 3" type="submit">
@@ -39,14 +46,22 @@
     <div class="ment">
       <p>MAKE NEW ACCOUNT</p>
     </div>
-    <div class="nickName elem">
-      <input class="operation 0" id="nickName-signup" type="text" placeholder="NICKNAME"/>
+    <div class="id elem">
+      <input class="input operation 0" id="id-signup" type="text" placeholder="ID"
+             maxlength="20"
+             autocomplete="off"/>
     </div>
     <div class="password elem">
-      <input class="operation 1" id="password-signup" type="password" placeholder="PASSWORD"/>
+      <input class="input operation 1" id="password-signup" type="password" placeholder="PASSWORD"
+             maxlength="20"
+             autocomplete="off"/>
     </div>
     <div class="password elem">
-      <input class="operation 2" id="password-signup-check" type="password" placeholder="PASSWORD AGAIN"/>
+      <input class="input operation 2" id="password-signup-check" type="password"
+             maxlength="20"
+             placeholder="PASSWORD AGAIN" autocomplete="off"/>
+    </div>
+    <div class="message">
     </div>
     <div class="login elem">
       <button class="operation 3" type="submit">
@@ -54,6 +69,18 @@
       </button>
     </div>
   </div>
+
+  <div class="modal" id="systemMessage">
+    <div class="message">
+    </div>
+    <div class="login elem">
+      <button class="operation 1" type="submit">
+        <span class="login">BACK</span>
+      </button>
+    </div>
+  </div>
+
+</div>
 </div>
 <script type="module" src="/src/main.js"></script>
 </body>

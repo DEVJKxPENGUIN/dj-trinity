@@ -9,9 +9,8 @@ export default class IntroSceneKeyboard {
   }
 
   handleKeydown = (e) => {
-    console.log(e)
     if (e.key === "Enter") {
-      this.scene.nextState()
+      this.scene.goNextState()
     } else if(e.key === "ArrowUp") {
       this.scene.prevFocus()
     } else if(e.key === "ArrowDown") {
@@ -21,7 +20,7 @@ export default class IntroSceneKeyboard {
     } else if(e.key === "Backspace") {
 
     }else if(e.key === "Escape") {
-      this.scene.prevState()
+      this.scene.goPrevState()
     }
 
   }

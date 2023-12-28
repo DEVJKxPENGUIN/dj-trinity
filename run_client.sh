@@ -25,11 +25,11 @@ if [ ${RUN_TYPE} = "client" ]; then
 
   FULL_ARGS=""
   if [ "$RUN_MODULE" = "electron" ]; then
-    FULL_ARGS="npm run --prefix ./client dev:electron"
+    FULL_ARGS="npm run --prefix ./client ${MODE}:electron"
   fi
 
   if [ "$RUN_MODULE" = "vite" ]; then
-    FULL_ARGS="npm run --prefix ./client dev:vite"
+    FULL_ARGS="npm run --prefix ./client ${MODE}:vite"
   fi
 
   if [ "$FULL_ARGS" = "" ]; then
