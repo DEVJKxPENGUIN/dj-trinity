@@ -1,0 +1,9 @@
+POST localhost:5002/user
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "admin",
+  "password": "develop12321",
+  "passwordCheck": "develop12321"
+}

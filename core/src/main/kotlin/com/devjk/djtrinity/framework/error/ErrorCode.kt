@@ -14,5 +14,7 @@ enum class ErrorCode(
     BMS_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, -4, "BMS File Not Found"),
     BMS_SOUND_NOT_FOUND(HttpStatus.NOT_FOUND, -5, "BMS Sound File Not Found : "),
     BMS_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -6, "BMS Read Error"),
+    INVALID_SIGNUP_REQ(HttpStatus.BAD_REQUEST, -7, "Invalid Signup Request"),
+    INVALID_SIGNUP_ID_DUPLICATED(HttpStatus.BAD_REQUEST, -8, "Invalid duplicated id request"),
     ;
 }

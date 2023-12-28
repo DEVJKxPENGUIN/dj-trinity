@@ -1,5 +1,6 @@
 package com.devjk.djtrinity.db.entity
 
+import com.devjk.djtrinity.common.BaseEntity
 import jakarta.persistence.*
 
 @Entity
@@ -9,14 +10,14 @@ class BmsNode(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    val id: Long? = null,
 
     @Column(name = "file_name")
     val fileName: String,
 
     @Column(name = "root_path")
     val rootPath: String
-) {
+) : BaseEntity() {
 
     companion object {
         fun of(fileName: String, rootPath: String): BmsNode {

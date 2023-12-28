@@ -3,6 +3,7 @@ package com.devjk.djtrinity.bms.controller
 import com.devjk.djtrinity.bms.response.BmsHeaderResponse
 import com.devjk.djtrinity.bms.response.BmsResponse
 import com.devjk.djtrinity.bms.service.FileService
+import com.devjk.djtrinity.common.BaseResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -14,9 +15,9 @@ class FileController(
 ) {
 
     @PostMapping("/sync")
-    fun sync(): ResponseEntity<Unit> {
+    fun sync(): ResponseEntity<BaseResponse<Unit>> {
         fileService.syncWithDb()
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok().body(BaseResponse.success())
     }
 
     @GetMapping("/list")

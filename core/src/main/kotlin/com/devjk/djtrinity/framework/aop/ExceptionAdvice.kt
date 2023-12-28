@@ -1,9 +1,9 @@
 package com.devjk.djtrinity.framework.aop
 
+import com.devjk.djtrinity.common.BaseResponse
 import com.devjk.djtrinity.framework.error.ErrorCode
 import com.devjk.djtrinity.framework.error.exception.BaseException
 import org.springframework.http.ResponseEntity
-import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -12,19 +12,16 @@ class ExceptionAdvice {
 
     @ExceptionHandler(BaseException::class)
     fun handleBaseException(e: BaseException): ResponseEntity<*> {
-        return handleResponse(e.errorCode)
+        return handleResponse(e.errorCode, e)
     }
 
     @ExceptionHandler(Exception::class)
     fun handleException(e: Exception): ResponseEntity<*> {
-        return handleResponse(ErrorCode.UNKNOWN)
+        return handleResponse(ErrorCode.UNKNOWN, e)
     }
 
-    private fun handleResponse(errorCode: ErrorCode): ResponseEntity<*> {
-        val map = LinkedMultiValueMap<String, String>()
-        map.set("code", errorCode.value.toString())
-        map.set("message", errorCode.message)
+    private fun handleResponse(errorCode: ErrorCode, e: Exception): ResponseEntity<*> {
         return ResponseEntity.status(errorCode.httpStatus)
-            .body(map)
+            .body(BaseResponse.error(errorCode, e.message ?: errorCode.message))
     }
 }
