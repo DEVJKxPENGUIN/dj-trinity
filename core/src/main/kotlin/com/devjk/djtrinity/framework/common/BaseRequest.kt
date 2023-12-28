@@ -1,4 +1,4 @@
-package com.devjk.djtrinity.common
+package com.devjk.djtrinity.framework.common
 
 interface BaseRequest {
     fun validate()

@@ -16,5 +16,8 @@ enum class ErrorCode(
     BMS_READ_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -6, "BMS Read Error"),
     INVALID_SIGNUP_REQ(HttpStatus.BAD_REQUEST, -7, "Invalid Signup Request"),
     INVALID_SIGNUP_ID_DUPLICATED(HttpStatus.BAD_REQUEST, -8, "Invalid duplicated id request"),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, -9, "User is not found"),
+    USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -10, "Password mismatched"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, -11, "Cannot get authentication")
     ;
 }

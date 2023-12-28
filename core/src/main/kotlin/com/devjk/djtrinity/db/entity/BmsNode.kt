@@ -1,6 +1,6 @@
 package com.devjk.djtrinity.db.entity
 
-import com.devjk.djtrinity.common.BaseEntity
+import com.devjk.djtrinity.framework.common.BaseEntity
 import jakarta.persistence.*
 
 @Entity

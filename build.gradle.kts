@@ -40,6 +40,7 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("io.jsonwebtoken:jjwt:0.12.3")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
         implementation("com.mysql:mysql-connector-j")
         implementation("com.google.code.gson:gson")

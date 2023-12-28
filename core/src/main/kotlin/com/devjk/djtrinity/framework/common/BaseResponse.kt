@@ -1,4 +1,4 @@
-package com.devjk.djtrinity.common
+package com.devjk.djtrinity.framework.common
 
 import com.devjk.djtrinity.framework.error.ErrorCode
 import com.fasterxml.jackson.annotation.JsonInclude

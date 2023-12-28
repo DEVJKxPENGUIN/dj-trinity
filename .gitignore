@@ -1,6 +1,9 @@
 bms/
+!**/src/main/**/bms
+!**/src/test/**/bms
 docker/
-docker/**
+!**/src/main/**/docker
+!**/src/test/**/docker
 HELP.md
 .gradle
 build/

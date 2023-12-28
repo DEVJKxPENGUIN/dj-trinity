@@ -1,4 +1,4 @@
-package com.devjk.djtrinity.common
+package com.devjk.djtrinity.framework.common
 
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners

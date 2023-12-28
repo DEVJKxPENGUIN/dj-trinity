@@ -1,6 +1,6 @@
 package com.devjk.djtrinity.framework.aop
 
-import com.devjk.djtrinity.common.BaseResponse
+import com.devjk.djtrinity.framework.common.BaseResponse
 import com.devjk.djtrinity.framework.error.ErrorCode
 import com.devjk.djtrinity.framework.error.exception.BaseException
 import org.springframework.http.ResponseEntity

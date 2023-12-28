@@ -3,7 +3,19 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "id": "admin",
+  "id": "admin2",
   "password": "develop12321",
   "passwordCheck": "develop12321"
 }
+
+###
+POST localhost:5002/user/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "admin2",
+  "password": "develop12321"
+}
+
+###
