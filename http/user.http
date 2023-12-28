@@ -1,21 +1,23 @@
-POST localhost:5002/user
+POST localhost:5002/auth/signup
 Content-Type: application/json
 Accept: application/json
 
 {
-  "id": "admin2",
+  "id": "admin5",
   "password": "develop12321",
   "passwordCheck": "develop12321"
 }
 
 ###
-POST localhost:5002/user/login
+POST localhost:5002/auth/login
 Content-Type: application/json
 Accept: application/json
 
 {
-  "id": "admin2",
+  "id": "admin5",
   "password": "develop12321"
 }
 
 ###
+GET localhost:5002/user
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJuaWNrbmFtZSI6Ik5FV0JJRV9hZG1pbjUiLCJpc3MiOiJ0cmluaXR5IiwiaWF0IjoxNzAzNzg3NDEwLCJleHAiOjE3MDM3ODkyMTB9.1zqEKyXv0Gea3HohYfXFb0oBmu5r-PB5eJqiUwloPCXZ0bN4Mq3To1tfPRV-Kz_ElZZR9kCzb_KIM2kjymeXyw

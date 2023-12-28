@@ -8,12 +8,13 @@ import com.devjk.djtrinity.framework.utils.JwtProvider
 import com.devjk.djtrinity.user.request.UserLoginRequest
 import com.devjk.djtrinity.user.request.UserSignupRequest
 import com.devjk.djtrinity.user.response.LoginResponse
+import com.devjk.djtrinity.user.response.UserResponse
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class AuthService(
+class UserService(
     private val userRepository: UserRepository,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtProvider: JwtProvider
@@ -43,5 +44,12 @@ class AuthService(
 
         val token = jwtProvider.createToken(user.id, user.nickname, user.profile)
         return LoginResponse(token)
+    }
+
+    @Transactional(readOnly = true)
+    fun getUserInfo(id: String): UserResponse {
+        val user = userRepository.findById(id)
+            .orElseThrow { BaseException(ErrorCode.USER_NOT_FOUND, "id is not exists!") }
+        return UserResponse(user.id, user.nickname, user.profile)
     }
 }

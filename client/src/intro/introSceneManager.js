@@ -76,7 +76,7 @@ export default class IntroSceneManager {
         const signupInfo = this.view.getSignupInfo()
         this.sound.select()
         this.goRequesting(() => {
-              serverHandler.post('/user', signupInfo, (data) => {
+              serverHandler.post('/auth/signup', signupInfo, (data) => {
                 this.popupSystemMessage("SUCCESS! NOW.. LOGIN TO PLAY",
                     INTRO_SCENE_STATE.NEED_USER_LOGIN,
                     INTRO_SCENE_STATE.NEED_USER_LOGIN)
