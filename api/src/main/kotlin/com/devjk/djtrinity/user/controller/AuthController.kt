@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@CrossOrigin
+@CrossOrigin(origins = ["http://localhost:5001"], allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 class AuthController(

@@ -5,7 +5,7 @@ import IntroSceneKeyboard from "./introSceneKeyboard";
 import IntroSceneView from "./introSceneView";
 import {INTRO_SCENE_STATE} from "./introSceneState";
 import IntroSceneSound from "./introSceneSound";
-import * as serverHandler from "../common/serverHandler";
+import * as authenticationHandler from "../common/authenticationHandler";
 
 export default class IntroSceneManager {
 
@@ -62,13 +62,10 @@ export default class IntroSceneManager {
         this.sound.select()
         const loginInfo = this.view.getLoginInfo()
         this.goRequesting(() => {
-          // todo - login
-          serverHandler.post('/auth/login', loginInfo, (data) => {
-            console.log(data)
+          authenticationHandler.login(loginInfo, () => {
             this.popupSystemMessage("LOGIN SUCCESS! ENTERING SERVER",
-                INTRO_SCENE_STATE.PRESS_START,  // fixme -> 여기서부터 : token 저장
-                INTRO_SCENE_STATE.PRESS_START
-            )
+                INTRO_SCENE_STATE.PRESS_START,  // todo go channel
+                INTRO_SCENE_STATE.PRESS_START)
           }, (message) => {
             this.popupSystemMessage(message, INTRO_SCENE_STATE.NEED_USER_LOGIN,
                 INTRO_SCENE_STATE.NEED_USER_LOGIN)
@@ -87,7 +84,7 @@ export default class IntroSceneManager {
         const signupInfo = this.view.getSignupInfo()
         this.sound.select()
         this.goRequesting(() => {
-              serverHandler.post('/auth/signup', signupInfo, (data) => {
+              authenticationHandler.signup(signupInfo, () => {
                 this.popupSystemMessage("SUCCESS! NOW.. LOGIN TO PLAY",
                     INTRO_SCENE_STATE.NEED_USER_LOGIN,
                     INTRO_SCENE_STATE.NEED_USER_LOGIN)
@@ -195,7 +192,7 @@ export default class IntroSceneManager {
         this.sound.beep()
         this.view.focusTarget(this.view.signupForm, currentIndex)
       }
-    } else if (this.state === INTRO_SCENE_STATE.ERROR) {
+    } else if (this.state === INTRO_SCENE_STATE.SYSTEM_MESSAGE) {
       let currentIndex = this.view.getCurrentFocus(this.view.systemMessage)
       if (currentIndex === null) {
         currentIndex = 0
@@ -233,7 +230,7 @@ export default class IntroSceneManager {
         this.sound.beep()
         this.view.focusTarget(this.view.signupForm, currentIndex)
       }
-    } else if (this.state === INTRO_SCENE_STATE.ERROR) {
+    } else if (this.state === INTRO_SCENE_STATE.SYSTEM_MESSAGE) {
       let currentIndex = this.view.getCurrentFocus(this.view.systemMessage)
       if (currentIndex === null) {
         currentIndex = 0
