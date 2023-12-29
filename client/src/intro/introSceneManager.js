@@ -1,6 +1,5 @@
 import ResourceLoader from "../common/resourceLoader";
 import introResources from "./introResources.json"
-import * as TWEEN from "@tweenjs/tween.js";
 import IntroSceneKeyboard from "./introSceneKeyboard";
 import IntroSceneView from "./introSceneView";
 import {INTRO_SCENE_STATE} from "./introSceneState";
@@ -9,11 +8,13 @@ import * as authenticationHandler from "../common/authenticationHandler";
 
 export default class IntroSceneManager {
 
-  constructor(ctx) {
-    this.context = ctx;
+  constructor() {
   }
 
-  init = async () => {
+  init = async (ctx) => {
+    this.context = ctx
+    this.isDestroy = false
+
     // load resources
     this.resources = introResources
     const loader = new ResourceLoader(this.context)
@@ -44,7 +45,7 @@ export default class IntroSceneManager {
       this.goPressStart()
     } else if (this.state === INTRO_SCENE_STATE.PRESS_START) {
       this.sound.select()
-      this.sound.startBackground()
+      this.context.backgroundSound.start()
       this.goNeedUserLogin()
     } else if (this.state === INTRO_SCENE_STATE.NEED_USER_LOGIN) {
       if (this.view.getCurrentFocus(this.view.loginForm) === 0) { // first element is signup state
@@ -64,11 +65,11 @@ export default class IntroSceneManager {
         this.goRequesting(() => {
           authenticationHandler.login(loginInfo, () => {
             this.popupSystemMessage("LOGIN SUCCESS! ENTERING SERVER",
-                INTRO_SCENE_STATE.PRESS_START,  // todo go channel
-                INTRO_SCENE_STATE.PRESS_START)
+                INTRO_SCENE_STATE.GO_ROBBY,
+                INTRO_SCENE_STATE.GO_ROBBY, false)
           }, (message) => {
             this.popupSystemMessage(message, INTRO_SCENE_STATE.NEED_USER_LOGIN,
-                INTRO_SCENE_STATE.NEED_USER_LOGIN)
+                INTRO_SCENE_STATE.NEED_USER_LOGIN, true)
           })
         })
         return
@@ -87,10 +88,10 @@ export default class IntroSceneManager {
               authenticationHandler.signup(signupInfo, () => {
                 this.popupSystemMessage("SUCCESS! NOW.. LOGIN TO PLAY",
                     INTRO_SCENE_STATE.NEED_USER_LOGIN,
-                    INTRO_SCENE_STATE.NEED_USER_LOGIN)
+                    INTRO_SCENE_STATE.NEED_USER_LOGIN, false)
               }, (message) => {
                 this.popupSystemMessage(message, INTRO_SCENE_STATE.SIGN_UP,
-                    INTRO_SCENE_STATE.SIGN_UP)
+                    INTRO_SCENE_STATE.SIGN_UP, true)
               })
             }
         )
@@ -110,6 +111,11 @@ export default class IntroSceneManager {
       if (this.nextState === INTRO_SCENE_STATE.NEED_USER_LOGIN) {
         this.sound.beep2()
         this.goNeedUserLogin()
+        return
+      }
+      if (this.nextState === INTRO_SCENE_STATE.GO_ROBBY) {
+        this.sound.select()
+        this.goRobby()
         return
       }
     }
@@ -138,6 +144,11 @@ export default class IntroSceneManager {
         this.goNeedUserLogin()
         return
       }
+      if (this.prevState === INTRO_SCENE_STATE.GO_ROBBY) {
+        this.sound.select()
+        this.goLobby()
+        return
+      }
     }
   }
 
@@ -164,6 +175,12 @@ export default class IntroSceneManager {
     this.state = INTRO_SCENE_STATE.REQUESTING
     this.view.drawRequesting()
     action()
+  }
+
+  goRobby = () => {
+    this.view.clearCanvas()
+    this.state = INTRO_SCENE_STATE.GO_ROBBY
+    this.context.changeScene()
   }
 
   nextFocus = () => {
@@ -244,14 +261,22 @@ export default class IntroSceneManager {
     }
   }
 
-  popupSystemMessage = (message, nextState, prevState) => {
+  popupSystemMessage = (message, nextState, prevState, isErrorPopup) => {
     this.view.clearCanvas()
     this.state = INTRO_SCENE_STATE.SYSTEM_MESSAGE
     this.nextState = nextState
     this.prevState = prevState
-    this.sound.beep2()
+
+    if (isErrorPopup) {
+      this.sound.beep2()
+      this.view.drawSystemMessage()
+      this.view.vibrate(this.view.systemMessage, message)
+      return
+    }
+
+    this.sound.select()
     this.view.drawSystemMessage()
-    this.view.vibrate(this.view.systemMessage, message)
+    this.view.appear(this.view.systemMessage, message)
   }
 
   checkLoginValidation = () => {
@@ -288,15 +313,18 @@ export default class IntroSceneManager {
   }
 
   animate = () => {
+    console.log('calling introSceneManager animate')
+    if (this.isDestroy) {
+      return
+    }
     requestAnimationFrame(this.animate);
-    TWEEN.update()
     this.context.draw()
   }
 
   destroy = () => {
     this.view.destroy()
     this.keyboard.destroy()
-    this.state.destroy()
     this.sound.destroy()
+    this.isDestroy = true
   }
 }

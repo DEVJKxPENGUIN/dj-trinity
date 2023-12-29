@@ -11,6 +11,8 @@ import settings from "../settings/settings.json"
 
 export default class ResourceLoader {
   constructor(ctx) {
+    console.log('resource loader new')
+
     this.context = ctx
     this.manager = new LoadingManager()
     this.loadPromiseResolve = null
@@ -23,9 +25,7 @@ export default class ResourceLoader {
     };
 
     this.manager.onLoad = () => {
-      this.loadFinished = true
-      this.context.removeObject(this.loadLine)
-      this.loadPromiseResolve()
+      this.finishLoad()
     };
 
     this.manager.onProgress = (url, itemsLoaded, itemsTotal) => {
@@ -47,6 +47,9 @@ export default class ResourceLoader {
 
   load = async (resources) => {
     return new Promise((resolve, reject) => {
+
+      console.log('load async called')
+
       this.loadPromiseResolve = resolve
       this.loadPromiseReject = reject
 
@@ -56,8 +59,10 @@ export default class ResourceLoader {
       }))
       this.context.scene.add(this.loadLine)
 
+      let loadTargetCount = 0
       const fontLoader = new FontLoader(this.manager)
       Object.keys(resources.fonts).forEach(fontPath => {
+        loadTargetCount++
         fontLoader.load(fontPath, function (font) {
           resources.fonts[fontPath] = font
         })
@@ -65,18 +70,29 @@ export default class ResourceLoader {
 
       const soundLoader = new AudioLoader(this.manager)
       Object.keys(resources.sounds).forEach(soundPath => {
-        soundLoader.load(soundPath, function(buffer) {
+        loadTargetCount++
+        soundLoader.load(soundPath, function (buffer) {
           resources.sounds[soundPath] = buffer
         })
       })
 
       // todo other resources
 
+      if (loadTargetCount === 0) {
+        this.finishLoad()
+      }
       this.animate()
     })
   }
 
+  finishLoad = () => {
+    this.loadFinished = true
+    this.context.removeObject(this.loadLine)
+    this.loadPromiseResolve()
+  }
+
   animate = () => {
+    console.log('load animate')
     if (this.loadFinished) {
       return
     }

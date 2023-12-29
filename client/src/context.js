@@ -8,15 +8,21 @@ import {
 import settings from "./settings/settings.json";
 import Stats from "three/addons/libs/stats.module";
 import {CSS3DRenderer} from "three/addons";
+import * as TWEEN from "@tweenjs/tween.js";
+import commonResources from "./common/commonResources.json";
+import ResourceLoader from "./common/resourceLoader";
+import BackgroundSoundHandler from "./common/backgroundSoundHandler";
 
 export default class Context {
-  constructor(isDebug) {
+  constructor(isDebug, sceneManager) {
     this.isDebug = isDebug
+    this.sceneManager = sceneManager
+
     this.scene = new Scene()
     this.scene.background = new Color(0x111111)
 
     this.renderer = new WebGLRenderer({
-      antialias:true,
+      antialias: true,
       powerPreference: "high-performance",
     })
     this.renderer.setSize(settings.width, settings.height)
@@ -28,6 +34,7 @@ export default class Context {
     document.body.appendChild(this.cssRenderer.domElement)
 
     this.listener = new AudioListener()
+    this.backgroundSound = new BackgroundSoundHandler(this)
 
     this.aspect = settings.width / settings.height
     this.camera = new OrthographicCamera(
@@ -55,6 +62,14 @@ export default class Context {
     window.addEventListener('resize', this.resize, false)
   }
 
+  init = async () => {
+    this.commonResources = commonResources
+    const loader = new ResourceLoader(this)
+    await loader.load(this.commonResources)
+
+    await this.sceneManager.init(this)
+  }
+
   resize = () => {
     const targetRatio = settings.width / settings.height
     const windowRatio = window.innerWidth / window.innerHeight
@@ -70,9 +85,36 @@ export default class Context {
   draw = () => {
     this.renderer.render(this.scene, this.camera)
     this.cssRenderer.render(this.scene, this.camera)
+    TWEEN.update()
     if (this.isDebug) {
       this.stats.update()
     }
+  }
+
+  changeScene = () => {
+    // 현재 씬 메모리 해제
+    this.disposeAll()
+
+    // 현재 씬 컨트롤러 해제
+    this.sceneManager.destroy()
+    // this.sceneManager = null
+
+    console.log('scene change occurred!!!!!!!')
+  }
+
+  disposeAll = () => {
+    this.scene.traverse(obj => {
+      this.removeObject(obj)
+    })
+
+    const resources = this.sceneManager.resources
+    if (resources.textures) {
+      Object.keys(resources.textures).forEach(texture => {
+        texture.dispose()
+      })
+    }
+
+    this.draw()
   }
 
   removeObject = (object) => {

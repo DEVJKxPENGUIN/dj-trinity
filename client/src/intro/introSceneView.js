@@ -17,9 +17,10 @@ export default class IntroSceneView {
   }
 
   init = () => {
+    const commonResources = this.manager.context.commonResources
     // title
     const mainTitleG = new TextGeometry('TRINITY', {
-      font: this.manager.resources.fonts["font/Orbitron_Regular.json"],
+      font: commonResources.fonts["font/Orbitron_Regular.json"],
       size: 150,
     })
     mainTitleG.computeBoundingBox()
@@ -33,7 +34,7 @@ export default class IntroSceneView {
 
     // subtitle
     const subTitleG = new TextGeometry('DJ TECHNICION', {
-      font: this.manager.resources.fonts["font/Orbitron_Regular.json"],
+      font: commonResources.fonts["font/Orbitron_Regular.json"],
       size: 74,
     })
     subTitleG.computeBoundingBox()
@@ -47,7 +48,7 @@ export default class IntroSceneView {
 
     // press start
     const pressStartG = new TextGeometry('PRESS "ENTER" to START', {
-      font: this.manager.resources.fonts["font/Orbitron_Regular.json"],
+      font: commonResources.fonts["font/Orbitron_Regular.json"],
       size: 40,
     })
     pressStartG.computeBoundingBox()
@@ -239,6 +240,17 @@ export default class IntroSceneView {
     .repeat(5)
     .yoyo(true)
     .onComplete(() => target.position.x = 0)
+    .start()
+  }
+
+  appear = (target, message) => {
+    const messageDiv = target.element.querySelector(".message")
+    messageDiv.innerHTML = `<p>${message}</p>`
+
+    target.position.y = -30
+    new Tween(target.position)
+    .to({y: 0}, 300)
+    .easing(TWEEN.Easing.Cubic.Out)
     .start()
   }
 
