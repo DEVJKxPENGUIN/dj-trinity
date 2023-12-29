@@ -23,7 +23,7 @@ class User(
     var nickname: String,
 
     @Column(name = "profile")
-    var profile: String? = null
+    var profile: String = "image/trinity.webp"
 ) : BaseEntity() {
 
     init {

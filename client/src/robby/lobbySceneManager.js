@@ -1,22 +1,30 @@
 import ResourceLoader from "../common/resourceLoader";
-import robbyResources from "./lobbyResources.json"
+import lobbyResources from "./lobbyResources.json"
 import LobbySceneView from "./lobbySceneView";
 import LobbySceneSound from "./lobbySceneSound";
 import LobbySceneKeyboard from "./lobbySceneKeyboard";
 import {ROBBY_SCENE_STATE} from "./lobbySceneState";
-import * as authenticationHandler from "../common/authenticationHandler"
 
 export default class LobbySceneManager {
 
-  constructor() {
+  constructor(testUserInfo) {
+    this.testUserInfo = testUserInfo
   }
 
   init = async (ctx) => {
     this.context = ctx
     this.isDestroy = false
 
+    console.log('userInfo : {}', this.context.userInfo)
+
+    // fixme for test
+    if (this.context.isDebug && !this.context.userInfo) {
+      this.context.userInfo = this.testUserInfo
+    }
+
     // load resources
-    this.resources = robbyResources
+    this.resources = lobbyResources
+    this.resources.textures[this.context.userInfo.profile] = null
     const loader = new ResourceLoader(this.context)
     await loader.load(this.resources)
 

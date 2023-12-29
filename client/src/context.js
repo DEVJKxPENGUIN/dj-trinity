@@ -82,7 +82,7 @@ export default class Context {
     }
   }
 
-  draw = () => {
+  draw = (caller) => {
     this.renderer.render(this.scene, this.camera)
     this.cssRenderer.render(this.scene, this.camera)
     TWEEN.update()
@@ -114,6 +114,13 @@ export default class Context {
         texture.dispose()
       })
     }
+    // fixme - do not dispose commonResources
+    // const commonResources = this.commonResources
+    // if (commonResources.textures) {
+    //   Object.keys(commonResources.textures).forEach(texture => {
+    //     texture.dispose()
+    //   })
+    // }
 
     this.draw()
   }

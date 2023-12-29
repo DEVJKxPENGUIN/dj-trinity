@@ -4,6 +4,7 @@ import {
   Line,
   LineBasicMaterial,
   LoadingManager,
+  TextureLoader,
   Vector3
 } from "three";
 import {FontLoader} from "three/addons";
@@ -68,6 +69,14 @@ export default class ResourceLoader {
         loadTargetCount++
         soundLoader.load(soundPath, function (buffer) {
           resources.sounds[soundPath] = buffer
+        })
+      })
+
+      const textureLoader = new TextureLoader(this.manager)
+      Object.keys(resources.textures).forEach(texturePath => {
+        loadTargetCount++
+        textureLoader.load(texturePath, function (texture) {
+          resources.textures[texturePath] = texture
         })
       })
 
