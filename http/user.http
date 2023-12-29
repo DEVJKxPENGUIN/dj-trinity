@@ -21,3 +21,23 @@ Accept: application/json
 ###
 GET localhost:5002/user
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJuaWNrbmFtZSI6Ik5FV0JJRV9hZG1pbjUiLCJpc3MiOiJ0cmluaXR5IiwiaWF0IjoxNzAzNzg3NDEwLCJleHAiOjE3MDM3ODkyMTB9.1zqEKyXv0Gea3HohYfXFb0oBmu5r-PB5eJqiUwloPCXZ0bN4Mq3To1tfPRV-Kz_ElZZR9kCzb_KIM2kjymeXyw
+
+###
+POST localhost:5002/auth/refresh
+Content-Type: application/json
+Accept: application/json
+
+{
+  "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJuaWNrbmFtZSI6Ik5FV0JJRV9hZG1pbjUiLCJpc3MiOiJ0cmluaXR5IiwiaWF0IjoxNzAzODA5NzQzLCJleHAiOjE3MDM4MTE1NDN9.yGFExUciYQOMKaohgF8ubtmwYGAkA6RZPbsY4wGBsk5z5tBYNbt7ZX7U_TxZ7FARW8Cvr4g_b4v7ZEN8sB9IhA",
+  "refreshToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJpc3MiOiJ0cmluaXR5LXJlZnJlc2giLCJpYXQiOjE3MDM4MDk3NDMsImV4cCI6MTcwMzg5NjE0M30.kO-Xn07GGUdA5mLkJnApj_g_rW2MEk1_5xWKUO-ib1vQd6ySutZj1W0-2swpoBsQLTwbCLm-MnfVRVRMAq1D8A"
+}
+
+###
+POST localhost:5002/auth/logout
+Content-Type: application/json
+Accept: application/json
+
+{
+  "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJuaWNrbmFtZSI6Ik5FV0JJRV9hZG1pbjUiLCJpc3MiOiJ0cmluaXR5IiwiaWF0IjoxNzAzODEwODc3LCJleHAiOjE3MDM4MTI2Nzd9.RVnNx_ssoWnMg8HMU7r2ayu2_F0MW5L7afATOFi1zFWZAhZLDZe_JgdwwzugslOtbPrK7nF3cvDZvir526oaZQ",
+  "refreshToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbjUiLCJpc3MiOiJ0cmluaXR5LXJlZnJlc2giLCJpYXQiOjE3MDM4MTA4NzcsImV4cCI6MTcwMzg5NzI3N30.-hsLLMRAhh93MIh8tHRyf1PQE-sjW7OjBUVWhe5sIl4CZEyirDLvYUvx7D_aedYYzvTB8_yrUfPRU5x6l7i0Tg"
+}

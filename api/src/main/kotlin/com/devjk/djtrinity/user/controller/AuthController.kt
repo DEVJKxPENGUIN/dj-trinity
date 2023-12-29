@@ -2,6 +2,8 @@ package com.devjk.djtrinity.user.controller
 
 import com.devjk.djtrinity.framework.common.BaseResponse
 import com.devjk.djtrinity.user.request.UserLoginRequest
+import com.devjk.djtrinity.user.request.UserLogoutRequest
+import com.devjk.djtrinity.user.request.UserRefreshRequest
 import com.devjk.djtrinity.user.request.UserSignupRequest
 import com.devjk.djtrinity.user.service.UserService
 import org.springframework.http.ResponseEntity
@@ -26,5 +28,19 @@ class AuthController(
         req.validate()
         val response = userService.login(req)
         return ResponseEntity.ok(BaseResponse.success(response))
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody req: UserRefreshRequest): ResponseEntity<*> {
+        req.validate()
+        val response = userService.refresh(req)
+        return ResponseEntity.ok(BaseResponse.success(response))
+    }
+
+    @PostMapping("/logout")
+    fun refresh(@RequestBody req: UserLogoutRequest): ResponseEntity<*> {
+        req.validate()
+        userService.logout(req)
+        return ResponseEntity.ok(BaseResponse.success())
     }
 }

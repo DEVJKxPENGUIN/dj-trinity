@@ -60,8 +60,19 @@ export default class IntroSceneManager {
           return
         }
         this.sound.select()
+        const loginInfo = this.view.getLoginInfo()
         this.goRequesting(() => {
           // todo - login
+          serverHandler.post('/auth/login', loginInfo, (data) => {
+            console.log(data)
+            this.popupSystemMessage("LOGIN SUCCESS! ENTERING SERVER",
+                INTRO_SCENE_STATE.PRESS_START,  // fixme -> 여기서부터 : token 저장
+                INTRO_SCENE_STATE.PRESS_START
+            )
+          }, (message) => {
+            this.popupSystemMessage(message, INTRO_SCENE_STATE.NEED_USER_LOGIN,
+                INTRO_SCENE_STATE.NEED_USER_LOGIN)
+          })
         })
         return
       }

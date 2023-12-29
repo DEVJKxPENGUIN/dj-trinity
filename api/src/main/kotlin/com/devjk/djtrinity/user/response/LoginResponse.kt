@@ -6,7 +6,8 @@ import com.google.gson.Gson
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class LoginResponse(
-    val token: String
+    val accessToken: String,
+    val refreshToken: String
 ) {
     override fun toString(): String {
         return Gson().toJson(this)

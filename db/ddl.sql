@@ -21,4 +21,18 @@ CREATE TABLE djtrinity.user
     created_at timestamp    not null,
     updated_at timestamp    not null,
     primary key (id)
-)
+);
+
+CREATE TABLE djtrinity.token
+(
+    id                      bigint auto_increment,
+    user_id                 varchar(30)  not null,
+    access_token            varchar(255) not null,
+    refresh_token           varchar(255) not null,
+    refresh_token_used_at   timestamp,
+    refresh_token_expire_at timestamp    not null,
+    created_at              timestamp    not null,
+    updated_at              timestamp    not null,
+    primary key (id),
+    INDEX                   accesstoken_refreshtoken (access_token, refresh_token)
+);
