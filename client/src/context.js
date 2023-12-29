@@ -91,15 +91,16 @@ export default class Context {
     }
   }
 
-  changeScene = () => {
+  changeScene = (newScene) => {
     // 현재 씬 메모리 해제
     this.disposeAll()
 
     // 현재 씬 컨트롤러 해제
     this.sceneManager.destroy()
-    this.sceneManager = null
 
-    console.log('scene change occurred!!!!!!!')
+    // 씬 컨트롤러 체인지
+    this.sceneManager = newScene
+    this.sceneManager.init(this)
   }
 
   disposeAll = () => {

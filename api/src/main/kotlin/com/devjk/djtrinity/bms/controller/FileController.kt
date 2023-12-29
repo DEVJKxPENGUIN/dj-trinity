@@ -7,7 +7,6 @@ import com.devjk.djtrinity.framework.common.BaseResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@CrossOrigin
 @RestController
 @RequestMapping("/bms")
 class FileController(

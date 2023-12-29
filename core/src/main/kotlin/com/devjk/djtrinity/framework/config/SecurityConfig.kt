@@ -24,6 +24,7 @@ class SecurityConfig(
                     .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
+            .cors {}
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

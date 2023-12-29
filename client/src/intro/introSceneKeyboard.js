@@ -1,7 +1,7 @@
 export default class IntroSceneKeyboard {
 
-  constructor(scene) {
-    this.scene = scene
+  constructor(manager) {
+    this.manager = manager
   }
 
   init = () => {
@@ -10,17 +10,17 @@ export default class IntroSceneKeyboard {
 
   handleKeydown = (e) => {
     if (e.key === "Enter") {
-      this.scene.goNextState()
+      this.manager.goNextState()
     } else if(e.key === "ArrowUp") {
-      this.scene.prevFocus()
+      this.manager.prevFocus()
     } else if(e.key === "ArrowDown") {
-      this.scene.nextFocus()
+      this.manager.nextFocus()
     } else if(e.key === "ArrowRight") {
     } else if(e.key === "ArrowLeft") {
     } else if(e.key === "Backspace") {
 
     }else if(e.key === "Escape") {
-      this.scene.goPrevState()
+      this.manager.goPrevState()
     }
 
   }

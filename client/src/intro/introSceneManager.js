@@ -5,6 +5,7 @@ import IntroSceneView from "./introSceneView";
 import {INTRO_SCENE_STATE} from "./introSceneState";
 import IntroSceneSound from "./introSceneSound";
 import * as authenticationHandler from "../common/authenticationHandler";
+import LobbySceneManager from "../robby/lobbySceneManager";
 
 export default class IntroSceneManager {
 
@@ -61,15 +62,18 @@ export default class IntroSceneManager {
         }
         this.sound.select()
         const loginInfo = this.view.getLoginInfo()
-        this.goRequesting(() => {
-          authenticationHandler.login(loginInfo, () => {
+        this.goRequesting(async () => {
+          try {
+            await authenticationHandler.login(loginInfo)
+            this.context.userInfo = await authenticationHandler.userInfo()
             this.popupSystemMessage("LOGIN SUCCESS! ENTERING SERVER",
-                INTRO_SCENE_STATE.GO_ROBBY,
-                INTRO_SCENE_STATE.GO_ROBBY, false)
-          }, (message) => {
-            this.popupSystemMessage(message, INTRO_SCENE_STATE.NEED_USER_LOGIN,
+                INTRO_SCENE_STATE.GO_LOBBY,
+                INTRO_SCENE_STATE.GO_LOBBY, false)
+          } catch (e) {
+            this.popupSystemMessage(e.message,
+                INTRO_SCENE_STATE.NEED_USER_LOGIN,
                 INTRO_SCENE_STATE.NEED_USER_LOGIN, true)
-          })
+          }
         })
         return
       }
@@ -83,15 +87,16 @@ export default class IntroSceneManager {
         }
         const signupInfo = this.view.getSignupInfo()
         this.sound.select()
-        this.goRequesting(() => {
-              authenticationHandler.signup(signupInfo, () => {
+        this.goRequesting(async () => {
+              try {
+                await authenticationHandler.signup(signupInfo)
                 this.popupSystemMessage("SUCCESS! NOW.. LOGIN TO PLAY",
                     INTRO_SCENE_STATE.NEED_USER_LOGIN,
                     INTRO_SCENE_STATE.NEED_USER_LOGIN, false)
-              }, (message) => {
-                this.popupSystemMessage(message, INTRO_SCENE_STATE.SIGN_UP,
+              } catch (e) {
+                this.popupSystemMessage(e.message, INTRO_SCENE_STATE.SIGN_UP,
                     INTRO_SCENE_STATE.SIGN_UP, true)
-              })
+              }
             }
         )
         return
@@ -112,9 +117,9 @@ export default class IntroSceneManager {
         this.goNeedUserLogin()
         return
       }
-      if (this.nextState === INTRO_SCENE_STATE.GO_ROBBY) {
+      if (this.nextState === INTRO_SCENE_STATE.GO_LOBBY) {
         this.sound.select()
-        this.goRobby()
+        this.goLobby()
         return
       }
     }
@@ -143,7 +148,7 @@ export default class IntroSceneManager {
         this.goNeedUserLogin()
         return
       }
-      if (this.prevState === INTRO_SCENE_STATE.GO_ROBBY) {
+      if (this.prevState === INTRO_SCENE_STATE.GO_LOBBY) {
         this.sound.select()
         this.goLobby()
         return
@@ -176,10 +181,10 @@ export default class IntroSceneManager {
     action()
   }
 
-  goRobby = () => {
+  goLobby = () => {
     this.view.clearCanvas()
-    this.state = INTRO_SCENE_STATE.GO_ROBBY
-    this.context.changeScene()
+    this.state = INTRO_SCENE_STATE.GO_LOBBY
+    this.context.changeScene(new LobbySceneManager())
   }
 
   nextFocus = () => {
