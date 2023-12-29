@@ -58,6 +58,10 @@ logging:
 jwt-secret-key: ${JWT_SECRET_KEY:eyJhbGciOiJIUzUxMiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwMzc4MDE1MCwiaWF0IjoxNzAzNzgwMTUwfQ.gMUEaSKmYFSfCZd9SYrgRHBTSc4ZEY7Fr8dlzD3pTat2Cka_KRKARvMY3nXOyJxhGYwycKwmXb0x0sNtuJ0-wg}
 jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:30}
 
+redis-host: ${REDIS_HOST}
+redis-port: ${REDIS_PORT}
+redis-password: ${REDIS_PASSWORD}
+
 ---
 spring:
   config:

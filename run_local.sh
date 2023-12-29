@@ -9,6 +9,9 @@ RUN_TYPE="spring" ## spring or npm
 DB_HOST="localhost:53306"
 DB_USERNAME="root"
 DB_PASSWORD="develop"
+REDIS_HOST="localhost"
+REDIS_PORT="56379"
+REDIS_PASSWORD="develop"
 
 # parse arguments
 while (("$#")); do
@@ -61,6 +64,9 @@ if [ ${RUN_TYPE} = "spring" ]; then
   export DB_HOST=${DB_HOST}
   export DB_USERNAME=${DB_USERNAME}
   export DB_PASSWORD=${DB_PASSWORD}
+  export REDIS_HOST=${REDIS_HOST}
+  export REDIS_PORT=${REDIS_PORT}
+  export REDIS_PASSWORD=${REDIS_PASSWORD}
   ${FULL_ARGS}
   #./gradlew ${RUN_MODULE}:bootRun ${ARGS}
 fi
