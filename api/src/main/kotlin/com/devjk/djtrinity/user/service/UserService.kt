@@ -8,8 +8,6 @@ import com.devjk.djtrinity.framework.error.ErrorCode
 import com.devjk.djtrinity.framework.error.exception.BaseException
 import com.devjk.djtrinity.framework.utils.JwtProvider
 import com.devjk.djtrinity.user.request.UserLoginRequest
-import com.devjk.djtrinity.user.request.UserLogoutRequest
-import com.devjk.djtrinity.user.request.UserRefreshRequest
 import com.devjk.djtrinity.user.request.UserSignupRequest
 import com.devjk.djtrinity.user.response.LoginResponse
 import com.devjk.djtrinity.user.response.UserResponse
@@ -53,11 +51,11 @@ class UserService(
     }
 
     @Transactional
-    fun refresh(req: UserRefreshRequest): LoginResponse {
+    fun refresh(accessToken: String?, refreshToken: String?): LoginResponse {
         val token =
             tokenRepository.findByAccessTokenAndRefreshTokenAndRefreshTokenUsedAtIsNullAndRefreshTokenExpireAtAfter(
-                req.accessToken,
-                req.refreshToken,
+                accessToken,
+                refreshToken,
                 LocalDateTime.now()
             ) ?: throw BaseException(ErrorCode.AUTHENTICATION_EXPIRED)
 
@@ -70,10 +68,10 @@ class UserService(
     }
 
     @Transactional
-    fun logout(req: UserLogoutRequest) {
+    fun logout(accessToken: String?, refreshToken: String?) {
         // refresh token 만 만료, access token 은 클라에서 자체파기 해야함.
         val token =
-            tokenRepository.findByAccessTokenOrRefreshToken(req.accessToken, req.refreshToken)
+            tokenRepository.findByAccessTokenOrRefreshToken(accessToken, refreshToken)
         token?.use()
     }
 

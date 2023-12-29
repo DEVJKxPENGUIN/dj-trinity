@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 @Repository
 interface TokenRepository : JpaRepository<Token, Long> {
     fun findByAccessTokenAndRefreshTokenAndRefreshTokenUsedAtIsNullAndRefreshTokenExpireAtAfter(
-        accessToken: String,
-        refreshToken: String,
+        accessToken: String?,
+        refreshToken: String?,
         expireAt: LocalDateTime
     ): Token?
 
