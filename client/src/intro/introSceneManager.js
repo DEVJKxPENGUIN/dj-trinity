@@ -19,7 +19,6 @@ export default class IntroSceneManager {
     this.resources = introResources
     const loader = new ResourceLoader(this.context)
     await loader.load(this.resources)
-    console.log(this.resources)
 
     // init view
     this.view = new IntroSceneView(this)
@@ -313,7 +312,6 @@ export default class IntroSceneManager {
   }
 
   animate = () => {
-    console.log('calling introSceneManager animate')
     if (this.isDestroy) {
       return
     }

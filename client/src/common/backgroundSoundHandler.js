@@ -8,7 +8,6 @@ export default class BackgroundSoundHandler {
   }
 
   start = () => {
-    console.log('backgroundsound play')
     if (this.backgroundSound === null || this.backgroundSound === undefined) {
       this.backgroundSound = new Audio(this.context.listener)
       this.backgroundSound.setBuffer(
@@ -18,7 +17,6 @@ export default class BackgroundSoundHandler {
     }
 
     if (this.backgroundSound.isPlaying) {
-      console.log('playing')
       return
     }
 

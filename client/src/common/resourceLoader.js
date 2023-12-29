@@ -11,8 +11,6 @@ import settings from "../settings/settings.json"
 
 export default class ResourceLoader {
   constructor(ctx) {
-    console.log('resource loader new')
-
     this.context = ctx
     this.manager = new LoadingManager()
     this.loadPromiseResolve = null
@@ -47,9 +45,6 @@ export default class ResourceLoader {
 
   load = async (resources) => {
     return new Promise((resolve, reject) => {
-
-      console.log('load async called')
-
       this.loadPromiseResolve = resolve
       this.loadPromiseReject = reject
 
@@ -92,7 +87,6 @@ export default class ResourceLoader {
   }
 
   animate = () => {
-    console.log('load animate')
     if (this.loadFinished) {
       return
     }

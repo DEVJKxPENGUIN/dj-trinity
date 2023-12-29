@@ -97,7 +97,7 @@ export default class Context {
 
     // 현재 씬 컨트롤러 해제
     this.sceneManager.destroy()
-    // this.sceneManager = null
+    this.sceneManager = null
 
     console.log('scene change occurred!!!!!!!')
   }
