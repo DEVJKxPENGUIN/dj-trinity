@@ -67,6 +67,17 @@ export default class Context {
     const loader = new ResourceLoader(this)
     await loader.load(this.commonResources)
 
+    this.info = {
+      user: {
+        id: "undefined",
+        nickname:"undefined",
+        profile: "image/trinity.webp",
+      },
+      channel: {
+        id: "connecting"
+      },
+    }
+
     await this.sceneManager.init(this)
   }
 

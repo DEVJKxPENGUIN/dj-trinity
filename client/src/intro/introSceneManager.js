@@ -65,7 +65,7 @@ export default class IntroSceneManager {
         this.goRequesting(async () => {
           try {
             await authenticationHandler.login(loginInfo)
-            this.context.userInfo = await authenticationHandler.userInfo()
+            this.context.info.user = await authenticationHandler.userInfo()
             this.popupSystemMessage("LOGIN SUCCESS! ENTERING SERVER",
                 INTRO_SCENE_STATE.GO_LOBBY,
                 INTRO_SCENE_STATE.GO_LOBBY, false)

@@ -1,7 +1,8 @@
-const serverHost = import.meta.env.VITE_SERVER_HOST
+const apiHost = import.meta.env.VITE_API_HOST
+const gameHost = import.meta.env.VITE_GAME_HOST
 export const post = async (uri, data) => {
   // for loading page
-  await sleep(2000)
+  await sleep(1000)
 
   const headers = {
     "Content-Type": "application/json",
@@ -11,7 +12,7 @@ export const post = async (uri, data) => {
     headers.Authorization = "bearer " + sessionStorage.getItem("trinity-at")
   }
 
-  const response = await fetch(`${serverHost}${uri}`, {
+  const response = await fetch(`${apiHost}${uri}`, {
     method: "POST",
     headers: headers,
     body: JSON.stringify(data),
@@ -40,7 +41,7 @@ export const get = async (uri, data) => {
   if (queryString) {
     queryString = '?' + queryString
   }
-  const response = await fetch(`${serverHost}${uri}${queryString}`, {
+  const response = await fetch(`${apiHost}${uri}${queryString}`, {
     method: "GET",
     headers: headers,
     credentials: "include"
@@ -52,6 +53,21 @@ export const get = async (uri, data) => {
   }
 
   return body.data
+}
+
+export const createSocket = (path, onOpen, onMessage, onClose) => {
+  const socket = new WebSocket(`${gameHost}/ws${path}`)
+  socket.onopen = (e) => {
+    socket.send(JSON.stringify({
+      type: "AUTHORIZATION",
+      token: sessionStorage.getItem("trinity-at")
+    }))
+
+    onOpen(e)
+  }
+  socket.onmessage = onMessage
+  socket.onclose = onClose
+  return socket
 }
 
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));

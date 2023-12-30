@@ -5,12 +5,8 @@ import LobbySceneManager from "./robby/lobbySceneManager";
 import IntroSceneManager from "./intro/introSceneManager";
 
 // fixme - for debug
-const context = new Context(true, new IntroSceneManager())
-// const context = new Context(true, new LobbySceneManager({
-//   id: "devjk",
-//   nickname: "testNickName",
-//   profile: "image/trinity.webp"
-// }))
+// const context = new Context(true, new IntroSceneManager())
+const context = new Context(true, new LobbySceneManager())
 
 if (WebGL.isWebGLAvailable()) {
   await context.init()

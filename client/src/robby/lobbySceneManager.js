@@ -4,27 +4,22 @@ import LobbySceneView from "./lobbySceneView";
 import LobbySceneSound from "./lobbySceneSound";
 import LobbySceneKeyboard from "./lobbySceneKeyboard";
 import {ROBBY_SCENE_STATE} from "./lobbySceneState";
+import LobbySceneSocketHandler from "./lobbySceneSocketHandler";
 
 export default class LobbySceneManager {
 
-  constructor(testUserInfo) {
-    this.testUserInfo = testUserInfo
+  constructor() {
   }
 
   init = async (ctx) => {
     this.context = ctx
     this.isDestroy = false
 
-    console.log('userInfo : {}', this.context.userInfo)
-
-    // fixme for test
-    if (this.context.isDebug && !this.context.userInfo) {
-      this.context.userInfo = this.testUserInfo
-    }
+    console.log('userInfo : {}', this.context.info.user)
 
     // load resources
     this.resources = lobbyResources
-    this.resources.textures[this.context.userInfo.profile] = null
+    this.resources.textures[this.context.info.user.profile] = null
     const loader = new ResourceLoader(this.context)
     await loader.load(this.resources)
 
@@ -43,6 +38,10 @@ export default class LobbySceneManager {
     // init game state
     this.goNextState()
 
+    // init socket
+    this.socketHandler = new LobbySceneSocketHandler(this)
+    this.socketHandler.init()
+
     // start animate
     this.animate()
   }
@@ -58,6 +57,14 @@ export default class LobbySceneManager {
     this.view.clearCanvas()
     this.state = ROBBY_SCENE_STATE.CHAT_ROOM
     this.view.drawChatRoom()
+  }
+
+  enterChannel = (channelInfo) => {
+    // beep
+    this.context.info.channel.id = channelInfo.channelId
+    console.log(this.context.info)
+
+    this.view.updateTextGeometries()
   }
 
   animate = () => {
