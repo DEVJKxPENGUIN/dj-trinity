@@ -1,0 +1,90 @@
+spring:
+  profiles:
+    group:
+      "local": "local, common"
+      "dev": "dev, common"
+      "prod": "prod, common"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: true
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: ${http.port:5003}
+  tomcat:
+    protocol: org.apache.coyote.http11.Http11Protocol
+    maxThreads: 200
+    maxConnections: 10000
+    acceptCount: 100
+    maxKeepAliveRequests: 100
+    connectionTimeout: 60000
+    enableLookups: false
+    tcpNoDelay: true
+    compression: off
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+  devtools:
+    livereload:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}/djtrinity?useSSL=false&serverTimezone=UTC&connectTimeout=5000&autoReconnect=true&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+logging:
+  level:
+    root: debug
+
+jwt-secret-key: ${JWT_SECRET_KEY:eyJhbGciOiJIUzUxMiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcwMzc4MDE1MCwiaWF0IjoxNzAzNzgwMTUwfQ.gMUEaSKmYFSfCZd9SYrgRHBTSc4ZEY7Fr8dlzD3pTat2Cka_KRKARvMY3nXOyJxhGYwycKwmXb0x0sNtuJ0-wg}
+jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:30}
+
+redis-host: ${REDIS_HOST}
+redis-port: ${REDIS_PORT}
+redis-password: ${REDIS_PASSWORD}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}/djtrinity?useSSL=false&serverTimezone=UTC&connectTimeout=5000&autoReconnect=true&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}/djtrinity?serverTimezone=UTC&connectTimeout=5000&autoReconnect=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+logging:
+  level:
+    root: info

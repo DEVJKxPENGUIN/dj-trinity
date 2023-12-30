@@ -1,4 +1,4 @@
-package com.devjk.djtrinity.framework.security
+package com.devjk.djtrinity.framework.filter
 
 import com.devjk.djtrinity.framework.utils.JwtProvider
 import jakarta.servlet.FilterChain

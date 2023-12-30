@@ -1,6 +1,6 @@
 package com.devjk.djtrinity.framework.config
 
-import com.devjk.djtrinity.framework.security.JwtAuthenticationFilter
+import com.devjk.djtrinity.framework.filter.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -22,6 +22,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it.requestMatchers("/public/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .anyRequest().authenticated()
             }
             .cors {}
