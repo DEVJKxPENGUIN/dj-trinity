@@ -1,9 +1,10 @@
 package com.devjk.djtrinity.lobby.handler
 
 import com.devjk.djtrinity.framework.common.BaseSocketHandler
+import com.devjk.djtrinity.framework.common.SessionHandler
 import com.devjk.djtrinity.framework.utils.JwtProvider
-import com.devjk.djtrinity.lobby.LobbyService
 import com.devjk.djtrinity.lobby.message.LobbyMessage
+import com.devjk.djtrinity.lobby.service.LobbyService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
@@ -17,9 +18,10 @@ class LobbyHandler(
     private val redisTemplate: RedisTemplate<String, Any>,
     private val objectMapper: ObjectMapper,
     private val lobbyService: LobbyService,
-    jwtProvider: JwtProvider
+    jwtProvider: JwtProvider,
+    sessionHandler: SessionHandler
 ) : BaseSocketHandler(
-    redisTemplate, jwtProvider
+    redisTemplate, jwtProvider, sessionHandler
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -61,7 +63,7 @@ class LobbyHandler(
         val ops = redisTemplate.opsForHash<String, String>()
         ops.delete("Authorization", session.id)
         lobbyService.exitChannel(session)
-        removeSession(session.id)
+        sessionHandler.remove(session.id)
     }
 
     override fun supportsPartialMessages(): Boolean {

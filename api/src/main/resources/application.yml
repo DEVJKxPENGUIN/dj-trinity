@@ -61,6 +61,8 @@ jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:30}
 redis-host: ${REDIS_HOST}
 redis-port: ${REDIS_PORT}
 redis-password: ${REDIS_PASSWORD}
+api-server-host: ${API_SERVER_HOST:http://localhost:5002}
+server-to-server-key: ${SERVER_TO_SERVER_KEY:servertoserverkey}
 
 ---
 spring:
