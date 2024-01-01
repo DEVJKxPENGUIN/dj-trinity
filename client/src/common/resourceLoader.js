@@ -58,6 +58,9 @@ export default class ResourceLoader {
       let loadTargetCount = 0
       const fontLoader = new FontLoader(this.manager)
       Object.keys(resources.fonts).forEach(fontPath => {
+        if(resources.fonts[fontPath] !== null){
+          return
+        }
         loadTargetCount++
         fontLoader.load(fontPath, function (font) {
           resources.fonts[fontPath] = font
@@ -66,6 +69,9 @@ export default class ResourceLoader {
 
       const soundLoader = new AudioLoader(this.manager)
       Object.keys(resources.sounds).forEach(soundPath => {
+        if (resources.sounds[soundPath] !== null) {
+          return
+        }
         loadTargetCount++
         soundLoader.load(soundPath, function (buffer) {
           resources.sounds[soundPath] = buffer
@@ -74,6 +80,9 @@ export default class ResourceLoader {
 
       const textureLoader = new TextureLoader(this.manager)
       Object.keys(resources.textures).forEach(texturePath => {
+        if (resources.textures[texturePath] !== null) {
+          return
+        }
         loadTargetCount++
         textureLoader.load(texturePath, function (texture) {
           resources.textures[texturePath] = texture

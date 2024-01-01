@@ -19,12 +19,33 @@ export default class LobbySceneSocketHandler {
     }))
   }
 
-  onMessage = (e) => {
+  onMessage = async (e) => {
     const message = JSON.parse(e.data)
     console.log("onMessage : ", message)
-    if("ENTER_CHANNEL" === message.type){
-      this.manager.enterChannel(message.payload)
-      return
+    if ("ENTER_CHANNEL" === message.type) {
+      // 본인 입장
+      if (!message.payload.userId) {
+        await this.manager.enterChannel(message.payload)
+        return
+      }
+
+      // 타인 입장
+      if (message.payload.userId) {
+        await this.manager.updateChannel(message.payload)
+        return
+      }
+    }
+
+    if("CHAT_MESSAGE" === message.type) {
+      if(message.payload.chatType === "SYSTEM") {
+        console.log("SYSTEM message received : ", message.payload)
+        return
+      }
+
+      if(message.payload.chatType === "NORMAL") {
+
+        return
+      }
     }
 
 

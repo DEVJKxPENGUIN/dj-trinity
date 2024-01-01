@@ -5,6 +5,7 @@ import LobbySceneSound from "./lobbySceneSound";
 import LobbySceneKeyboard from "./lobbySceneKeyboard";
 import {ROBBY_SCENE_STATE} from "./lobbySceneState";
 import LobbySceneSocketHandler from "./lobbySceneSocketHandler";
+import * as serverHandler from "../common/serverHandler";
 
 export default class LobbySceneManager {
 
@@ -56,15 +57,40 @@ export default class LobbySceneManager {
   goChatRoom = () => {
     this.view.clearCanvas()
     this.state = ROBBY_SCENE_STATE.CHAT_ROOM
+    this.updateShowUsers(0)
     this.view.drawChatRoom()
   }
 
-  enterChannel = (channelInfo) => {
+  enterChannel = async (channelInfo) => {
     // beep
+    this.sound.beep()
     this.context.info.channel.id = channelInfo.channelId
-    console.log(this.context.info)
+    await this.updateChannel(channelInfo)
+  }
 
+  updateChannel = async (channelInfo) => {
+    this.context.info.channel.users = await serverHandler.get('/users',
+        {userIds: channelInfo.users.join(',')})
+
+    for (let i = 0; i < this.context.info.channel.users.length; i++) {
+      const user = this.context.info.channel.users[i]
+      if (!this.resources.textures[user.profile]) {
+        this.resources.textures[user.profile] = null
+      }
+    }
+
+    const loader = new ResourceLoader(this.context)
+    await loader.load(this.resources)
+
+    console.log('update channels : ', this.context.info)
+    this.updateShowUsers(0)
     this.view.updateTextGeometries()
+  }
+
+  updateShowUsers = (pageIndex) => {
+    this.showUsers = this.context.info.channel.users.filter(
+        user => user.id !== this.context.info.user.id).slice(pageIndex * 10,
+        (pageIndex + 1) * 10)
   }
 
   animate = () => {

@@ -1,6 +1,7 @@
 import {
   AudioListener,
   Color,
+  Group,
   OrthographicCamera,
   Scene,
   WebGLRenderer
@@ -30,7 +31,7 @@ export default class Context {
 
     this.cssRenderer = new CSS3DRenderer()
     this.cssRenderer.setSize(settings.width, settings.height)
-    this.cssRenderer.domElement.style.position = 'absolute'
+    this.cssRenderer.domElement.style.position = 'fixed'
     document.body.appendChild(this.cssRenderer.domElement)
 
     this.listener = new AudioListener()
@@ -67,18 +68,58 @@ export default class Context {
     const loader = new ResourceLoader(this)
     await loader.load(this.commonResources)
 
-    this.info = {
+    this.info = this.defaultInfo()
+    await this.sceneManager.init(this)
+  }
+
+  defaultInfo = () => {
+    return {
       user: {
         id: "undefined",
-        nickname:"undefined",
+        nickname: "undefined",
         profile: "image/trinity.webp",
       },
       channel: {
-        id: "connecting"
+        id: "connecting",
+        users: [
+          // {id: "user1", nickname: "sdfjkl", profile: "image/trinity.webp"},
+          // {id: "user2", nickname: "jkzlxcjvkl", profile: "image/trinity.webp"},
+          // {id: "devjk", nickname: "jfksj", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
+        ],
       },
     }
-
-    await this.sceneManager.init(this)
   }
 
   resize = () => {
@@ -153,6 +194,31 @@ export default class Context {
 
     if (object.material && object.material.map) {
       object.material.map.dispose();
+    }
+  }
+
+  // group 하위의 오브젝트 모두 제거
+  removeGroup = (group) => {
+    while (group.children.length > 0) {
+      const object = group.children[0];
+
+      // 재질 해제
+      if (object.material) {
+        object.material.dispose();
+      }
+
+      // 지오메트리 해제
+      if (object.geometry) {
+        object.geometry.dispose();
+      }
+
+      // 하위 오브젝트가 Group인 경우 재귀적으로 처리
+      if (object instanceof Group) {
+        this.removeGroup(object);
+      }
+
+      // 오브젝트를 Group에서 제거
+      group.remove(object);
     }
   }
 }
