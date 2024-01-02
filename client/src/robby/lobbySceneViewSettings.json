@@ -1,0 +1,101 @@
+{
+  "profile": {
+    "profileId": {
+      "font": "font/Tektur_Regular.json",
+      "size": 12,
+      "color": "#ffffff",
+      "x": -80,
+      "y": 20
+    },
+    "profileNickname": {
+      "font": "font/Tektur_Regular.json",
+      "size": 20,
+      "color": "#ffffff",
+      "x": -80,
+      "y": 50
+    },
+    "profileImage": {
+      "width": 50,
+      "height": 50,
+      "x": -120,
+      "y": 40
+    },
+    "x": -720,
+    "y": 370
+  },
+  "channelId": {
+    "font": "font/Tektur_Regular.json",
+    "size": 12,
+    "color": "#ffffff",
+    "x": -880,
+    "y": 470
+  },
+  "userProfileList": {
+    "profileId": {
+      "font": "font/Tektur_Regular.json",
+      "size": 10,
+      "color": "#ffffff",
+      "x": -90,
+      "y": 20
+    },
+    "profileNickname": {
+      "font": "font/Tektur_Regular.json",
+      "size": 14,
+      "color": "#ffffff",
+      "x": -90,
+      "y": 40
+    },
+    "profileImage": {
+      "width": 40,
+      "height": 40,
+      "x": -120,
+      "y": 35
+    },
+    "profileBox": {
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.4
+      },
+      "width": 350,
+      "height": 570,
+      "x": 10,
+      "y": -210
+    },
+    "userProfileEmpty": {
+      "text": "No users in this channel",
+      "font": "font/Tektur_Regular.json",
+      "size": 15,
+      "color": "#666666",
+      "x": -115,
+      "y": -200
+    },
+    "x": -710,
+    "y": 285,
+    "yOffset": 55
+  },
+  "chatBox": {
+    "list": {
+      "width": 800,
+      "height": 230,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.4
+      },
+      "x": 0,
+      "y": 40
+    },
+    "text": {
+      "font": "font/Tektur_Regular.json",
+      "size": 12,
+      "systemColor": "#888888",
+      "color": "#ffffff",
+      "x": -390,
+      "y": 125,
+      "yOffset": 25
+    },
+    "x": -475,
+    "y": -370
+  }
+}

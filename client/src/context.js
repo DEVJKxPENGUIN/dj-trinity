@@ -1,6 +1,6 @@
 import {
-  AudioListener,
-  Color,
+  AudioListener, AxesHelper, CameraHelper,
+  Color, GridHelper,
   Group,
   OrthographicCamera,
   Scene,
@@ -13,6 +13,7 @@ import * as TWEEN from "@tweenjs/tween.js";
 import commonResources from "./common/commonResources.json";
 import ResourceLoader from "./common/resourceLoader";
 import BackgroundSoundHandler from "./common/backgroundSoundHandler";
+import {GUI} from 'dat.gui'
 
 export default class Context {
   constructor(isDebug, sceneManager) {
@@ -49,9 +50,10 @@ export default class Context {
     this.camera.add(this.listener)
 
     if (this.isDebug) {
-      // const cameraHelper = new CameraHelper(this.camera)
-      // this.scene.add(cameraHelper)
-      // const gridHelper = new GridHelper(1)
+      const cameraHelper = new CameraHelper(this.camera)
+      this.scene.add(cameraHelper)
+      this.gui = new GUI()
+      // const gridHelper = new GridHelper(100)
       // this.scene.add(gridHelper)
       // const axesHelper = new AxesHelper()
       // this.scene.add(axesHelper)
@@ -85,39 +87,21 @@ export default class Context {
           // {id: "user1", nickname: "sdfjkl", profile: "image/trinity.webp"},
           // {id: "user2", nickname: "jkzlxcjvkl", profile: "image/trinity.webp"},
           // {id: "devjk", nickname: "jfksj", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
-          // {id: "user4", nickname: "djkflzjx", profile: "image/trinity.webp"},
         ],
+        chats: [
+          // {chatType:"SYSTEM", message:"1111", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"2222", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"skldjfksldjfklsjdklfj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"sdkfjsdkj", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"3333", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"4444", sendTime:"2021-01-01T00:00:00.2343"},
+          // {chatType:"SYSTEM", message:"5555", sendTime:"2021-01-01T00:00:00.2343"},
+        ]
       },
     }
   }

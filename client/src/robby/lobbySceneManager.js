@@ -24,6 +24,10 @@ export default class LobbySceneManager {
     const loader = new ResourceLoader(this.context)
     await loader.load(this.resources)
 
+    // init default state
+    this.showUsers = []
+    this.showChats = []
+
     // init view
     this.view = new LobbySceneView(this)
     this.view.init()
@@ -87,10 +91,31 @@ export default class LobbySceneManager {
     this.view.updateTextGeometries()
   }
 
+  updateChatBox = async (receivedChat) => {
+    this.context.info.channel.chats.push(receivedChat)
+
+    this.updateChats(2)
+    this.view.updateTextGeometries()
+  }
+
   updateShowUsers = (pageIndex) => {
     this.showUsers = this.context.info.channel.users.filter(
         user => user.id !== this.context.info.user.id).slice(pageIndex * 10,
         (pageIndex + 1) * 10)
+  }
+
+  updateChats = (bottomIndex) => {
+    const maxShowSize = 8
+    const chatLength = this.context.info.channel.chats.length
+    const startIndex= chatLength - bottomIndex - maxShowSize
+    const endIndex = chatLength - bottomIndex
+
+    if(startIndex < 0) {
+      this.showChats = this.context.info.channel.chats.slice(0, maxShowSize)
+      return
+    }
+
+    this.showChats = this.context.info.channel.chats.slice(startIndex, endIndex)
   }
 
   animate = () => {

@@ -95,7 +95,7 @@ class LobbyService(
                     session?.sendMessage(
                         LobbyMessage.ofChatMessage(
                             chatType = LobbyMessage.ChatMessageData.ChatType.SYSTEM,
-                            message = "$nickname 님이 입장하셨습니다.",
+                            message = "$nickname Entered.",
                             sendTime = LocalDateTime.now()
                         ).toPong()
                     )

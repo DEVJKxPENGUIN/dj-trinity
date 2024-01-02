@@ -37,17 +37,9 @@ export default class LobbySceneSocketHandler {
     }
 
     if("CHAT_MESSAGE" === message.type) {
-      if(message.payload.chatType === "SYSTEM") {
-        console.log("SYSTEM message received : ", message.payload)
-        return
-      }
-
-      if(message.payload.chatType === "NORMAL") {
-
-        return
-      }
+      await this.manager.updateChatBox(message.payload)
+      return
     }
-
 
   }
 
