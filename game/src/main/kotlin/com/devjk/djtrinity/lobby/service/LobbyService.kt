@@ -54,6 +54,20 @@ class LobbyService(
                 ops.delete(channelId, session.id)
             }
             ops.delete("UserStatus", session.id)
+
+            // channel
+            val users =
+                ops.entries(userStatus.currentChannel!!).values.map { it as String }.toList()
+
+            // publish
+            redisTemplate.convertAndSend(
+                userStatus.currentChannel!!,
+                LobbyMessage.ofExitChannel(
+                    channelId = userStatus.currentChannel,
+                    userId = userStatus.userId,
+                    users = users
+                )
+            )
         }
     }
 
@@ -96,6 +110,41 @@ class LobbyService(
                         LobbyMessage.ofChatMessage(
                             chatType = LobbyMessage.ChatMessageData.ChatType.SYSTEM,
                             message = "$nickname Entered.",
+                            sendTime = LocalDateTime.now()
+                        ).toPong()
+                    )
+                }
+        }
+    }
+
+    fun publishUserExited(lobbyMessage: LobbyMessage) {
+        val exitChannelData = lobbyMessage.payload as LinkedHashMap<*, *>
+
+        val ops = redisTemplate.opsForHash<String, String>()
+        val sessionIds = ops.entries(exitChannelData["channelId"].toString()).keys
+
+        // send exit channel message
+        sessionIds.forEach { sessionId ->
+            val session = sessionHandler.get(sessionId)
+            session?.sendMessage(
+                LobbyMessage.ofExitChannel(
+                    channelId = exitChannelData["channelId"].toString(),
+                    userId = exitChannelData["userId"].toString(),
+                    users = exitChannelData["users"] as List<String>
+                ).toPong()
+            )
+        }
+
+        // send system mesage
+        sessionIds.forEach { sessionId ->
+            trinityApiUtils.getUserInfo(exitChannelData["userId"].toString())
+                .subscribe { userInfo ->
+                    val nickname = userInfo["nickname"].asText()
+                    val session = sessionHandler.get(sessionId)
+                    session?.sendMessage(
+                        LobbyMessage.ofChatMessage(
+                            chatType = LobbyMessage.ChatMessageData.ChatType.SYSTEM,
+                            message = "$nickname Exited.",
                             sendTime = LocalDateTime.now()
                         ).toPong()
                     )

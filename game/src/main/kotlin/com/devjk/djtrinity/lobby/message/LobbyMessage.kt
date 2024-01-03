@@ -25,6 +25,17 @@ class LobbyMessage(
             )
         }
 
+        fun ofExitChannel(
+            channelId: String? = null,
+            userId: String? = null,
+            users: List<String>? = listOf()
+        ): LobbyMessage {
+            return LobbyMessage(
+                type = MessageType.EXIT_CHANNEL,
+                payload = ExitChannelData(channelId, userId, users)
+            )
+        }
+
         fun ofChatMessage(
             chatType: ChatMessageData.ChatType,
             nickname: String? = null,
@@ -46,6 +57,12 @@ class LobbyMessage(
     }
 
     data class EnterChannelData(
+        val channelId: String?,
+        val userId: String?,
+        val users: List<String>?
+    )
+
+    data class ExitChannelData(
         val channelId: String?,
         val userId: String?,
         val users: List<String>?
@@ -73,6 +90,10 @@ class LobbyMessage(
 
     fun isEnterChannel(): Boolean {
         return type == MessageType.ENTER_CHANNEL
+    }
+
+    fun isExitChannel(): Boolean {
+        return type == MessageType.EXIT_CHANNEL
     }
 
     fun toPong(): TextMessage {

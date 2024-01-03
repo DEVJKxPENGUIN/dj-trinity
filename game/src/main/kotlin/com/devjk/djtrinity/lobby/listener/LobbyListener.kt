@@ -25,5 +25,10 @@ class LobbyListener(
             return
         }
 
+        if(lobbyMessage.isExitChannel()) {
+            lobbyService.publishUserExited(lobbyMessage)
+            return
+        }
+
     }
 }
