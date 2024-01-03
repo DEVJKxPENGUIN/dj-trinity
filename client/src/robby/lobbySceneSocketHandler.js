@@ -36,8 +36,13 @@ export default class LobbySceneSocketHandler {
       }
     }
 
-    if("CHAT_MESSAGE" === message.type) {
+    if ("CHAT_MESSAGE" === message.type) {
       await this.manager.updateChatBox(message.payload)
+      return
+    }
+
+    if ("EXIT_CHANNEL" === message.type) {
+      await this.manager.updateChannel(message.payload)
       return
     }
 

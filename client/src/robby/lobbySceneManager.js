@@ -72,6 +72,7 @@ export default class LobbySceneManager {
     await this.updateChannel(channelInfo)
   }
 
+
   updateChannel = async (channelInfo) => {
     this.context.info.channel.users = await serverHandler.get('/users',
         {userIds: channelInfo.users.join(',')})
