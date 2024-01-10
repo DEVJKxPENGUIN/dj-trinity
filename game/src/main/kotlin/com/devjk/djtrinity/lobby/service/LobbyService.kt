@@ -71,7 +71,30 @@ class LobbyService(
         }
     }
 
-    fun findAvailableChannel(): String {
+
+    fun sendChatMessage(session: WebSocketSession, userId: String, lobbyMessage: LobbyMessage) {
+        val chatMessageData = lobbyMessage.payload as LinkedHashMap<*, *>
+        val message = chatMessageData["message"].toString()
+
+        val ops = redisTemplate.opsForHash<String, Any>()
+        ops.get("UserStatus", session.id)?.let { userStatus ->
+            userStatus as UserStatus
+            userStatus.currentChannel?.let { channelId ->
+                redisTemplate.convertAndSend(
+                    channelId,
+                    LobbyMessage.ofChatMessage(
+                        chatType = LobbyMessage.ChatMessageData.ChatType.NORMAL,
+                        nickname = chatMessageData["nickname"].toString(),
+                        userId = userId,
+                        message = message,
+                        channelId = channelId
+                    )
+                )
+            }
+        }
+    }
+
+    private fun findAvailableChannel(): String {
         // todo channel 추가/삭제/조회 시 global lock 을 잡는 것이 좋을 듯 하다.
         // todo channel 이 커지면 클래스로 분리하는 것이 좋을 듯 하다.
         return "channel_1"
@@ -136,9 +159,9 @@ class LobbyService(
         }
 
         // send system mesage
-        sessionIds.forEach { sessionId ->
-            trinityApiUtils.getUserInfo(exitChannelData["userId"].toString())
-                .subscribe { userInfo ->
+        trinityApiUtils.getUserInfo(exitChannelData["userId"].toString())
+            .subscribe { userInfo ->
+                sessionIds.forEach { sessionId ->
                     val nickname = userInfo["nickname"].asText()
                     val session = sessionHandler.get(sessionId)
                     session?.sendMessage(
@@ -149,6 +172,25 @@ class LobbyService(
                         ).toPong()
                     )
                 }
+            }
+    }
+
+    fun publishChatMessage(lobbyMessage: LobbyMessage) {
+        val messageData = lobbyMessage.payload as LinkedHashMap<*, *>
+
+        val ops = redisTemplate.opsForHash<String, String>()
+        val sessionIds = ops.entries(messageData["channelId"].toString()).keys
+
+        sessionIds.forEach { sessionId ->
+            sessionHandler.get(sessionId)?.sendMessage(
+                LobbyMessage.ofChatMessage(
+                    chatType = LobbyMessage.ChatMessageData.ChatType.valueOf(messageData["chatType"].toString()),
+                    nickname = messageData["nickname"].toString(),
+                    userId = messageData["userId"].toString(),
+                    message = messageData["message"].toString(),
+                    sendTime = LocalDateTime.now(),
+                ).toPong()
+            )
         }
     }
 }

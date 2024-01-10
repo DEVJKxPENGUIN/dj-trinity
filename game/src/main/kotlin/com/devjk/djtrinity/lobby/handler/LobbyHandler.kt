@@ -46,6 +46,12 @@ class LobbyHandler(
                 return
             }
 
+            if (lobbyMessage.isChatMessage()) {
+                val userId = getUserId(session)
+                lobbyService.sendChatMessage(session, userId, lobbyMessage)
+                return
+            }
+
 
         } catch (e: Exception) {
             e.printStackTrace()

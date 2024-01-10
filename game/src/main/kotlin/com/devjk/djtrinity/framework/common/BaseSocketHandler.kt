@@ -14,7 +14,6 @@ abstract class BaseSocketHandler(
 ) : WebSocketHandler {
     private val log = org.slf4j.LoggerFactory.getLogger(this.javaClass)
 
-
     fun authorize(session: WebSocketSession, message: BaseMessage) {
         val ops = redisTemplate.opsForHash<String, String>()
         if (message.isAuthorization()) {

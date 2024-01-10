@@ -41,7 +41,8 @@ class LobbyMessage(
             nickname: String? = null,
             userId: String? = null,
             message: String,
-            sendTime: LocalDateTime? = null
+            sendTime: LocalDateTime? = null,
+            channelId: String? = null
         ): LobbyMessage {
             return LobbyMessage(
                 type = MessageType.CHAT_MESSAGE,
@@ -50,7 +51,8 @@ class LobbyMessage(
                     nickname = nickname,
                     userId = userId,
                     message = message,
-                    sendTime = sendTime?.toString()
+                    sendTime = sendTime?.toString(),
+                    channelId = channelId
                 )
             )
         }
@@ -73,7 +75,8 @@ class LobbyMessage(
         val nickname: String?,
         val userId: String?,
         val message: String,
-        val sendTime: String?
+        val sendTime: String?,
+        val channelId: String?
     ) {
         init {
             if (chatType == ChatType.NORMAL) {
@@ -94,6 +97,10 @@ class LobbyMessage(
 
     fun isExitChannel(): Boolean {
         return type == MessageType.EXIT_CHANNEL
+    }
+
+    fun isChatMessage(): Boolean {
+        return type == MessageType.CHAT_MESSAGE
     }
 
     fun toPong(): TextMessage {

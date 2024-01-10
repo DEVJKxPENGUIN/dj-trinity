@@ -30,5 +30,10 @@ class LobbyListener(
             return
         }
 
+        if(lobbyMessage.isChatMessage()) {
+            lobbyService.publishChatMessage(lobbyMessage)
+            return
+        }
+
     }
 }
