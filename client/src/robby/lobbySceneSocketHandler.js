@@ -56,11 +56,12 @@ export default class LobbySceneSocketHandler {
     this.socket.close()
   }
 
-  sendChat = (chatMessage) => {
+  sendChat = (nickname, chatMessage) => {
     this.socket.send(JSON.stringify({
       type: "CHAT_MESSAGE",
       payload: {
         message: chatMessage,
+        nickname: nickname
       }
     }))
   }

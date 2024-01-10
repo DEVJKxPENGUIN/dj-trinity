@@ -1,7 +1,6 @@
 import {Group, Mesh, MeshBasicMaterial, PlaneGeometry} from "three";
 import {TextGeometry} from "three/addons";
 import vs from "./lobbySceneViewSettings.json";
-import TWEEN, {Tween} from "@tweenjs/tween.js";
 
 export default class LobbySceneView {
 
@@ -243,9 +242,23 @@ export default class LobbySceneView {
       }
 
       if (chat.chatType === "NORMAL") {
-        // todo -
+        let color = vs.chatBox.text.normalColor
+        if (chat.userId === this.manager.context.info.user.id) {
+          color = vs.chatBox.text.userColor
+        }
+        const chatG = new TextGeometry(
+            `[${chat.nickname} : ${chat.sendTime.split('T')[1].split(
+                '.')[0]}] ${chat.message}`, {
+              font: commonResources.fonts[vs.chatBox.text.font],
+              size: vs.chatBox.text.size,
+            })
+        const chatObj = new Mesh(chatG, new MeshBasicMaterial({
+          color: color
+        }))
+        chatObj.position.set(0, -i * vs.chatBox.text.yOffset)
+        this.chatText.add(chatObj)
+        continue
       }
-
     }
 
     // chat input

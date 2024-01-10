@@ -27,6 +27,7 @@ export default class LobbySceneManager {
     // init default state
     this.showUsers = []
     this.showChats = []
+    this.showChatBottomIndex = 0
     this.chatInputText = ''
 
     // init view
@@ -95,7 +96,7 @@ export default class LobbySceneManager {
   updateChatBox = async (receivedChat) => {
     this.context.info.channel.chats.push(receivedChat)
 
-    this.updateChats(2)
+    this.updateChats(0)
     this.view.updateTextGeometries()
   }
 
@@ -128,21 +129,21 @@ export default class LobbySceneManager {
   }
 
   sendChat = () => {
-    this.socketHandler.sendChat(this.chatInputText)
+    this.socketHandler.sendChat(this.context.info.user.nickname, this.chatInputText)
     this.sound.beep()
     this.chatInputText = ''
     this.view.updateTextGeometries()
   }
 
   toggleChatInput = () => {
-    if(!this.view.isChatInputOpen()) {
+    if (!this.view.isChatInputOpen()) {
       this.sound.beep()
     }
     this.view.toggleChatInput()
   }
 
   handleEnter = () => {
-    if(this.view.isChatInputOpen()) {
+    if (this.view.isChatInputOpen()) {
       this.sendChat()
       this.toggleChatInput()
       return

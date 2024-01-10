@@ -90,6 +90,8 @@
       "font": "font/Tektur_Regular.json",
       "size": 12,
       "systemColor": "#888888",
+      "normalColor": "#aaaaaa",
+      "userColor": "#ffff00",
       "color": "#ffffff",
       "x": -390,
       "y": 125,
