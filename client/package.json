@@ -21,6 +21,7 @@
   "main": "dist-electron/main.js",
   "dependencies": {
     "@tweenjs/tween.js": "^21.0.0",
-    "three": "^0.160.0"
+    "three": "^0.160.0",
+    "three-mesh-ui": "^6.5.4"
   }
 }

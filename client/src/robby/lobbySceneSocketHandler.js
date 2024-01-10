@@ -55,4 +55,13 @@ export default class LobbySceneSocketHandler {
   destroy = () => {
     this.socket.close()
   }
+
+  sendChat = (chatMessage) => {
+    this.socket.send(JSON.stringify({
+      type: "CHAT_MESSAGE",
+      payload: {
+        message: chatMessage,
+      }
+    }))
+  }
 }

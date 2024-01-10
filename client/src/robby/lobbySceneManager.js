@@ -27,6 +27,7 @@ export default class LobbySceneManager {
     // init default state
     this.showUsers = []
     this.showChats = []
+    this.chatInputText = ''
 
     // init view
     this.view = new LobbySceneView(this)
@@ -72,7 +73,6 @@ export default class LobbySceneManager {
     await this.updateChannel(channelInfo)
   }
 
-
   updateChannel = async (channelInfo) => {
     this.context.info.channel.users = await serverHandler.get('/users',
         {userIds: channelInfo.users.join(',')})
@@ -108,15 +108,61 @@ export default class LobbySceneManager {
   updateChats = (bottomIndex) => {
     const maxShowSize = 8
     const chatLength = this.context.info.channel.chats.length
-    const startIndex= chatLength - bottomIndex - maxShowSize
+    const startIndex = chatLength - bottomIndex - maxShowSize
     const endIndex = chatLength - bottomIndex
 
-    if(startIndex < 0) {
+    if (startIndex < 0) {
       this.showChats = this.context.info.channel.chats.slice(0, maxShowSize)
       return
     }
 
     this.showChats = this.context.info.channel.chats.slice(startIndex, endIndex)
+  }
+
+  addChatInput = (input) => {
+    if (!this.view.isChatInputOpen()) {
+      return
+    }
+    this.chatInputText += input
+    this.view.updateTextGeometries()
+  }
+
+  sendChat = () => {
+    this.socketHandler.sendChat(this.chatInputText)
+    this.sound.beep()
+    this.chatInputText = ''
+    this.view.updateTextGeometries()
+  }
+
+  toggleChatInput = () => {
+    if(!this.view.isChatInputOpen()) {
+      this.sound.beep()
+    }
+    this.view.toggleChatInput()
+  }
+
+  handleEnter = () => {
+    if(this.view.isChatInputOpen()) {
+      this.sendChat()
+      this.toggleChatInput()
+      return
+    }
+  }
+
+  handleBackspace = () => {
+    if (this.view.isChatInputOpen()) {
+      this.chatInputText = this.chatInputText.slice(0, -1)
+      this.view.updateTextGeometries()
+      return
+    }
+
+  }
+
+  handleEscape = () => {
+    if (this.view.isChatInputOpen()) {
+      this.toggleChatInput()
+      return
+    }
   }
 
   animate = () => {

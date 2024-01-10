@@ -1,6 +1,7 @@
 import {Group, Mesh, MeshBasicMaterial, PlaneGeometry} from "three";
 import {TextGeometry} from "three/addons";
 import vs from "./lobbySceneViewSettings.json";
+import TWEEN, {Tween} from "@tweenjs/tween.js";
 
 export default class LobbySceneView {
 
@@ -33,7 +34,6 @@ export default class LobbySceneView {
         vs.profile.profileNickname.y)
     const profileImageG = new PlaneGeometry(vs.profile.profileImage.width,
         vs.profile.profileImage.height)
-    console.log(this.manager.resources.textures[this.info.user.profile])
     const profileImageM = new MeshBasicMaterial({
       map: this.manager.resources.textures[this.info.user.profile]
     })
@@ -82,7 +82,8 @@ export default class LobbySceneView {
     // chat box
     this.chatBox = new Group()
     this.chatText = new Group()
-    const chatListG = new PlaneGeometry(vs.chatBox.list.width, vs.chatBox.list.height)
+    const chatListG = new PlaneGeometry(vs.chatBox.list.width,
+        vs.chatBox.list.height)
     const chatListM = new MeshBasicMaterial(vs.chatBox.list.material)
     const chatList = new Mesh(chatListG, chatListM)
     chatList.position.set(vs.chatBox.list.x, vs.chatBox.list.y)
@@ -91,7 +92,50 @@ export default class LobbySceneView {
     this.chatBox.add(this.chatText)
     this.chatBox.position.set(vs.chatBox.x, vs.chatBox.y, 0)
 
-
+    // chat input
+    this.chatInput = new Group()
+    const chatInputBoxG = new PlaneGeometry(vs.chatInput.box.width,
+        vs.chatInput.box.height)
+    const chatInputBoxM = new MeshBasicMaterial(vs.chatInput.box.material)
+    const chatInputBox = new Mesh(chatInputBoxG, chatInputBoxM)
+    const chatInputSenderG = new TextGeometry(`${this.info.user.nickname} : `, {
+      font: commonResources.fonts[vs.chatInput.sender.font],
+      size: vs.chatInput.sender.size,
+    })
+    const chatInputSender = new Mesh(chatInputSenderG, new MeshBasicMaterial({
+      color: vs.chatInput.sender.color
+    }))
+    chatInputSender.geometry.computeBoundingBox()
+    chatInputSender.position.set(vs.chatInput.sender.x, vs.chatInput.sender.y)
+    const chatInputTextG = new TextGeometry(this.manager.chatInputText, {
+      font: commonResources.fonts[vs.chatInput.text.font],
+      size: vs.chatInput.text.size,
+    })
+    this.chatInputText = new Mesh(chatInputTextG, new MeshBasicMaterial({
+      color: vs.chatInput.text.color
+    }))
+    this.chatInputText.position.set(
+        chatInputSender.position.x + chatInputSender.geometry.boundingBox.max.x
+        + 10,
+        vs.chatInput.text.y)
+    this.chatInputText.geometry.computeBoundingBox()
+    const cursorG = new TextGeometry("|", {
+      font: commonResources.fonts[vs.chatInput.text.font],
+      size: vs.chatInput.text.size,
+    })
+    this.chatInputCursor = new Mesh(cursorG, new MeshBasicMaterial({
+      color: "#ffffff",
+      transparent: true,
+      opacity: 1,
+    }))
+    this.chatInputCursor.position.set(
+        this.chatInputText.position.x
+        + this.chatInputText.geometry.boundingBox.max.x + 5,
+        vs.chatInput.text.y)
+    this.chatInput.add(chatInputBox)
+    this.chatInput.add(chatInputSender)
+    this.chatInput.add(this.chatInputText)
+    this.chatInput.add(this.chatInputCursor)
   }
 
   clearCanvas = () => {
@@ -99,6 +143,7 @@ export default class LobbySceneView {
     this.manager.context.scene.remove(this.userProfiles)
     this.manager.context.scene.remove(this.channelId)
     this.manager.context.scene.remove(this.chatBox)
+    this.manager.context.scene.remove(this.chatInput)
 
   }
 
@@ -109,6 +154,18 @@ export default class LobbySceneView {
     this.manager.context.scene.add(this.chatBox)
 
     this.updateTextGeometries()
+  }
+
+  toggleChatInput = () => {
+    if (this.isChatInputOpen()) {
+      this.manager.context.scene.remove(this.chatInput)
+      return
+    }
+    this.manager.context.scene.add(this.chatInput)
+  }
+
+  isChatInputOpen = () => {
+    return this.manager.context.scene.children.includes(this.chatInput)
   }
 
   updateTextGeometries = () => {
@@ -167,27 +224,51 @@ export default class LobbySceneView {
 
     // chats
     this.manager.context.removeGroup(this.chatText)
-    for(let i = 0; i < this.manager.showChats.length; i++) {
+    for (let i = 0; i < this.manager.showChats.length; i++) {
       const chat = this.manager.showChats[i]
 
-      if(chat.chatType === "SYSTEM") {
-        const chatG = new TextGeometry(`[SYSTEM : ${chat.sendTime.split('T')[1].split('.')[0]}] ${chat.message}`, {
-          font : commonResources.fonts[vs.chatBox.text.font],
-          size : vs.chatBox.text.size,
-        })
+      if (chat.chatType === "SYSTEM") {
+        const chatG = new TextGeometry(
+            `[SYSTEM : ${chat.sendTime.split('T')[1].split(
+                '.')[0]}] ${chat.message}`, {
+              font: commonResources.fonts[vs.chatBox.text.font],
+              size: vs.chatBox.text.size,
+            })
         const chatObj = new Mesh(chatG, new MeshBasicMaterial({
-          color : vs.chatBox.text.systemColor
+          color: vs.chatBox.text.systemColor
         }))
         chatObj.position.set(0, -i * vs.chatBox.text.yOffset)
         this.chatText.add(chatObj)
         continue
       }
 
-      if(chat.chatType === "NORMAL") {
+      if (chat.chatType === "NORMAL") {
         // todo -
       }
 
     }
+
+    // chat input
+    this.chatInputText.geometry.dispose()
+    this.chatInputText.geometry = new TextGeometry(this.manager.chatInputText, {
+      font: commonResources.fonts[vs.chatInput.text.font],
+      size: vs.chatInput.text.size,
+    })
+    this.chatInputText.geometry.computeBoundingBox()
+    let boundingBoxMaxX = this.chatInputText.geometry.boundingBox.max.x
+    if (boundingBoxMaxX === -Infinity) {
+      boundingBoxMaxX = 0
+    }
+    let lastIndex = this.manager.chatInputText.length - 1;
+    // 뒤에서부터 첫 번째 비공백 문자를 찾기
+    while (lastIndex >= 0 && this.manager.chatInputText[lastIndex] === ' ') {
+      lastIndex--;
+    }
+    // 마지막 공백부터 텍스트 끝까지의 길이 계산
+    const numTrailingSpaces = this.manager.chatInputText.length - lastIndex - 1;
+    boundingBoxMaxX += numTrailingSpaces * 3
+    this.chatInputCursor.position.x = this.chatInputText.position.x
+        + boundingBoxMaxX + 5
   }
 
   destroy = () => {

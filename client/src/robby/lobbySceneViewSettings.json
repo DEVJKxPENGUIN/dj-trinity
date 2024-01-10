@@ -97,5 +97,31 @@
     },
     "x": -475,
     "y": -370
+  },
+  "chatInput": {
+    "box": {
+      "width": 800,
+      "height": 40,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.8
+      }
+    },
+    "sender": {
+      "font": "font/Tektur_Regular.json",
+      "size": 12,
+      "color": "#ffffff",
+      "x": -390,
+      "y": -5
+    },
+    "text": {
+      "font": "font/Tektur_Regular.json",
+      "size": 12,
+      "color": "#ffffff",
+      "x": 0,
+      "y": -5
+    }
+
   }
 }
