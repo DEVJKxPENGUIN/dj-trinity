@@ -125,5 +125,12 @@
       "y": -5
     }
 
+  },
+  "bmsSelectList": {
+    "item": {
+      "font": "font/Tektur_Regular.json",
+      "size": 12,
+      "color": "#ffffff"
+    }
   }
 }

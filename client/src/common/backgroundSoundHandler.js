@@ -8,6 +8,9 @@ export default class BackgroundSoundHandler {
   }
 
   start = () => {
+    // fixme
+    return
+
     if (this.backgroundSound === null || this.backgroundSound === undefined) {
       this.backgroundSound = new Audio(this.context.listener)
       this.backgroundSound.setBuffer(

@@ -135,6 +135,23 @@ export default class LobbySceneView {
     this.chatInput.add(chatInputSender)
     this.chatInput.add(this.chatInputText)
     this.chatInput.add(this.chatInputCursor)
+
+    // bms select list
+    this.bmsSelectList = new Group()
+    this.manager.showBms.forEach((bmsTitle, i) => {
+      // console.log(bmsTitle)
+      const bmsSelectItem = new Group()
+      const bmsSelectItemTextG = new TextGeometry(bmsTitle, {
+        font: commonResources.fonts[vs.bmsSelectList.item.font],
+        size: vs.bmsSelectList.item.size,
+      })
+      const bmsSelectItemText = new Mesh(bmsSelectItemTextG, new MeshBasicMaterial({
+        color: vs.bmsSelectList.item.color
+      }))
+      bmsSelectItem.add(bmsSelectItemText)
+      bmsSelectItem.position.set(200, i * 40)
+      this.bmsSelectList.add(bmsSelectItem)
+    })
   }
 
   clearCanvas = () => {
@@ -143,6 +160,7 @@ export default class LobbySceneView {
     this.manager.context.scene.remove(this.channelId)
     this.manager.context.scene.remove(this.chatBox)
     this.manager.context.scene.remove(this.chatInput)
+    this.manager.context.scene.remove(this.bmsSelectList)
 
   }
 
@@ -151,6 +169,7 @@ export default class LobbySceneView {
     this.manager.context.scene.add(this.userProfiles)
     this.manager.context.scene.add(this.channelId)
     this.manager.context.scene.add(this.chatBox)
+    this.manager.context.scene.add(this.bmsSelectList)
 
     this.updateTextGeometries()
   }
@@ -282,6 +301,22 @@ export default class LobbySceneView {
     boundingBoxMaxX += numTrailingSpaces * 3
     this.chatInputCursor.position.x = this.chatInputText.position.x
         + boundingBoxMaxX + 5
+
+    // bms select list
+    this.manager.context.removeGroup(this.bmsSelectList)
+    this.manager.showBms.forEach((bmsTitle, i) => {
+      const bmsSelectItem = new Group()
+      const bmsSelectItemTextG = new TextGeometry(bmsTitle, {
+        font: commonResources.fonts[vs.bmsSelectList.item.font],
+        size: vs.bmsSelectList.item.size,
+      })
+      const bmsSelectItemText = new Mesh(bmsSelectItemTextG, new MeshBasicMaterial({
+        color: vs.bmsSelectList.item.color
+      }))
+      bmsSelectItem.add(bmsSelectItemText)
+      bmsSelectItem.position.set(200, i * 40)
+      this.bmsSelectList.add(bmsSelectItem)
+    })
   }
 
   destroy = () => {

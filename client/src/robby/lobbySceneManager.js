@@ -24,11 +24,16 @@ export default class LobbySceneManager {
     const loader = new ResourceLoader(this.context)
     await loader.load(this.resources)
 
+    console.log('loader : {}', this.resources)
+
     // init default state
     this.showUsers = []
     this.showChats = []
     this.showChatBottomIndex = 0
     this.chatInputText = ''
+    this.showBms = []
+    this.showBmsIndex = 0
+    this.updateBms()
 
     // init view
     this.view = new LobbySceneView(this)
@@ -120,6 +125,40 @@ export default class LobbySceneManager {
     this.showChats = this.context.info.channel.chats.slice(startIndex, endIndex)
   }
 
+  updateBms = () => {
+    console.log('updateBms : {}', this.showBmsIndex)
+    this.showBms = []
+    const maxShowSize = 15
+    const bmsList = Object.keys(this.resources["bms-meta"])
+    const length = bmsList.length
+    // upper
+    const half = (maxShowSize - 1) / 2
+    let startIndex = this.showBmsIndex - half;
+    if (this.showBmsIndex - half < 0) {
+      startIndex = length + (this.showBmsIndex - half)
+    }
+    console.log('startIndex : {}', startIndex)
+    for (let i = 0; i < half; i++) {
+      let index = startIndex + i
+      if (startIndex + i >= length) {
+        index = startIndex + i - length
+      }
+      console.log(index)
+      this.showBms.push(bmsList[index])
+    }
+    // current
+    this.showBms.push(bmsList[this.showBmsIndex])
+    // bottom
+    for (let i = 0; i < half; i++) {
+      let index = this.showBmsIndex + i + 1
+      if (this.showBmsIndex + i + 1 >= length) {
+        index = this.showBmsIndex + i + 1 - length
+      }
+      console.log(index)
+      this.showBms.push(bmsList[index])
+    }
+  }
+
   addChatInput = (input) => {
     if (!this.view.isChatInputOpen()) {
       return
@@ -129,7 +168,8 @@ export default class LobbySceneManager {
   }
 
   sendChat = () => {
-    this.socketHandler.sendChat(this.context.info.user.nickname, this.chatInputText)
+    this.socketHandler.sendChat(this.context.info.user.nickname,
+        this.chatInputText)
     this.sound.beep()
     this.chatInputText = ''
     this.view.updateTextGeometries()
@@ -148,6 +188,30 @@ export default class LobbySceneManager {
       this.toggleChatInput()
       return
     }
+  }
+
+  handleArrowUp = () => {
+    this.sound.beep()
+    if (this.showBmsIndex == 0) {
+      this.showBmsIndex = Object.keys(this.resources["bms-meta"]).length - 1
+    } else {
+      this.showBmsIndex--
+    }
+
+    this.updateBms()
+    this.view.updateTextGeometries()
+  }
+
+  handleArrowDown = () => {
+    this.sound.beep()
+    if (this.showBmsIndex == Object.keys(this.resources["bms-meta"]).length
+        - 1) {
+      this.showBmsIndex = 0
+    } else {
+      this.showBmsIndex++
+    }
+    this.updateBms()
+    this.view.updateTextGeometries()
   }
 
   handleBackspace = () => {

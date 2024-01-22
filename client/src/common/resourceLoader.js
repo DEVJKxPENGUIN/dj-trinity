@@ -9,6 +9,7 @@ import {
 } from "three";
 import {FontLoader} from "three/addons";
 import settings from "../settings/settings.json"
+import BmsLoader from "./bmsLoader";
 
 export default class ResourceLoader {
   constructor(ctx) {
@@ -58,7 +59,7 @@ export default class ResourceLoader {
       let loadTargetCount = 0
       const fontLoader = new FontLoader(this.manager)
       Object.keys(resources.fonts).forEach(fontPath => {
-        if(resources.fonts[fontPath] !== null){
+        if (resources.fonts[fontPath] !== null) {
           return
         }
         loadTargetCount++
@@ -88,6 +89,17 @@ export default class ResourceLoader {
           resources.textures[texturePath] = texture
         })
       })
+
+      const bmsLoader = new BmsLoader(this.manager)
+      if (resources['bms-meta'] !== undefined) {
+        if (resources['bms-meta'] == null || Array.isArray(
+            resources['bms-meta'])) {
+          loadTargetCount++
+          bmsLoader.load('', function (bmsMap) {
+            resources['bms-meta'] = bmsMap
+          })
+        }
+      }
 
       // todo other resources
 
