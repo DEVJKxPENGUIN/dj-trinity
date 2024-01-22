@@ -23,6 +23,7 @@ class SecurityConfig(
                 it.requestMatchers("/public/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/bms/sync").permitAll()
                     .anyRequest().authenticated()
             }
             .cors {}

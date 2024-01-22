@@ -1,6 +1,5 @@
 package com.devjk.djtrinity.bms.controller
 
-import com.devjk.djtrinity.bms.response.BmsHeaderResponse
 import com.devjk.djtrinity.bms.response.BmsResponse
 import com.devjk.djtrinity.bms.service.FileService
 import com.devjk.djtrinity.framework.common.BaseResponse
@@ -20,9 +19,9 @@ class FileController(
     }
 
     @GetMapping("/list")
-    fun listAll(): ResponseEntity<List<BmsHeaderResponse>> {
+    fun listAll(): ResponseEntity<*> {
         val response = fileService.getBmsListAll()
-        return ResponseEntity.ok().body(response)
+        return ResponseEntity.ok(BaseResponse.success(response))
     }
 
     @GetMapping("/{nodeId}")

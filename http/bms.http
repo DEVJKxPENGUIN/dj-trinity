@@ -1,1 +1,5 @@
 GET localhost:5001/bms/255
+
+###
+GET localhost:5002/bms/list
+accept: application/json

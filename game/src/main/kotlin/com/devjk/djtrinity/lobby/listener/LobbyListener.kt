@@ -1,5 +1,6 @@
 package com.devjk.djtrinity.lobby.listener
 
+import com.devjk.djtrinity.framework.common.RedisHandler
 import com.devjk.djtrinity.lobby.message.LobbyMessage
 import com.devjk.djtrinity.lobby.service.LobbyService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service
 @Service
 class LobbyListener(
     private val lobbyService: LobbyService,
+    private val redisHandler: RedisHandler,
     private val objectMapper: ObjectMapper
 ) : MessageListener {
     private val log = LoggerFactory.getLogger(this.javaClass)
@@ -19,7 +21,8 @@ class LobbyListener(
 
         log.debug("LobbyListener : onMessage : {} / pattern : {}", message, pattern)
 
-        val lobbyMessage = objectMapper.readValue<LobbyMessage>(message.body)
+        val lobbyMessage = redisHandler.readMessage(message, LobbyMessage::class.java)
+//        val lobbyMessage = objectMapper.readValue<LobbyMessage>(message.body)
         if (lobbyMessage.isEnterChannel()) {
             lobbyService.publishUserEntered(lobbyMessage)
             return

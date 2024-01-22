@@ -2,6 +2,7 @@ package com.devjk.djtrinity.lobby.message
 
 import com.devjk.djtrinity.common.MessageType
 import com.devjk.djtrinity.framework.common.BaseMessage
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import org.springframework.web.socket.TextMessage
@@ -104,7 +105,7 @@ class LobbyMessage(
     }
 
     fun toPong(): TextMessage {
-        return TextMessage(Gson().toJson(this))
+        return TextMessage(toString())
     }
 
     override fun toString(): String {

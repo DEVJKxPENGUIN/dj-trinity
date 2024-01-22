@@ -23,25 +23,30 @@ class FileService(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun getBmsListAll(): List<BmsHeaderResponse> {
-        val bmsNodes = bmsNodeRepository.findAll()
-        return bmsNodes
-            .mapNotNull { bmsNode ->
-                try {
-                    val bms = readBms(bmsNode)
-                    BmsHeaderResponse(bmsNode.id!!, bmsService.parseHeaderInfo(bms))
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    null
+    fun getBmsListAll(): Map<String, List<BmsHeaderResponse>> {
+        return bmsNodeRepository.findAll()
+            .groupBy { it.rootPath }
+            .mapKeys { it.key.substringAfterLast("/") }
+            .mapValues { bmsList ->
+                bmsList.value.mapNotNull { bmsNode ->
+                    try {
+                        val bms = readBms(bmsNode)
+                        BmsHeaderResponse(bmsNode.id!!, bmsService.parseHeaderInfo(bms))
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        null
+                    }
                 }
             }
-            .toList()
     }
 
     fun readBms(bmsNode: BmsNode): String {
         val file = File(bmsNode.fullPath())
         if (!file.exists() || file.isDirectory()) {
-            throw BaseException(ErrorCode.BMS_FILE_NOT_FOUND, "BMS file 경로 탐색 실패 : ${file.absolutePath}")
+            throw BaseException(
+                ErrorCode.BMS_FILE_NOT_FOUND,
+                "BMS file 경로 탐색 실패 : ${file.absolutePath}"
+            )
         }
         return read(file)
     }
@@ -133,12 +138,20 @@ class FileService(
             }
         }
 
-        throw BaseException(ErrorCode.BMS_SOUND_NOT_FOUND, "해당 fileName 의 사운드파일을 찾을 수 없습니다. : $fileName")
+        throw BaseException(
+            ErrorCode.BMS_SOUND_NOT_FOUND,
+            "해당 fileName 의 사운드파일을 찾을 수 없습니다. : $fileName"
+        )
     }
 
     private fun findBmsByNodeId(nodeId: Long): BmsNode {
         return bmsNodeRepository
             .findById(nodeId)
-            .orElseThrow { BaseException(ErrorCode.BMS_FILE_NOT_FOUND, "nodeId 에 해당하는 bms 를 찾을 수 없습니다. : $nodeId") }
+            .orElseThrow {
+                BaseException(
+                    ErrorCode.BMS_FILE_NOT_FOUND,
+                    "nodeId 에 해당하는 bms 를 찾을 수 없습니다. : $nodeId"
+                )
+            }
     }
 }

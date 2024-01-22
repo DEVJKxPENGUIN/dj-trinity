@@ -1,32 +1,35 @@
 package com.devjk.djtrinity.lobby.service
 
 import com.devjk.djtrinity.common.UserStatus
+import com.devjk.djtrinity.framework.common.RedisHandler
 import com.devjk.djtrinity.framework.common.SessionHandler
 import com.devjk.djtrinity.framework.utils.TrinityApiUtils
 import com.devjk.djtrinity.lobby.message.LobbyMessage
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.data.redis.core.RedisTemplate
+import com.fasterxml.jackson.module.kotlin.convertValue
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.WebSocketSession
 import java.time.LocalDateTime
 
 @Service
 class LobbyService(
-    private val redisTemplate: RedisTemplate<String, Any>,
+    private val redisHandler: RedisHandler,
     private val sessionHandler: SessionHandler,
     private val trinityApiUtils: TrinityApiUtils,
     private val objectMapper: ObjectMapper
 ) {
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
     companion object {
         const val MAX_USERS_IN_CHANNEL = 20
     }
 
     fun enterChannel(session: WebSocketSession, userId: String) {
         val channelId = findAvailableChannel()
-        val ops = redisTemplate.opsForHash<String, Any>()
 
         // user status
-        ops.put(
+        redisHandler.put(
             "UserStatus", session.id, UserStatus(
                 userId = userId,
                 currentChannel = channelId
@@ -34,33 +37,29 @@ class LobbyService(
         )
 
         // channel
-        ops.put(channelId, session.id, userId)
-        val users = ops.entries(channelId).values.map { it as String }.toList()
+        redisHandler.put(channelId, session.id, userId)
+        val users = redisHandler.entries(channelId).values.toList()
         session.sendMessage(LobbyMessage.ofEnterChannel(channelId, users = users).toPong())
 
         // publish
-        redisTemplate.convertAndSend(
+        redisHandler.convertAndSend(
             channelId,
             LobbyMessage.ofEnterChannel(channelId, userId, users)
         )
-
     }
 
     fun exitChannel(session: WebSocketSession) {
-        val ops = redisTemplate.opsForHash<String, Any>()
-        ops.get("UserStatus", session.id)?.let { userStatus ->
-            userStatus as UserStatus
+        redisHandler.get("UserStatus", session.id, UserStatus::class.java)?.let { userStatus ->
             userStatus.currentChannel?.let { channelId ->
-                ops.delete(channelId, session.id)
+                redisHandler.delete(channelId, session.id)
             }
-            ops.delete("UserStatus", session.id)
+            redisHandler.delete("UserStatus", session.id)
 
             // channel
-            val users =
-                ops.entries(userStatus.currentChannel!!).values.map { it as String }.toList()
+            val users = redisHandler.entries(userStatus.currentChannel!!).values.toList()
 
             // publish
-            redisTemplate.convertAndSend(
+            redisHandler.convertAndSend(
                 userStatus.currentChannel!!,
                 LobbyMessage.ofExitChannel(
                     channelId = userStatus.currentChannel,
@@ -76,11 +75,9 @@ class LobbyService(
         val chatMessageData = lobbyMessage.payload as LinkedHashMap<*, *>
         val message = chatMessageData["message"].toString()
 
-        val ops = redisTemplate.opsForHash<String, Any>()
-        ops.get("UserStatus", session.id)?.let { userStatus ->
-            userStatus as UserStatus
+        redisHandler.get("UserStatus", session.id, UserStatus::class.java)?.let { userStatus ->
             userStatus.currentChannel?.let { channelId ->
-                redisTemplate.convertAndSend(
+                redisHandler.convertAndSend(
                     channelId,
                     LobbyMessage.ofChatMessage(
                         chatType = LobbyMessage.ChatMessageData.ChatType.NORMAL,
@@ -106,26 +103,25 @@ class LobbyService(
         //        val enterChannelData = lobbyMessage.payload!!.let {
 //            objectMapper.convertValue<LobbyMessage.EnterChannelData>(it)
 //        }
-        val enterChannelData = lobbyMessage.payload as LinkedHashMap<*, *>
-
-        val ops = redisTemplate.opsForHash<String, String>()
-        val sessionIds = ops.entries(enterChannelData["channelId"].toString()).keys
+        val enterChannelData =
+            objectMapper.convertValue<LobbyMessage.EnterChannelData>(lobbyMessage.payload!!)
+        val sessionIds = redisHandler.entries(enterChannelData.channelId!!).keys
 
         // send enter channel message
         sessionIds.forEach { sessionId ->
             val session = sessionHandler.get(sessionId)
             session?.sendMessage(
                 LobbyMessage.ofEnterChannel(
-                    channelId = enterChannelData["channelId"].toString(),
-                    userId = enterChannelData["userId"].toString(),
-                    users = enterChannelData["users"] as List<String>
+                    channelId = enterChannelData.channelId,
+                    userId = enterChannelData.userId,
+                    users = enterChannelData.users
                 ).toPong()
             )
         }
 
         // send system message
         sessionIds.forEach { sessionId ->
-            trinityApiUtils.getUserInfo(enterChannelData["userId"].toString())
+            trinityApiUtils.getUserInfo(enterChannelData.userId!!)
                 .subscribe { userInfo ->
                     val nickname = userInfo["nickname"].asText()
                     val session = sessionHandler.get(sessionId)
@@ -141,25 +137,24 @@ class LobbyService(
     }
 
     fun publishUserExited(lobbyMessage: LobbyMessage) {
-        val exitChannelData = lobbyMessage.payload as LinkedHashMap<*, *>
-
-        val ops = redisTemplate.opsForHash<String, String>()
-        val sessionIds = ops.entries(exitChannelData["channelId"].toString()).keys
+        val exitChannelData =
+            objectMapper.convertValue<LobbyMessage.ExitChannelData>(lobbyMessage.payload!!)
+        val sessionIds = redisHandler.entries(exitChannelData.channelId!!).keys
 
         // send exit channel message
         sessionIds.forEach { sessionId ->
             val session = sessionHandler.get(sessionId)
             session?.sendMessage(
                 LobbyMessage.ofExitChannel(
-                    channelId = exitChannelData["channelId"].toString(),
-                    userId = exitChannelData["userId"].toString(),
-                    users = exitChannelData["users"] as List<String>
+                    channelId = exitChannelData.channelId,
+                    userId = exitChannelData.userId,
+                    users = exitChannelData.users
                 ).toPong()
             )
         }
 
-        // send system mesage
-        trinityApiUtils.getUserInfo(exitChannelData["userId"].toString())
+        // send system message
+        trinityApiUtils.getUserInfo(exitChannelData.userId!!)
             .subscribe { userInfo ->
                 sessionIds.forEach { sessionId ->
                     val nickname = userInfo["nickname"].asText()
@@ -176,18 +171,17 @@ class LobbyService(
     }
 
     fun publishChatMessage(lobbyMessage: LobbyMessage) {
-        val messageData = lobbyMessage.payload as LinkedHashMap<*, *>
-
-        val ops = redisTemplate.opsForHash<String, String>()
-        val sessionIds = ops.entries(messageData["channelId"].toString()).keys
+        val messageData =
+            objectMapper.convertValue<LobbyMessage.ChatMessageData>(lobbyMessage.payload!!)
+        val sessionIds = redisHandler.entries(messageData.channelId!!).keys
 
         sessionIds.forEach { sessionId ->
             sessionHandler.get(sessionId)?.sendMessage(
                 LobbyMessage.ofChatMessage(
-                    chatType = LobbyMessage.ChatMessageData.ChatType.valueOf(messageData["chatType"].toString()),
-                    nickname = messageData["nickname"].toString(),
-                    userId = messageData["userId"].toString(),
-                    message = messageData["message"].toString(),
+                    chatType = messageData.chatType,
+                    nickname = messageData.nickname,
+                    userId = messageData.userId,
+                    message = messageData.message,
                     sendTime = LocalDateTime.now(),
                 ).toPong()
             )
