@@ -33,6 +33,7 @@ export default class LobbySceneManager {
     this.chatInputText = ''
     this.showBms = []
     this.showBmsIndex = 0
+    this.currentBmsIndex = 0 // todo -> 여기서부터, bms 세부선택 화면 그려야 한다.
     this.updateBms()
 
     // init view
@@ -126,9 +127,8 @@ export default class LobbySceneManager {
   }
 
   updateBms = () => {
-    console.log('updateBms : {}', this.showBmsIndex)
     this.showBms = []
-    const maxShowSize = 15
+    const maxShowSize = 17
     const bmsList = Object.keys(this.resources["bms-meta"])
     const length = bmsList.length
     // upper
@@ -137,13 +137,11 @@ export default class LobbySceneManager {
     if (this.showBmsIndex - half < 0) {
       startIndex = length + (this.showBmsIndex - half)
     }
-    console.log('startIndex : {}', startIndex)
     for (let i = 0; i < half; i++) {
       let index = startIndex + i
       if (startIndex + i >= length) {
         index = startIndex + i - length
       }
-      console.log(index)
       this.showBms.push(bmsList[index])
     }
     // current
@@ -154,9 +152,10 @@ export default class LobbySceneManager {
       if (this.showBmsIndex + i + 1 >= length) {
         index = this.showBmsIndex + i + 1 - length
       }
-      console.log(index)
       this.showBms.push(bmsList[index])
     }
+
+    console.log(this.resources["bms-meta"][bmsList[this.showBmsIndex]])
   }
 
   addChatInput = (input) => {

@@ -129,8 +129,33 @@
   "bmsSelectList": {
     "item": {
       "font": "font/Tektur_Regular.json",
-      "size": 12,
-      "color": "#ffffff"
+      "size": 18,
+      "color": "#ffffff",
+      "x": 200,
+      "y": -400,
+      "heightInterval": 45
+    },
+    "box": {
+      "x": 325,
+      "y": 370,
+      "width": 700,
+      "height": 800,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.4
+      }
+    },
+    "cursor": {
+      "x": 325,
+      "y": 370,
+      "width": 700,
+      "height": 45,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 1.0
+      }
     }
   }
 }

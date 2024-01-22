@@ -138,20 +138,19 @@ export default class LobbySceneView {
 
     // bms select list
     this.bmsSelectList = new Group()
-    this.manager.showBms.forEach((bmsTitle, i) => {
-      // console.log(bmsTitle)
-      const bmsSelectItem = new Group()
-      const bmsSelectItemTextG = new TextGeometry(bmsTitle, {
-        font: commonResources.fonts[vs.bmsSelectList.item.font],
-        size: vs.bmsSelectList.item.size,
-      })
-      const bmsSelectItemText = new Mesh(bmsSelectItemTextG, new MeshBasicMaterial({
-        color: vs.bmsSelectList.item.color
-      }))
-      bmsSelectItem.add(bmsSelectItemText)
-      bmsSelectItem.position.set(200, i * 40)
-      this.bmsSelectList.add(bmsSelectItem)
-    })
+    this.bmsSelectItems = new Group()
+    const bmsSelectListBoxG = new PlaneGeometry(vs.bmsSelectList.box.width, vs.bmsSelectList.box.height)
+    const bmsSelectListBoxM = new MeshBasicMaterial(vs.bmsSelectList.box.material)
+    const bmsSelectListBox = new Mesh(bmsSelectListBoxG, bmsSelectListBoxM)
+    bmsSelectListBox.position.set(vs.bmsSelectList.box.x, vs.bmsSelectList.box.y)
+    const bmsSelectListCursorG = new PlaneGeometry(vs.bmsSelectList.cursor.width, vs.bmsSelectList.cursor.height)
+    const bmsSelectListCursorM = new MeshBasicMaterial(vs.bmsSelectList.cursor.material)
+    const bmsSelectListCursor = new Mesh(bmsSelectListCursorG, bmsSelectListCursorM)
+    bmsSelectListCursor.position.set(vs.bmsSelectList.cursor.x, vs.bmsSelectList.cursor.y)
+    this.bmsSelectList.add(bmsSelectListBox)
+    this.bmsSelectList.add(bmsSelectListCursor)
+    this.bmsSelectList.add(this.bmsSelectItems)
+    this.bmsSelectList.position.set(vs.bmsSelectList.item.x, vs.bmsSelectList.item.y)
   }
 
   clearCanvas = () => {
@@ -303,7 +302,7 @@ export default class LobbySceneView {
         + boundingBoxMaxX + 5
 
     // bms select list
-    this.manager.context.removeGroup(this.bmsSelectList)
+    this.manager.context.removeGroup(this.bmsSelectItems)
     this.manager.showBms.forEach((bmsTitle, i) => {
       const bmsSelectItem = new Group()
       const bmsSelectItemTextG = new TextGeometry(bmsTitle, {
@@ -314,8 +313,8 @@ export default class LobbySceneView {
         color: vs.bmsSelectList.item.color
       }))
       bmsSelectItem.add(bmsSelectItemText)
-      bmsSelectItem.position.set(200, i * 40)
-      this.bmsSelectList.add(bmsSelectItem)
+      bmsSelectItem.position.set(0, i * vs.bmsSelectList.item.heightInterval)
+      this.bmsSelectItems.add(bmsSelectItem)
     })
   }
 
