@@ -1,14 +1,14 @@
 {
   "profile": {
     "profileId": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 12,
       "color": "#ffffff",
       "x": -80,
       "y": 20
     },
     "profileNickname": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 20,
       "color": "#ffffff",
       "x": -80,
@@ -24,7 +24,7 @@
     "y": 370
   },
   "channelId": {
-    "font": "font/Tektur_Regular.json",
+    "font": "font/Orbitron_Regular.json",
     "size": 12,
     "color": "#ffffff",
     "x": -880,
@@ -32,14 +32,14 @@
   },
   "userProfileList": {
     "profileId": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 10,
       "color": "#ffffff",
       "x": -90,
       "y": 20
     },
     "profileNickname": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 14,
       "color": "#ffffff",
       "x": -90,
@@ -64,7 +64,7 @@
     },
     "userProfileEmpty": {
       "text": "No users in this channel",
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 15,
       "color": "#666666",
       "x": -115,
@@ -87,7 +87,7 @@
       "y": 40
     },
     "text": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 12,
       "systemColor": "#888888",
       "normalColor": "#aaaaaa",
@@ -111,14 +111,14 @@
       }
     },
     "sender": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 12,
       "color": "#ffffff",
       "x": -390,
       "y": -5
     },
     "text": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 12,
       "color": "#ffffff",
       "x": 0,
@@ -128,7 +128,7 @@
   },
   "bmsSelectList": {
     "item": {
-      "font": "font/Tektur_Regular.json",
+      "font": "font/Orbitron_Regular.json",
       "size": 18,
       "color": "#ffffff",
       "x": 200,
@@ -176,11 +176,11 @@
       "x": -290,
       "y": -100,
       "title": {
-        "font": "font/Tektur_Regular.json",
+        "font": "font/Orbitron_Regular.json",
         "size": 16
       },
       "desc": {
-        "font": "font/Tektur_Regular.json",
+        "font": "font/Orbitron_Regular.json",
         "size": 10
       },
       "material": {
