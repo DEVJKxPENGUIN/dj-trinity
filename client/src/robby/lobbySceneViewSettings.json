@@ -137,7 +137,7 @@
     },
     "box": {
       "x": 325,
-      "y": 370,
+      "y": 360,
       "width": 700,
       "height": 800,
       "material": {
@@ -156,6 +156,53 @@
         "transparent": true,
         "opacity": 1.0
       }
+    }
+  },
+  "bmsDetail": {
+    "x": -175,
+    "y": 95,
+    "box": {
+      "x": 0,
+      "y": 0,
+      "width": 600,
+      "height": 530,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.4
+      }
+    },
+    "text": {
+      "x": -290,
+      "y": -100,
+      "title": {
+        "font": "font/Tektur_Regular.json",
+        "size": 16
+      },
+      "desc": {
+        "font": "font/Tektur_Regular.json",
+        "size": 10
+      },
+      "material": {
+        "color": "#ffffff",
+        "transparent": true,
+        "opacity": 1.0
+      }
+    },
+    "textBox": {
+      "x": 0,
+      "y": -140,
+      "width": 600,
+      "height": 150,
+      "material": {
+        "color": "#000000",
+        "transparent": true,
+        "opacity": 0.7
+      }
+    },
+    "stage": {
+      "width": 600,
+      "height": 530
     }
   }
 }

@@ -9,7 +9,7 @@ export default class BackgroundSoundHandler {
 
   start = () => {
     // fixme
-    return
+    // return
 
     if (this.backgroundSound === null || this.backgroundSound === undefined) {
       this.backgroundSound = new Audio(this.context.listener)

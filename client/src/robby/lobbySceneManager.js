@@ -33,7 +33,8 @@ export default class LobbySceneManager {
     this.chatInputText = ''
     this.showBms = []
     this.showBmsIndex = 0
-    this.currentBmsIndex = 0 // todo -> 여기서부터, bms 세부선택 화면 그려야 한다.
+    this.bmsDetailIndex = 0 // todo -> 여기서부터, bms 세부선택 화면 그려야 한다.
+    this.currentBms = []
     this.updateBms()
 
     // init view
@@ -127,7 +128,7 @@ export default class LobbySceneManager {
   }
 
   updateBms = () => {
-    this.showBms = []
+    this.showBms = {}
     const maxShowSize = 17
     const bmsList = Object.keys(this.resources["bms-meta"])
     const length = bmsList.length
@@ -142,20 +143,20 @@ export default class LobbySceneManager {
       if (startIndex + i >= length) {
         index = startIndex + i - length
       }
-      this.showBms.push(bmsList[index])
+      this.showBms[bmsList[index]] = this.resources["bms-meta"][bmsList[index]]
     }
     // current
-    this.showBms.push(bmsList[this.showBmsIndex])
+    this.showBms[bmsList[this.showBmsIndex]] = this.resources["bms-meta"][bmsList[this.showBmsIndex]]
+    this.currentBms = this.resources["bms-meta"][bmsList[this.showBmsIndex]][this.bmsDetailIndex]
+
     // bottom
     for (let i = 0; i < half; i++) {
       let index = this.showBmsIndex + i + 1
       if (this.showBmsIndex + i + 1 >= length) {
         index = this.showBmsIndex + i + 1 - length
       }
-      this.showBms.push(bmsList[index])
+      this.showBms[bmsList[index]] = this.resources["bms-meta"][bmsList[index]]
     }
-
-    console.log(this.resources["bms-meta"][bmsList[this.showBmsIndex]])
   }
 
   addChatInput = (input) => {
@@ -191,24 +192,25 @@ export default class LobbySceneManager {
 
   handleArrowUp = () => {
     this.sound.beep()
-    if (this.showBmsIndex == 0) {
-      this.showBmsIndex = Object.keys(this.resources["bms-meta"]).length - 1
+    if (this.showBmsIndex === Object.keys(this.resources["bms-meta"]).length
+        - 1) {
+      this.showBmsIndex = 0
     } else {
-      this.showBmsIndex--
+      this.showBmsIndex++
     }
-
+    this.bmsDetailIndex = 0
     this.updateBms()
     this.view.updateTextGeometries()
   }
 
   handleArrowDown = () => {
     this.sound.beep()
-    if (this.showBmsIndex == Object.keys(this.resources["bms-meta"]).length
-        - 1) {
-      this.showBmsIndex = 0
+    if (this.showBmsIndex === 0) {
+      this.showBmsIndex = Object.keys(this.resources["bms-meta"]).length - 1
     } else {
-      this.showBmsIndex++
+      this.showBmsIndex--
     }
+    this.bmsDetailIndex = 0
     this.updateBms()
     this.view.updateTextGeometries()
   }

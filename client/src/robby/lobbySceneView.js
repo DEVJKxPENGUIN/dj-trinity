@@ -139,18 +139,71 @@ export default class LobbySceneView {
     // bms select list
     this.bmsSelectList = new Group()
     this.bmsSelectItems = new Group()
-    const bmsSelectListBoxG = new PlaneGeometry(vs.bmsSelectList.box.width, vs.bmsSelectList.box.height)
-    const bmsSelectListBoxM = new MeshBasicMaterial(vs.bmsSelectList.box.material)
+    const bmsSelectListBoxG = new PlaneGeometry(vs.bmsSelectList.box.width,
+        vs.bmsSelectList.box.height)
+    const bmsSelectListBoxM = new MeshBasicMaterial(
+        vs.bmsSelectList.box.material)
     const bmsSelectListBox = new Mesh(bmsSelectListBoxG, bmsSelectListBoxM)
-    bmsSelectListBox.position.set(vs.bmsSelectList.box.x, vs.bmsSelectList.box.y)
-    const bmsSelectListCursorG = new PlaneGeometry(vs.bmsSelectList.cursor.width, vs.bmsSelectList.cursor.height)
-    const bmsSelectListCursorM = new MeshBasicMaterial(vs.bmsSelectList.cursor.material)
-    const bmsSelectListCursor = new Mesh(bmsSelectListCursorG, bmsSelectListCursorM)
-    bmsSelectListCursor.position.set(vs.bmsSelectList.cursor.x, vs.bmsSelectList.cursor.y)
+    bmsSelectListBox.position.set(vs.bmsSelectList.box.x,
+        vs.bmsSelectList.box.y)
+    const bmsSelectListCursorG = new PlaneGeometry(
+        vs.bmsSelectList.cursor.width, vs.bmsSelectList.cursor.height)
+    const bmsSelectListCursorM = new MeshBasicMaterial(
+        vs.bmsSelectList.cursor.material)
+    const bmsSelectListCursor = new Mesh(bmsSelectListCursorG,
+        bmsSelectListCursorM)
+    bmsSelectListCursor.position.set(vs.bmsSelectList.cursor.x,
+        vs.bmsSelectList.cursor.y)
     this.bmsSelectList.add(bmsSelectListBox)
     this.bmsSelectList.add(bmsSelectListCursor)
     this.bmsSelectList.add(this.bmsSelectItems)
-    this.bmsSelectList.position.set(vs.bmsSelectList.item.x, vs.bmsSelectList.item.y)
+    this.bmsSelectList.position.set(vs.bmsSelectList.item.x,
+        vs.bmsSelectList.item.y)
+
+    // bms detail
+    this.bmsDetail = new Group()
+    const bmsDetailBoxG = new PlaneGeometry(vs.bmsDetail.box.width,
+        vs.bmsDetail.box.height)
+    const bmsDetailBoxM = new MeshBasicMaterial(vs.bmsDetail.box.material)
+    const bmsDetailBox = new Mesh(bmsDetailBoxG, bmsDetailBoxM)
+    bmsDetailBox.position.set(vs.bmsDetail.box.x, vs.bmsDetail.box.y)
+    const bmsDetailTextBoxG = new PlaneGeometry(vs.bmsDetail.textBox.width,
+        vs.bmsDetail.textBox.height)
+    const bmsDetailTextBoxM = new MeshBasicMaterial(
+        vs.bmsDetail.textBox.material)
+    const bmsDetailTextBox = new Mesh(bmsDetailTextBoxG, bmsDetailTextBoxM)
+    bmsDetailTextBox.position.set(vs.bmsDetail.textBox.x,
+        vs.bmsDetail.textBox.y)
+    const bmsDetailTitleG = new TextGeometry(
+        this.manager.currentBms.bmsHeader.title, {
+          font: commonResources.fonts[vs.bmsDetail.text.title.font],
+          size: vs.bmsDetail.text.title.size
+        })
+    this.bmsDetailTitle = new Mesh(bmsDetailTitleG,
+        new MeshBasicMaterial(vs.bmsDetail.text.material))
+    this.bmsDetailTitle.position.set(vs.bmsDetail.text.x, vs.bmsDetail.text.y)
+    this.bmsDetailText = new Mesh(new TextGeometry(
+        `artist : ${this.manager.currentBms.bmsHeader.artist}\n`,
+        {
+          font: commonResources.fonts[vs.bmsDetail.text.desc.font],
+          size: vs.bmsDetail.text.desc.size
+        }
+    ), new MeshBasicMaterial(vs.bmsDetail.text.desc.material))
+    this.bmsDetailText.position.set(vs.bmsDetail.text.x,
+        vs.bmsDetail.text.y - 20)
+    const bmsDetailStageImageG = new PlaneGeometry(vs.bmsDetail.stage.width,
+        vs.bmsDetail.stage.height)
+    const bmsDetailStageImageM = new MeshBasicMaterial({
+      map: this.manager.resources.textures[`http://localhost:5002/download/bms/stage/${this.manager.currentBms.id}`]
+    })
+    this.bmsDetailStageImage = new Mesh(bmsDetailStageImageG,
+        bmsDetailStageImageM)
+    this.bmsDetail.add(bmsDetailBox)
+    this.bmsDetail.add(bmsDetailTextBox)
+    this.bmsDetail.add(this.bmsDetailTitle)
+    this.bmsDetail.add(this.bmsDetailText)
+    this.bmsDetail.add(this.bmsDetailStageImage)
+    this.bmsDetail.position.set(vs.bmsDetail.x, vs.bmsDetail.y)
   }
 
   clearCanvas = () => {
@@ -160,6 +213,7 @@ export default class LobbySceneView {
     this.manager.context.scene.remove(this.chatBox)
     this.manager.context.scene.remove(this.chatInput)
     this.manager.context.scene.remove(this.bmsSelectList)
+    this.manager.context.scene.remove(this.bmsDetail)
 
   }
 
@@ -169,6 +223,7 @@ export default class LobbySceneView {
     this.manager.context.scene.add(this.channelId)
     this.manager.context.scene.add(this.chatBox)
     this.manager.context.scene.add(this.bmsSelectList)
+    this.manager.context.scene.add(this.bmsDetail)
 
     this.updateTextGeometries()
   }
@@ -303,19 +358,56 @@ export default class LobbySceneView {
 
     // bms select list
     this.manager.context.removeGroup(this.bmsSelectItems)
-    this.manager.showBms.forEach((bmsTitle, i) => {
+    Object.keys(this.manager.showBms).forEach((bmsTitle, i) => {
       const bmsSelectItem = new Group()
       const bmsSelectItemTextG = new TextGeometry(bmsTitle, {
         font: commonResources.fonts[vs.bmsSelectList.item.font],
         size: vs.bmsSelectList.item.size,
       })
-      const bmsSelectItemText = new Mesh(bmsSelectItemTextG, new MeshBasicMaterial({
-        color: vs.bmsSelectList.item.color
-      }))
+      const bmsSelectItemText = new Mesh(bmsSelectItemTextG,
+          new MeshBasicMaterial({
+            color: vs.bmsSelectList.item.color
+          }))
       bmsSelectItem.add(bmsSelectItemText)
       bmsSelectItem.position.set(0, i * vs.bmsSelectList.item.heightInterval)
       this.bmsSelectItems.add(bmsSelectItem)
     })
+
+    // bms detail
+    this.bmsDetailTitle.geometry.dispose()
+    this.bmsDetail.remove(this.bmsDetailTitle)
+    const bmsDetailTitleG = new TextGeometry(
+        this.manager.currentBms.bmsHeader.title, {
+          font: commonResources.fonts[vs.bmsDetail.text.title.font],
+          size: vs.bmsDetail.text.title.size
+        })
+    this.bmsDetailTitle = new Mesh(bmsDetailTitleG,
+        new MeshBasicMaterial(vs.bmsDetail.text.material))
+    this.bmsDetailTitle.position.set(vs.bmsDetail.text.x, vs.bmsDetail.text.y)
+    this.bmsDetailText.geometry.dispose()
+    this.bmsDetail.remove(this.bmsDetailText)
+    this.bmsDetailText = new Mesh(new TextGeometry(
+        `artist : ${this.manager.currentBms.bmsHeader.artist}\ngenre : ${this.manager.currentBms.bmsHeader.genre}\nlevel : ${this.manager.currentBms.bmsHeader.playLevel}\ntotal : ${this.manager.currentBms.bmsHeader.total}\nbpm : ${this.manager.currentBms.bmsHeader.startBpm}\n`,
+        {
+          font: commonResources.fonts[vs.bmsDetail.text.desc.font],
+          size: vs.bmsDetail.text.desc.size
+        }
+    ), new MeshBasicMaterial(vs.bmsDetail.text.desc.material))
+    this.bmsDetailText.position.set(vs.bmsDetail.text.x,
+        vs.bmsDetail.text.y - 20)
+    this.bmsDetailStageImage.geometry.dispose()
+    this.bmsDetail.remove(this.bmsDetailStageImage)
+    const bmsDetailStageImageG = new PlaneGeometry(vs.bmsDetail.stage.width,
+        vs.bmsDetail.stage.height)
+    const bmsDetailStageImageM = new MeshBasicMaterial({
+      map: this.manager.resources.textures[`http://localhost:5002/download/bms/stage/${this.manager.currentBms.id}`]
+    })
+    this.bmsDetailStageImage = new Mesh(bmsDetailStageImageG,
+        bmsDetailStageImageM)
+    this.bmsDetail.add(this.bmsDetailTitle)
+    this.bmsDetail.add(this.bmsDetailText)
+    this.bmsDetail.add(this.bmsDetailStageImage)
+    console.log(this.manager.currentBms)
   }
 
   destroy = () => {

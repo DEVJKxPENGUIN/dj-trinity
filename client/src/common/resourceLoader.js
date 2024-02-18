@@ -79,6 +79,29 @@ export default class ResourceLoader {
         })
       })
 
+      const bmsLoader = new BmsLoader(this.manager)
+      if (resources['bms-meta'] !== undefined) {
+        if (resources['bms-meta'] == null || Array.isArray(
+            resources['bms-meta'])) {
+          loadTargetCount++
+          bmsLoader.load('', function (bmsMap) {
+            resources['bms-meta'] = bmsMap
+
+            // load stage image
+            console.log('bmsMap : ', bmsMap)
+            Object.keys(bmsMap).forEach(bmsList => {
+              bmsMap[bmsList].forEach(bms => {
+                const bmsId = bms['id']
+                const bmsStageTexturePath = `http://localhost:5002/download/bms/stage/${bmsId}`
+                if (!resources.textures[bmsStageTexturePath]) {
+                  resources.textures[bmsStageTexturePath] = null
+                }
+              })
+            })
+          })
+        }
+      }
+
       const textureLoader = new TextureLoader(this.manager)
       Object.keys(resources.textures).forEach(texturePath => {
         if (resources.textures[texturePath] !== null) {
@@ -89,17 +112,6 @@ export default class ResourceLoader {
           resources.textures[texturePath] = texture
         })
       })
-
-      const bmsLoader = new BmsLoader(this.manager)
-      if (resources['bms-meta'] !== undefined) {
-        if (resources['bms-meta'] == null || Array.isArray(
-            resources['bms-meta'])) {
-          loadTargetCount++
-          bmsLoader.load('', function (bmsMap) {
-            resources['bms-meta'] = bmsMap
-          })
-        }
-      }
 
       // todo other resources
 
