@@ -19,7 +19,9 @@ export default class LobbySceneKeyboard {
     } else if (e.key === "ArrowDown") {
       this.manager.handleArrowDown()
     } else if (e.key === "ArrowRight") {
+      this.manager.handleArrowRight()
     } else if (e.key === "ArrowLeft") {
+      this.manager.handleArrowLeft()
     } else if (e.key === "Backspace") {
       this.manager.handleBackspace()
     } else if (e.key === "Escape") {

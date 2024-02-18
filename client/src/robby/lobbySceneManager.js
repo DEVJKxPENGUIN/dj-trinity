@@ -215,6 +215,26 @@ export default class LobbySceneManager {
     this.view.updateTextGeometries()
   }
 
+  handleArrowRight = () => {
+    this.sound.beep()
+    const length = this.resources["bms-meta"][Object.keys(
+        this.resources["bms-meta"])[this.showBmsIndex]].length
+    this.bmsDetailIndex = (this.bmsDetailIndex + 1) > length - 1 ? length - 1
+        : this.bmsDetailIndex + 1
+    this.updateBms()
+    this.view.updateTextGeometries()
+  }
+
+  handleArrowLeft = () => {
+    this.sound.beep()
+    const length = this.resources["bms-meta"][Object.keys(
+        this.resources["bms-meta"])[this.showBmsIndex]].length
+    this.bmsDetailIndex = (this.bmsDetailIndex - 1) < 0 ? 0
+        : this.bmsDetailIndex - 1
+    this.updateBms()
+    this.view.updateTextGeometries()
+  }
+
   handleBackspace = () => {
     if (this.view.isChatInputOpen()) {
       this.chatInputText = this.chatInputText.slice(0, -1)
