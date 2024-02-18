@@ -103,16 +103,16 @@ class FileService(
         bmsNodeRepository.saveAll(bmsNodes)
     }
 
-    fun getBms01Path(nodeId: Long): String {
+    fun getStageFilePath(nodeId: Long): String {
         val bmsNode = findBmsByNodeId(nodeId)
         val bms = read(File(bmsNode.fullPath()))
         val bmsHeader = bmsService.parseHeaderInfo(bms)
 
-        if (StringUtils.isBlank(bmsHeader.bmp01)) {
+        if (StringUtils.isBlank(bmsHeader.stageFile)) {
             return "../resource/sample.jpeg"
         }
 
-        return "${bmsNode.rootPath}/${bmsHeader.bmp01}"
+        return "${bmsNode.rootPath}/${bmsHeader.stageFile}"
     }
 
     fun parseBms(nodeId: Long): BmsResponse {

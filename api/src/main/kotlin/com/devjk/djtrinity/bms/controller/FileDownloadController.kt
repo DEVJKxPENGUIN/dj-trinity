@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,9 +18,9 @@ class FileDownloadController(
     private val fileDownloadService: FileDownloadService
 ) {
 
-    @GetMapping("/bmp01/{nodeId}")
+    @GetMapping("/stage/{nodeId}")
     fun downloadBmp01(@PathVariable nodeId: Long): ResponseEntity<Resource> {
-        val path = fileService.getBms01Path(nodeId)
+        val path = fileService.getStageFilePath(nodeId)
         val resource = fileDownloadService.loadFileAsResource(path)
         return ResponseEntity.status(HttpStatus.OK).headers {
             it.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${resource.filename}")
