@@ -1,6 +1,7 @@
 import {
-  AudioListener, AxesHelper, CameraHelper,
-  Color, GridHelper,
+  AudioListener,
+  CameraHelper,
+  Color,
   Group,
   OrthographicCamera,
   Scene,
@@ -28,7 +29,9 @@ export default class Context {
       powerPreference: "high-performance",
     })
     this.renderer.setSize(settings.width, settings.height)
-    document.body.appendChild(this.renderer.domElement)
+    // document.body.appendChild(this.renderer.domElement)
+    document.body.insertAdjacentElement('afterbegin',
+        this.renderer.domElement)
 
     this.cssRenderer = new CSS3DRenderer()
     this.cssRenderer.setSize(settings.width, settings.height)
