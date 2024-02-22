@@ -6,11 +6,11 @@ RUN_TYPE="client"
 
 # parse arguments
 while (("$#")); do
-  if [ "-electron" = $1 ]; then
-    RUN_MODULE="electron"
+  if [ "-app" = $1 ]; then
+    RUN_MODULE="app"
   fi
-  if [ "-vite" = $1 ]; then
-    RUN_MODULE="vite"
+  if [ "-web" = $1 ]; then
+    RUN_MODULE="web"
   fi
   if [ "-local" = $1 ]; then
     MODE=local
@@ -24,16 +24,18 @@ done
 if [ ${RUN_TYPE} = "client" ]; then
 
   FULL_ARGS=""
-  if [ "$RUN_MODULE" = "electron" ]; then
-    FULL_ARGS="npm run --prefix ./client ${MODE}:electron"
+  if [ "$RUN_MODULE" = "app" ]; then
+    # FULL_ARGS="npm run --prefix ./client ${MODE}:electron"
+    FULL_ARGS="npm run --prefix ./client electron:serve"
   fi
 
-  if [ "$RUN_MODULE" = "vite" ]; then
-    FULL_ARGS="npm run --prefix ./client ${MODE}:vite"
+  if [ "$RUN_MODULE" = "web" ]; then
+    # FULL_ARGS="npm run --prefix ./client ${MODE}:vite"
+    FULL_ARGS="npm run --prefix ./client serve"
   fi
 
   if [ "$FULL_ARGS" = "" ]; then
-    echo 'you should choose module option (-electron, -vite)'
+    echo 'you should choose module option (-web, -app)'
     exit 1
   fi
 
