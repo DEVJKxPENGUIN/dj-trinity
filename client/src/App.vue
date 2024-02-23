@@ -1,26 +1,61 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <IntroScene v-if="introScene"/>
+  <LobbyScene v-if="lobbyScene"/>
+  <GameScene v-if="gameScene"/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import IntroScene from "@/Scene/intro/IntroScene.vue";
+import LobbyScene from "@/Scene/lobby/LobbyScene.vue";
+import GameScene from "@/Scene/game/GameScene.vue";
+import AppManager from "@/manager/AppManager";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    GameScene,
+    LobbyScene,
+    IntroScene
+
+  },
+  created() {
+    this.init()
+  },
+  data() {
+    return {
+      // js
+      manager: new AppManager(),
+
+      // view
+      introScene: true,
+      lobbyScene: false,
+      gameScene: false
+    }
+  },
+  methods: {
+    async init() {
+
+    }
   }
 }
 </script>
 
 <style>
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+canvas, #app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  pointer-events: none;
 }
 </style>
