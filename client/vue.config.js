@@ -4,5 +4,6 @@ module.exports = defineConfig({
   devServer: {
     hot: false,
     liveReload: true
-  }
+  },
+  lintOnSave: false,
 })

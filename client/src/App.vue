@@ -28,15 +28,17 @@ export default {
       manager: new AppManager(),
 
       // view
-      introScene: true,
+      currentScene: null,
+      introScene: false,
       lobbyScene: false,
       gameScene: false
     }
   },
   methods: {
     async init() {
-
-    }
+      this.manager.changeScene('intro')
+      this.introScene = true
+    },
   }
 }
 </script>
@@ -47,6 +49,7 @@ body, html {
   padding: 0;
   overflow: hidden;
 }
+
 canvas, #app {
   position: fixed;
   top: 0;

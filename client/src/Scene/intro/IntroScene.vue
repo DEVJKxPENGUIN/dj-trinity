@@ -4,8 +4,30 @@
   </div>
 </template>
 
-<script setup>
+<script>
 
+export default {
+  name: 'App',
+  components: {},
+  created() {
+    this.init()
+  },
+  data() {
+    return {
+      // js
+
+      // view
+    }
+  },
+  methods: {
+    async init() {
+
+    },
+    async destroy() {
+
+    }
+  }
+}
 
 </script>
 
