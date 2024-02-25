@@ -25,6 +25,7 @@ class SecurityConfig(
                     .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/bms/sync").permitAll()
                     .requestMatchers("/download/**").permitAll()
+                    .requestMatchers("/user/**").permitAll()
                     .anyRequest().authenticated()
             }
             .cors {}
