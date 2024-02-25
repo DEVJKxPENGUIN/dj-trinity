@@ -1,17 +1,21 @@
 <template>
-    <div class="popup flex flex-col">
-      <div class="top flex h-20" />
-      <div class="middle flex flex-row flex-1" >
-        <div class="left flex-1" />
-        <div class="center flex w-full sm:w-128 backdrop-blur">
-          <slot/>
+  <transition name="slide-fade">
+    <div v-if="show" class="popup flex flex-col">
+      <div class="top flex h-20"/>
+      <div class="middle flex flex-col sm:flex-row flex-1">
+        <div class="left sm:flex-1"/>
+        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur">
+          <slot name="text"/>
         </div>
-        <div class="right flex-1" />
+        <div class="line h-0 sm:h-full sm:w-0.5 sm:mt-5 sm:mb-5"></div>
+        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur">
+          <slot name="form"/>
+        </div>
+        <div class="right sm:flex-1"/>
       </div>
-      <div class="bottom flex h-20" />
-
-
+      <div class="bottom flex h-20"/>
     </div>
+  </transition>
 
 </template>
 
@@ -19,6 +23,12 @@
 export default {
   name: 'Popup',
   components: {},
+  props: {
+    show: {
+      type: Boolean,
+      default: false
+    }
+  },
   created() {
     this.init()
   },
@@ -49,18 +59,41 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .1);
+  z-index: 1;
 }
 
 .top {
-  background-color: rgba(0, 0, 0, .7);
+  background-color: rgba(0, 0, 0, .8);
 }
 
 .bottom {
-  background-color: rgba(0, 0, 0, .7);
+  background-color: rgba(0, 0, 0, .8);
 }
 
 .center {
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, .3);
+}
+
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 0.1s ease-in-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.1s ease-in-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(50px);
+  opacity: 0;
+}
+
+.line {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
 }
 </style>

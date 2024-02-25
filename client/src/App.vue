@@ -62,8 +62,12 @@ canvas, #app {
   height: 100%;
 }
 
-#app {
+canvas {
+  z-index: -1;
   pointer-events: none;
+}
+
+#app {
   display: flex;
 }
 

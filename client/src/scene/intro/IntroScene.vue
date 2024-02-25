@@ -5,7 +5,7 @@
       <div class="flex-1"/>
 
       <!-- logo -->
-      <div class="flex flex-col flex-1 logo items-center justify-center">
+      <div v-if="showLogo" class="flex flex-col flex-1 logo items-center justify-center">
         <div class="anta-regular">
           <transition-group name="flip" tag="div">
             <div>
@@ -18,7 +18,7 @@
             <div v-if="showMenu" class="menu orbitron-regular">
               <div
                   v-for="(item, index) in menus"
-                  :class="['menu-text', selected === index ? 'active ping' : '' ]"
+                  :class="['menu-text', selected === index && activeMenu ? 'active ping' : '' ]"
                   :key="index"
                   :ref="`menu-${index}`"
                   tabindex="-1"
@@ -35,31 +35,31 @@
         PRESS ENTER TO START
       </div>
     </div>
-    <Popup v-if="showLogin">
-
-    </Popup>
+    <IntroSceneLogin v-if="showLogin" :show="showLogin"/>
   </div>
 </template>
 
 <script>
 
-import Popup from "@/scene/common/popup.vue";
+import IntroSceneLogin from "@/scene/intro/IntroSceneLogin.vue";
 
 const PRESS_ENTER = 'pressEnter'
 const MENU_SELECT = 'menuSelect'
 const LOGIN = 'LOGIN'
 export default {
   name: 'App',
-  components: {Popup},
+  components: {IntroSceneLogin},
   created() {
     this.init()
   },
   data() {
     return {
       // js
+      showLogo: true,
       showPressEnter: true,
       showMenu: false,
-      showLogin: false,
+      activeMenu: false,
+      showLogin: true,
       state: PRESS_ENTER,
 
       // view
@@ -78,13 +78,12 @@ export default {
     },
     keyboard(e) {
       if (e.key === 'ArrowUp') {
-        this.selected = this.selected === 0 ? this.selected : this.selected - 1
+        this.handleArrowUp()
       } else if (e.key === 'ArrowDown') {
-        this.selected = this.selected === this.menus.length - 1 ? this.selected
-            : this.selected + 1
+        this.handleArrowDown()
       } else if (e.key === 'Enter') {
         this.handleEnter()
-      } else if(e.key === 'Escape') {
+      } else if (e.key === 'Escape') {
         this.handleEsc()
       }
     },
@@ -99,12 +98,29 @@ export default {
         return
       }
     },
-    handleEsc() {
-      if(this.state === MENU_SELECT) {
-        this.switchToPressEnter()
+    handleArrowUp() {
+      if (this.state === MENU_SELECT) {
+        this.selected = this.selected === 0 ? this.selected : this.selected - 1
+        return
       }
 
       if(this.state === LOGIN) {
+
+      }
+
+    },
+    handleArrowDown() {
+      if (this.state === MENU_SELECT) {
+        this.selected = this.selected === this.menus.length - 1 ? this.selected
+            : this.selected + 1
+      }
+    },
+    handleEsc() {
+      if (this.state === MENU_SELECT) {
+        this.switchToPressEnter()
+      }
+
+      if (this.state === LOGIN) {
         this.switchToMenuSelect()
       }
 
@@ -118,23 +134,29 @@ export default {
 
     },
     switchToPressEnter() {
+      this.showLogo = true
       this.showLogin = false
-      this.showMenu = false;
+      this.showMenu = false
+      this.activeMenu = false
       this.showPressEnter = true
       this.state = PRESS_ENTER
     },
     switchToMenuSelect() {
+      this.showLogo = true
       this.showLogin = false
       this.showMenu = true
+      this.activeMenu = true
       this.showPressEnter = false
       this.state = MENU_SELECT
     },
     switchToLogin() {
+      this.showLogo = false
       this.showLogin = true
       this.showMenu = true
+      this.activeMenu = false
       this.showPressEnter = false
       this.state = LOGIN
-    }
+    },
   },
 
   beforeUnmount() {
@@ -219,5 +241,4 @@ export default {
 .flip-move {
   transition: transform 0.15s ease-in-out;
 }
-
 </style>

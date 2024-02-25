@@ -12,9 +12,6 @@ export default class IntroCanvas {
 
   constructor(ctx) {
     this.ctx = ctx
-
-    console.log(this.ctx.scene)
-
   }
 
   init() {
