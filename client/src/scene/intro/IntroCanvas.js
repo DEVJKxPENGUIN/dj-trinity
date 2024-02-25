@@ -42,7 +42,7 @@ export default class IntroCanvas {
 
     // const light = new SpotLight(0xffffff, 0.5, 100, 180, 0.5)
     const light = new PointLight(0xffffff, 0.5, 100)
-    light.position.set(8, 5, 3)
+    light.position.set(4, 3, 3)
     this.moveLight(light)
     this.ctx.scene.add(light)
   }
@@ -59,13 +59,13 @@ export default class IntroCanvas {
 
   moveLight(light) {
     gsap.to(light.position, {
-      duration: 20,
-      x: -8,
-      y: -5,
+      duration: 10,
+      x: -4,
+      y: -3,
       repeat: -1,
       repeatDelay: 0,
       yoyo: true,
-      // ease: 'power1.inOut'
+      ease: 'power1.inOut'
     })
   }
 

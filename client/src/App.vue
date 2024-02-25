@@ -6,9 +6,9 @@
 
 <script>
 
-import IntroScene from "@/Scene/intro/IntroScene.vue";
-import LobbyScene from "@/Scene/lobby/LobbyScene.vue";
-import GameScene from "@/Scene/game/GameScene.vue";
+import IntroScene from "@/scene/intro/IntroScene.vue";
+import LobbyScene from "@/scene/lobby/LobbyScene.vue";
+import GameScene from "@/scene/game/GameScene.vue";
 import AppManager from "@/manager/AppManager";
 
 export default {
@@ -44,6 +44,10 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anta&family=Orbitron:wght@400..900&display=swap');
+
+
 body, html {
   margin: 0;
   padding: 0;
@@ -60,5 +64,19 @@ canvas, #app {
 
 #app {
   pointer-events: none;
+  display: flex;
+}
+
+.anta-regular {
+  font-family: "Anta", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.orbitron-regular {
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
 }
 </style>

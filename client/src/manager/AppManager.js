@@ -1,6 +1,6 @@
 import {Color, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import settings from "../options/canvas/settings.json";
-import IntroCanvas from "@/Scene/intro/IntroCanvas";
+import IntroCanvas from "@/scene/intro/IntroCanvas";
 
 export default class AppManager {
 
