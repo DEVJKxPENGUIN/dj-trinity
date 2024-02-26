@@ -94,7 +94,7 @@ class UserService(
     @Transactional(readOnly = true)
     fun getUserInfo(id: String): UserResponse {
         val user = userRepository.findById(id)
-            .orElseThrow { BaseException(ErrorCode.USER_NOT_FOUND, "id is not exists!") }
+            .orElseThrow { BaseException(ErrorCode.USER_NOT_FOUND) }
         return UserResponse(user.id, user.nickname, user.profile)
     }
 

@@ -1,6 +1,7 @@
 package com.devjk.djtrinity.user.controller
 
 import com.devjk.djtrinity.framework.common.BaseResponse
+import com.devjk.djtrinity.framework.error.exception.BaseException
 import com.devjk.djtrinity.user.service.UserService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity

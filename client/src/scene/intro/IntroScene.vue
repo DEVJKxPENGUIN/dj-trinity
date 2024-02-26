@@ -35,7 +35,9 @@
         PRESS ENTER TO START
       </div>
     </div>
-    <IntroSceneLogin v-if="showLogin" :show="showLogin"/>
+    <transition name="slide-fade">
+      <IntroSceneLogin v-if="showLogin" @close="closeLoginPopup" @loginSuccess="handleLoginSuccess" />
+    </transition>
   </div>
 </template>
 
@@ -59,7 +61,7 @@ export default {
       showPressEnter: true,
       showMenu: false,
       activeMenu: false,
-      showLogin: true,
+      showLogin: false,
       state: PRESS_ENTER,
 
       // view
@@ -103,7 +105,6 @@ export default {
         this.selected = this.selected === 0 ? this.selected : this.selected - 1
         return
       }
-
       if(this.state === LOGIN) {
 
       }
@@ -118,10 +119,7 @@ export default {
     handleEsc() {
       if (this.state === MENU_SELECT) {
         this.switchToPressEnter()
-      }
-
-      if (this.state === LOGIN) {
-        this.switchToMenuSelect()
+        return
       }
 
     },
@@ -132,6 +130,14 @@ export default {
         return
       }
 
+    },
+    handleLoginSuccess() {
+      // todo
+      alert('로그인 성공! 채널 진입')
+
+    },
+    closeLoginPopup() {
+      this.switchToMenuSelect()
     },
     switchToPressEnter() {
       this.showLogo = true
@@ -240,5 +246,24 @@ export default {
 
 .flip-move {
   transition: transform 0.15s ease-in-out;
+}
+
+
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 0.1s ease-in-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.1s ease-in-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(50px);
+  opacity: 0;
 }
 </style>

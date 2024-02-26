@@ -83,4 +83,10 @@ canvas {
   font-weight: 800;
   font-style: normal;
 }
+.orbitron-thin {
+  font-family: "Orbitron", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
 </style>

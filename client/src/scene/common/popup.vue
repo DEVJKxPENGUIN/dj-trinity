@@ -1,5 +1,4 @@
 <template>
-  <transition name="slide-fade">
     <div v-if="show" class="popup flex flex-col">
       <div class="top flex h-20"/>
       <div class="middle flex flex-col sm:flex-row flex-1">
@@ -15,7 +14,6 @@
       </div>
       <div class="bottom flex h-20"/>
     </div>
-  </transition>
 
 </template>
 
@@ -26,7 +24,7 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: false
+      default:true
     }
   },
   created() {
@@ -73,24 +71,6 @@ export default {
 
 .center {
   background-color: rgba(0, 0, 0, .3);
-}
-
-/*
-  Enter and leave animations can use different
-  durations and timing functions.
-*/
-.slide-fade-enter-active {
-  transition: all 0.1s ease-in-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.1s ease-in-out;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(50px);
-  opacity: 0;
 }
 
 .line {

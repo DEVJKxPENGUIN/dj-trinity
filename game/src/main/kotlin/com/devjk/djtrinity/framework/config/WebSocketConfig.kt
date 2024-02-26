@@ -13,6 +13,6 @@ class WebSocketConfig(
 ) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry.addHandler(lobbyHandler, "/ws/lobby")
-            .setAllowedOrigins("http://localhost:5001")
+            .setAllowedOrigins("http://localhost:5001", "http://localhost:8080")
     }
 }
