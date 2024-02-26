@@ -260,22 +260,4 @@ export default {
   transition: transform 0.15s ease-in-out;
 }
 
-
-/*
-  Enter and leave animations can use different
-  durations and timing functions.
-*/
-.slide-fade-enter-active {
-  transition: all 0.1s ease-in-out;
-}
-
-.slide-fade-leave-active {
-  transition: all 0.1s ease-in-out;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateX(50px);
-  opacity: 0;
-}
 </style>

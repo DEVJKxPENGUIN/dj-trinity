@@ -3,7 +3,9 @@
   <IntroScene v-if="introScene"/>
   <LobbyScene v-if="lobbyScene"/>
   <GameScene v-if="gameScene"/>
-  <SystemPopup v-if="isSystemPopup" class="z-10" />
+  <transition name="slide-fade">
+    <SystemPopup v-if="isSystemPopup" class="z-10" />
+  </transition>
 </template>
 
 <script>
