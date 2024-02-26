@@ -413,17 +413,8 @@ input::placeholder {
   color: rgba(255, 255, 255, 0.4);
 }
 
-@keyframes flicker {
-  0%, 100% {
-    opacity: .9;
-  }
-  50% {
-    opacity: .65;
-  }
-}
-
 .id-check {
-  color: fuchsia;
+  color: rgba(255, 0, 255, .9);
   font-size: 14px;
   text-align: center;
 }

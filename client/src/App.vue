@@ -3,6 +3,7 @@
   <IntroScene v-if="introScene"/>
   <LobbyScene v-if="lobbyScene"/>
   <GameScene v-if="gameScene"/>
+  <SystemPopup />
 </template>
 
 <script>
@@ -11,10 +12,12 @@ import IntroScene from "@/scene/intro/IntroScene.vue";
 import LobbyScene from "@/scene/lobby/LobbyScene.vue";
 import GameScene from "@/scene/game/GameScene.vue";
 import AppManager from "@/manager/AppManager";
+import SystemPopup from "@/scene/common/SystemPopup.vue";
 
 export default {
   name: 'App',
   components: {
+    SystemPopup,
     GameScene,
     LobbyScene,
     IntroScene
