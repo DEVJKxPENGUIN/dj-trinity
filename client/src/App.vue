@@ -1,5 +1,5 @@
 <template>
-  <div id="overlay" class="overlay"></div>
+  <LoadingScene />
   <div class="topBar"></div>
   <transition name="fade">
     <IntroScene v-if="introScene" @changeScene="changeScene"/>
@@ -23,10 +23,12 @@ import GameScene from "@/scene/game/GameScene.vue";
 import AppManager from "@/manager/AppManager";
 import SystemPopup from "@/scene/common/SystemPopup.vue";
 import {mapState} from "vuex";
+import LoadingScene from "@/scene/common/LoadingScene.vue";
 
 export default {
   name: 'App',
   components: {
+    LoadingScene,
     SystemPopup,
     GameScene,
     LobbyScene,
@@ -51,12 +53,12 @@ export default {
   },
   methods: {
     async init() {
-      this.manager.changeScene('introScene')
+      await this.manager.changeScene('introScene')
       this.introScene = true
     },
-    changeScene(nextScene) {
+    async changeScene(nextScene) {
       this.closeScene()
-      this.manager.changeScene(nextScene)
+      await this.manager.changeScene(nextScene)
 
       if (nextScene === 'introScene') {
         this.introScene = true
@@ -118,25 +120,5 @@ canvas {
 
 #app {
   display: flex;
-}
-
-.anta-regular {
-  font-family: "Anta", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.orbitron-regular {
-  font-family: "Orbitron", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 800;
-  font-style: normal;
-}
-
-.orbitron-thin {
-  font-family: "Orbitron", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-style: normal;
 }
 </style>

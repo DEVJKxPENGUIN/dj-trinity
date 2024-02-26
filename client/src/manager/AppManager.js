@@ -54,7 +54,7 @@ export default class AppManager {
 
     return new Promise(resolve => {
       gsap.to('#overlay', {
-        duration: 2,
+        duration: 0.5,
         opacity: 1,
         ease: "power2.out",
         onComplete: () => {
