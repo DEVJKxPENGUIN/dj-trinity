@@ -27,8 +27,10 @@
 
       <!-- CHECK PASSWORD -->
       <div v-if="this.state === 'checkPassword'" class="flex flex-col w-4/6 orbitron-regular">
-        <div class="flex check-password w-full">
-          <p class="color-desc">WELCOME</p>&nbsp;&nbsp;{{ user.nickname }}!
+        <div class="flex flex-col color-main w-full">
+          <p class="color-desc">[&nbsp;{{ user.nickname }}&nbsp;]</p>
+          <p class="color-desc font-desc orbitron-thin">Enter your password when you're ready to
+            enjoy it</p>
         </div>
 
         <div class="flex flex-row mt-5 mb-5 input-box w-full">
@@ -40,6 +42,40 @@
              :class="['orbitron-thin id-check', passwordCheckMsg ? 'shake': '']">
           {{ passwordCheckMsg }}
         </div>
+      </div>
+
+      <!-- SIGN UP -->
+      <div v-if="this.state === 'signup'" class="flex flex-col w-4/6 orbitron-regular">
+        <div class="flex flex-col color-main w-full">
+          <p class="color-desc">WELCOME TRINITY</p>
+          <p class="color-desc font-desc orbitron-thin">MULTI PLAY RHYTHM GAME, BASED ON
+            BE-MUSIC-SCRIPT</p>
+        </div>
+
+        <div class="flex flex-row mt-5 mb-5 input-box w-full">
+          <label for="signupId" class="input-desc">ID</label>
+          <input class="input ml-5" v-model="signupId" id="signupId" ref="signupId" type="text"
+                 autocomplete="off"
+                 :disabled="isLoading"/>
+        </div>
+        <div class="flex flex-row mt-5 mb-5 input-box w-full">
+          <label for="signupPassword" class="input-desc">PASSWORD</label>
+          <input class="input ml-5" v-model="signupPassword" id="signupPassword"
+                 ref="signupPassword" type="password" autocomplete="off"
+                 :disabled="isLoading"/>
+        </div>
+        <div class="flex flex-row mt-5 mb-5 input-box w-full">
+          <label for="signupPasswordCheck" class="input-desc">CONFIRM</label>
+          <input class="input ml-5" v-model="signupPasswordCheck" id="signupPasswordCheck"
+                 ref="signupPasswordCheck" type="password" autocomplete="off"
+                 placeholder="repeat password again"
+                 :disabled="isLoading"/>
+        </div>
+        <div v-if="signupCheckMsg"
+             :class="['orbitron-thin id-check', signupCheckMsg ? 'shake': '']">
+          {{ signupCheckMsg }}
+        </div>
+
 
       </div>
 
@@ -57,6 +93,7 @@ import * as authenticationManager from "@/manager/authenticationManager";
 
 const INIT = 'init'
 const CHECK_PASSWORD = 'checkPassword'
+const SIGNUP = 'signup'
 export default {
   name: 'IntroSceneLogin',
   components: {Popup},
@@ -71,13 +108,17 @@ export default {
       // js
       idCheckMsg: '',
       passwordCheckMsg: '',
+      signupCheckMsg: '',
       state: INIT,
       isLoading: false,
 
       // view
       id: '',
       password: '',
-      user: {}
+      user: {},
+      signupId: '',
+      signupPassword: '',
+      signupPasswordCheck: ''
 
     }
   },
@@ -106,11 +147,26 @@ export default {
         this.handleCheckPassword()
         return
       }
-
+      if (this.state === SIGNUP) {
+        this.handleSignup()
+      }
     },
     handleArrowUp() {
       if (this.state === INIT) {
         this.$refs.id.focus()
+        return
+      }
+      if (this.state === SIGNUP) {
+        const active = document.activeElement
+        if (this.$refs.signupId === active) {
+          this.$refs.signupId.focus()
+        } else if (this.$refs.signupPassword === active) {
+          this.$refs.signupId.focus()
+        } else if (this.$refs.signupPasswordCheck === active) {
+          this.$refs.signupPassword.focus()
+        } else {
+          this.$refs.signupId.focus()
+        }
         return
       }
     },
@@ -119,13 +175,25 @@ export default {
         this.$refs.newbie.focus()
         return
       }
+      if (this.state === SIGNUP) {
+        const active = document.activeElement
+        if (this.$refs.signupId === active) {
+          this.$refs.signupPassword.focus()
+        } else if (this.$refs.signupPassword === active) {
+          this.$refs.signupPasswordCheck.focus()
+        } else if (this.$refs.signupPasswordCheck === active) {
+          this.$refs.signupPasswordCheck.focus()
+        } else {
+          this.$refs.signupPasswordCheck.focus()
+        }
+        return
+      }
     },
     handleEsc() {
       if (this.state === INIT) {
         this.$emit('close')
         return
       }
-
       if (this.state === CHECK_PASSWORD) {
         this.state = INIT
         this.id = ''
@@ -134,22 +202,41 @@ export default {
         this.$nextTick(() => {
           this.$refs.id.focus()
         })
+        return
       }
-
+      if (this.state === SIGNUP) {
+        this.state = INIT
+        this.id = ''
+        this.signupId = ''
+        this.signupPassword = ''
+        this.signupPasswordCheck = ''
+        this.$nextTick(() => {
+          this.$refs.id.focus()
+        })
+      }
     },
     handleInitMenuSelect() {
-      if (this.$refs.id === document.activeElement) {
+      const active = document.activeElement
+      if (this.$refs.id === active) {
         this.checkUserId(this.switchToPassword)
         return
       }
-      if (this.$refs.newbie === document.activeElement) {
+      if (this.$refs.newbie === active) {
         this.switchToSignup()
         return
       }
     },
     handleCheckPassword() {
-      if (this.$refs.password === document.activeElement) {
+      const active = document.activeElement
+      if (this.$refs.password === active) {
         this.checkPassword(this.switchToEnterChannel)
+      }
+    },
+    handleSignup() {
+      const active = document.activeElement
+      if (this.$refs.signupId === active || this.$refs.signupPassword === active
+          || this.$refs.signupPasswordCheck === active) {
+        this.signup(this.signupSuccess)
       }
     },
     async checkUserId(callback) {
@@ -200,17 +287,57 @@ export default {
         })
       }
     },
+    async signup(callback) {
+      const active = document.activeElement
+      try {
+        this.isLoading = true
+        if (!this.signupId) {
+          throw new Error('id is empty')
+        }
+        if (!this.signupPassword) {
+          throw new Error('Password is empty')
+        }
+        if (!this.signupPasswordCheck) {
+          throw new Error('confirm is empty')
+        }
+        await authenticationManager.signup({
+          id: this.signupId,
+          password: this.signupPassword,
+          passwordCheck: this.signupPasswordCheck
+        })
+        callback()
+      } catch (e) {
+        this.signupCheckMsg = ''
+        this.$nextTick(() => {
+          this.signupCheckMsg = e.message.toUpperCase()
+        })
+      } finally {
+        this.isLoading = false
+        this.$nextTick(() => {
+          if (active) {
+            active.focus()
+          }
+        })
+      }
+
+    },
+    signupSuccess() {
+      this.signupCheckMsg = ''
+      alert('signup success! + todo')
+    },
     switchToPassword() {
       this.idCheckMsg = ''
       this.state = CHECK_PASSWORD
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
-
     },
     switchToSignup() {
       this.idCheckMsg = ''
-
+      this.state = SIGNUP
+      this.$nextTick(() => {
+        this.$refs.signupId.focus()
+      })
     },
     switchToEnterChannel() {
       this.passwordCheckMsg = ''
@@ -234,10 +361,17 @@ export default {
   color: white;
 }
 
+.color-main {
+  color: rgba(255, 255, 255, .9);
+}
+
 .color-desc {
   color: rgba(255, 255, 255, 0.6);
 }
 
+.font-desc {
+  font-size: 10px;
+}
 
 .input-box {
   color: rgba(255, 255, 255, 0.3);
@@ -269,6 +403,14 @@ input {
   border: none;
   color: rgba(255, 255, 255, 0.6);
   outline: none;
+}
+
+input::placeholder {
+  text-align: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 @keyframes flicker {
@@ -303,7 +445,4 @@ input {
   animation: shake 0.1s ease;
 }
 
-.check-password {
-  color: rgba(255, 255, 255, .9);
-}
 </style>

@@ -108,7 +108,6 @@ export default {
       if(this.state === LOGIN) {
 
       }
-
     },
     handleArrowDown() {
       if (this.state === MENU_SELECT) {
