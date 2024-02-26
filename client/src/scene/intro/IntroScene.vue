@@ -145,8 +145,7 @@ export default {
 
     },
     handleLoginSuccess() {
-      // todo 바로 채널 진입
-
+      this.$emit('changeScene', 'lobbyScene')
     },
     closeLoginPopup() {
       this.switchToMenuSelect()

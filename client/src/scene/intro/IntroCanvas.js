@@ -67,7 +67,7 @@ export default class IntroCanvas {
   }
 
   destroy() {
-    // todo
+    gsap.globalTimeline.clear()
   }
 
 }

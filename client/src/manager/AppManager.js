@@ -1,6 +1,8 @@
-import {Color, PerspectiveCamera, Scene, WebGLRenderer} from "three";
+import {Color, Mesh, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import settings from "../options/canvas/settings.json";
 import IntroCanvas from "@/scene/intro/IntroCanvas";
+import {gsap} from 'gsap'
+import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 
 export default class AppManager {
 
@@ -10,7 +12,6 @@ export default class AppManager {
 
   init() {
     this.scene = new Scene()
-    console.log(settings.common.background.color)
     this.scene.background = new Color(settings.common.background.color)
     this.camera = new PerspectiveCamera(45,
         window.innerWidth / window.innerHeight, 0.1, 500)
@@ -32,22 +33,77 @@ export default class AppManager {
     this.draw()
   }
 
-  changeScene(scene) {
-    this.removeScene()
-    if (scene === 'intro') {
+  async changeScene(scene) {
+    await this.removeScene()
+    console.log('remove finished!!!')
+    if (scene === 'introScene') {
       this.currentScene = new IntroCanvas(this)
-      this.currentScene.init()
-      return
+    } else if (scene === 'lobbyScene') {
+      this.currentScene = new LobbyCanvas(this)
     }
 
+    if (this.currentScene) {
+      this.currentScene.init()
+    }
   }
 
-  removeScene() {
+  async removeScene() {
     if (!this.currentScene) {
+      return Promise.resolve()
+    }
+
+    return new Promise(resolve => {
+      gsap.to('#overlay', {
+        duration: 2,
+        opacity: 1,
+        ease: "power2.out",
+        onComplete: () => {
+          // canvas 이외에 js 관련 세팅한 것이 있다면 해제한다.
+          this.currentScene.destroy()
+          this.disposeAll()
+          this.currentScene = null;
+          resolve()
+        }
+      })
+    })
+  }
+
+  disposeAll() {
+    while (this.scene.children.length > 0) {
+      const object = this.scene.children[0];
+      this.disposeTraversal(object);
+      this.scene.remove(object);
+    }
+  }
+
+  disposeTraversal(node) {
+    if (!node) {
       return
     }
 
-    this.currentScene.destroy()
+    for (let i = node.children.length - 1; i >= 0; i--) {
+      const child = node.children[i];
+      this.disposeTraversal(child);
+      this.disposeSingle(child)
+    }
+  }
+
+  disposeSingle(node) {
+    if (node instanceof Mesh) {
+      if (node.geometry) {
+        node.geometry.dispose();
+      }
+      if (node.material) {
+        if (Array.isArray(node.material)) {
+          node.material.forEach(material => material.dispose());
+        } else {
+          node.material.dispose();
+        }
+        if (node.material.map) {
+          node.material.map.dispose();
+        } // 텍스처 해제
+      }
+    }
   }
 
   draw() {
