@@ -1,4 +1,5 @@
 <template>
+  <div class="topBar"></div>
   <IntroScene v-if="introScene"/>
   <LobbyScene v-if="lobbyScene"/>
   <GameScene v-if="gameScene"/>
@@ -52,6 +53,13 @@ body, html {
   margin: 0;
   padding: 0;
   overflow: hidden;
+}
+
+.topBar {
+  position: fixed;
+  height: 40px;
+  width: 100%;
+  -webkit-app-region: drag;
 }
 
 canvas, #app {
