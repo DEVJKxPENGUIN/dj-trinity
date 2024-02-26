@@ -140,8 +140,9 @@ export default {
 
     },
     handleLoginSuccess() {
-      // todo
-      alert('로그인 성공! 채널 진입')
+      // todo 바로 채널 진입
+
+
 
     },
     closeLoginPopup() {

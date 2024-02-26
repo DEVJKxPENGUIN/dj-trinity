@@ -328,9 +328,9 @@ export default {
     signupSuccess() {
       this.signupCheckMsg = ''
       this.showSystemPopup({
-        title: '제목',
-        contents: '내용',
-        button: '하하',
+        title: 'Congratulations on joining trinity.',
+        contents: 'Log in with your account and enjoy the bms rhythm game world.',
+        button: 'GO TO LOGIN',
         callback: this.handleEsc
       })
     },

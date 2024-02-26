@@ -22,7 +22,6 @@ export default {
     GameScene,
     LobbyScene,
     IntroScene
-
   },
   computed: {
     ...mapState(['isSystemPopup'])
