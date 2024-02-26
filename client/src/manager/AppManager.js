@@ -43,7 +43,12 @@ export default class AppManager {
     }
 
     if (this.currentScene) {
-      this.currentScene.init()
+      await this.currentScene.init()
+      gsap.to('#overlay', {
+        duration: 0.5,
+        opacity: 0,
+        ease: "power2.in",
+      })
     }
   }
 

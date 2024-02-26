@@ -1,12 +1,16 @@
-
 export default class LobbyCanvas {
 
   constructor(ctx) {
     this.ctx = ctx
   }
 
-  init() {
-
+  async init() {
+    // todo!!!
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve()
+      }, 3000)
+    })
   }
 
 }

@@ -14,7 +14,7 @@ export default class IntroCanvas {
     this.ctx = ctx
   }
 
-  init() {
+  async init() {
     this.background()
     this.light()
   }
