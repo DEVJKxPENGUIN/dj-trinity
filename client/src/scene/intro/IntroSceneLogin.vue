@@ -90,6 +90,7 @@
 import Popup from "@/scene/common/popup.vue";
 import * as apiHelper from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
+import {mapActions, mapState} from "vuex";
 
 const INIT = 'init'
 const CHECK_PASSWORD = 'checkPassword'
@@ -97,6 +98,9 @@ const SIGNUP = 'signup'
 export default {
   name: 'IntroSceneLogin',
   components: {Popup},
+  computed: {
+    ...mapState(['isLoading', 'isSystemPopup'])
+  },
   created() {
     window.addEventListener('keydown', this.keyboard)
     this.$nextTick(() => {
@@ -110,7 +114,6 @@ export default {
       passwordCheckMsg: '',
       signupCheckMsg: '',
       state: INIT,
-      isLoading: false,
 
       // view
       id: '',
@@ -123,8 +126,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     keyboard(e) {
-      if (this.isLoading) {
+      if (this.isLoading || this.isSystemPopup) {
         return
       }
 
@@ -241,7 +245,7 @@ export default {
     },
     async checkUserId(callback) {
       try {
-        this.isLoading = true
+        this.showLoading()
         if (!this.id) {
           throw new Error('ID is empty')
         }
@@ -254,7 +258,7 @@ export default {
           this.idCheckMsg = e.message.toUpperCase()
         })
       } finally {
-        this.isLoading = false
+        this.hideLoading()
         this.$nextTick(() => {
           if (this.$refs.id) {
             this.$refs.id.focus()
@@ -264,7 +268,7 @@ export default {
     },
     async checkPassword(callback) {
       try {
-        this.isLoading = true
+        this.showLoading()
         if (!this.password) {
           throw new Error('Password is empty')
         }
@@ -279,7 +283,7 @@ export default {
           this.passwordCheckMsg = e.message.toUpperCase()
         })
       } finally {
-        this.isLoading = false
+        this.hideLoading()
         this.$nextTick(() => {
           if (this.$refs.password) {
             this.$refs.password.focus()
@@ -290,7 +294,7 @@ export default {
     async signup(callback) {
       const active = document.activeElement
       try {
-        this.isLoading = true
+        this.showLoading()
         if (!this.signupId) {
           throw new Error('id is empty')
         }
@@ -312,7 +316,7 @@ export default {
           this.signupCheckMsg = e.message.toUpperCase()
         })
       } finally {
-        this.isLoading = false
+        this.hideLoading()
         this.$nextTick(() => {
           if (active) {
             active.focus()
@@ -323,7 +327,12 @@ export default {
     },
     signupSuccess() {
       this.signupCheckMsg = ''
-      alert('signup success! + todo')
+      this.showSystemPopup({
+        title: '제목',
+        contents: '내용',
+        button: '하하',
+        callback: this.handleEsc
+      })
     },
     switchToPassword() {
       this.idCheckMsg = ''

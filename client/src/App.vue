@@ -3,7 +3,7 @@
   <IntroScene v-if="introScene"/>
   <LobbyScene v-if="lobbyScene"/>
   <GameScene v-if="gameScene"/>
-  <SystemPopup />
+  <SystemPopup v-if="isSystemPopup" class="z-10" />
 </template>
 
 <script>
@@ -13,6 +13,7 @@ import LobbyScene from "@/scene/lobby/LobbyScene.vue";
 import GameScene from "@/scene/game/GameScene.vue";
 import AppManager from "@/manager/AppManager";
 import SystemPopup from "@/scene/common/SystemPopup.vue";
+import {mapState} from "vuex";
 
 export default {
   name: 'App',
@@ -22,6 +23,9 @@ export default {
     LobbyScene,
     IntroScene
 
+  },
+  computed: {
+    ...mapState(['isSystemPopup'])
   },
   created() {
     this.init()

@@ -3,16 +3,16 @@
     <div class="system-popup sm:w-128 h-fit ml-10 mr-10 drop-shadow-2xl shadow-black backdrop-blur">
       <!-- title -->
       <div class="text-white m-5 orbitron-regular text-lg">
-        {{ title }}
+        {{ systemPopupTitle }}
       </div>
       <div class="w-full h-0.5 ml-5 mr-5 line opacity-20"/>
       <div class="text-white opacity-50 m-5 orbitron-thin text-sm">
-        {{ contents }}
+        {{ systemPopupContent }}
       </div>
 
       <div class="btn h-10 m-5 text-white text-center justify-center orbitron-regular text-lg">
         <div class="flicker">
-          {{ button }}
+          {{ systemPopupButton }}
         </div>
       </div>
 
@@ -22,21 +22,29 @@
 </template>
 
 <script>
+import {mapActions, mapState} from "vuex";
+import {_systemPopupCallback} from "@/store/store";
+
 export default {
   name: "SystemPopup",
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    contents: {
-      type: String,
-      default: ''
-    },
-    button: {
-      type: String,
-      default: ''
+  computed: {
+    ...mapState(
+        ['systemPopupTitle', 'systemPopupContent', 'systemPopupButton'])
+  },
+  created() {
+    window.addEventListener('keydown', this.handleKeydown)
+  },
+  methods: {
+    ...mapActions(['hideSystemPopup']),
+    handleKeydown(e) {
+      if (e.key === 'Enter') {
+        this.hideSystemPopup()
+        _systemPopupCallback()
+      }
     }
+  },
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.handleKeydown)
   }
 }
 </script>
@@ -73,6 +81,4 @@ export default {
   linear-gradient(#000 0 0) content-box;
   transition: .1s;
 }
-
-
 </style>

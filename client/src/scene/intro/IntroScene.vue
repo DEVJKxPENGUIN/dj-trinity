@@ -44,6 +44,7 @@
 <script>
 
 import IntroSceneLogin from "@/scene/intro/IntroSceneLogin.vue";
+import {mapActions, mapState} from "vuex";
 
 const PRESS_ENTER = 'pressEnter'
 const MENU_SELECT = 'menuSelect'
@@ -51,6 +52,9 @@ const LOGIN = 'LOGIN'
 export default {
   name: 'App',
   components: {IntroSceneLogin},
+  computed: {
+    ...mapState(['isLoading', 'isSystemPopup'])
+  },
   created() {
     this.init()
   },
@@ -75,10 +79,15 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     async init() {
       window.addEventListener('keydown', this.keyboard)
     },
     keyboard(e) {
+      if (this.isLoading || this.isSystemPopup) {
+        return
+      }
+
       if (e.key === 'ArrowUp') {
         this.handleArrowUp()
       } else if (e.key === 'ArrowDown') {
