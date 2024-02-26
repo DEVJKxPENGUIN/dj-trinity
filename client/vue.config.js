@@ -6,4 +6,7 @@ module.exports = defineConfig({
     liveReload: true
   },
   lintOnSave: false,
+  configureWebpack: {
+    target: 'electron-renderer'
+  }
 })

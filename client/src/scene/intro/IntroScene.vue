@@ -36,7 +36,8 @@
       </div>
     </div>
     <transition name="slide-fade">
-      <IntroSceneLogin v-if="showLogin" @close="closeLoginPopup" @loginSuccess="handleLoginSuccess" />
+      <IntroSceneLogin v-if="showLogin" @close="closeLoginPopup"
+                       @loginSuccess="handleLoginSuccess"/>
     </transition>
   </div>
 </template>
@@ -114,7 +115,7 @@ export default {
         this.selected = this.selected === 0 ? this.selected : this.selected - 1
         return
       }
-      if(this.state === LOGIN) {
+      if (this.state === LOGIN) {
 
       }
     },
@@ -138,11 +139,13 @@ export default {
         return
       }
 
+      if (selected === "QUIT") {
+        window.close()
+      }
+
     },
     handleLoginSuccess() {
       // todo 바로 채널 진입
-
-
 
     },
     closeLoginPopup() {
