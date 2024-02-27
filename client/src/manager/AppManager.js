@@ -31,13 +31,13 @@ export default class AppManager {
     this.draw()
   }
 
-  async initScene(scene) {
-    this.currentScene = scene
-    this.currentScene.init(this)
+  async initCanvas(canvas) {
+    this.currentCanvas = canvas
+    this.currentCanvas.init(this)
   }
 
   async removeScene() {
-    if (!this.currentScene) {
+    if (!this.currentCanvas) {
       return Promise.resolve()
     }
 
@@ -48,9 +48,9 @@ export default class AppManager {
         ease: "power2.out",
         onComplete: () => {
           // canvas 이외에 js 관련 세팅한 것이 있다면 해제한다.
-          this.currentScene.destroy()
+          this.currentCanvas.destroy()
           this.disposeAll()
-          this.currentScene = null;
+          this.currentCanvas = null;
           resolve()
         }
       })

@@ -8,6 +8,8 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
+import {gsap} from "gsap";
+import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 
 export default {
   name: 'LobbyScene',
@@ -28,7 +30,15 @@ export default {
   methods: {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     async init() {
+      await this.manager.initCanvas(new LobbyCanvas())
       window.addEventListener('keydown', this.keyboard)
+      setTimeout(() => {
+        gsap.to('#overlay', {
+          duration: 0.5,
+          opacity: 0,
+          ease: "power2.in",
+        })
+      }, 1000)
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {
