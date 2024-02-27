@@ -46,15 +46,20 @@
 
 import IntroSceneLogin from "@/scene/intro/IntroSceneLogin.vue";
 import {mapActions, mapState} from "vuex";
+import IntroCanvas from "@/scene/intro/IntroCanvas";
+import {gsap} from 'gsap'
 
 const PRESS_ENTER = 'pressEnter'
 const MENU_SELECT = 'menuSelect'
 const LOGIN = 'LOGIN'
 export default {
-  name: 'App',
+  name: 'IntroScene',
   components: {IntroSceneLogin},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
+  },
+  props: {
+    manager: null
   },
   created() {
     this.init()
@@ -83,6 +88,15 @@ export default {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     async init() {
       window.addEventListener('keydown', this.keyboard)
+      await this.manager.initScene(new IntroCanvas())
+      setTimeout(() => {
+        gsap.to('#overlay', {
+          duration: 0.5,
+          opacity: 0,
+          ease: "power2.in",
+        })
+      }, 1000)
+
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {

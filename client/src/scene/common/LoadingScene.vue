@@ -18,6 +18,10 @@ export default {
 </script>
 
 <style scoped>
+.overlay {
+  opacity: 1;
+}
+
 .sk-folding-cube {
   position: absolute;
   top: 48%;

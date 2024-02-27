@@ -1,18 +1,18 @@
 <template>
-  <LoadingScene />
   <div class="topBar"></div>
   <transition name="fade">
-    <IntroScene v-if="introScene" @changeScene="changeScene"/>
+    <IntroScene v-if="introScene" :manager="manager" @changeScene="changeScene"/>
   </transition>
   <transition name="fade">
-    <LobbyScene v-if="lobbyScene"/>
+    <LobbyScene v-if="lobbyScene" :manager="manager"/>
   </transition>
   <transition name="fade">
-    <GameScene v-if="gameScene"/>
+    <GameScene v-if="gameScene" :manager="manager"/>
   </transition>
   <transition name="slide-fade">
     <SystemPopup v-if="isSystemPopup" class="z-10"/>
   </transition>
+  <LoadingScene />
 </template>
 
 <script>
@@ -53,12 +53,11 @@ export default {
   },
   methods: {
     async init() {
-      await this.manager.changeScene('introScene')
-      this.introScene = true
+      await this.changeScene('introScene')
     },
     async changeScene(nextScene) {
       this.closeScene()
-      await this.manager.changeScene(nextScene)
+      await this.manager.removeScene()
 
       if (nextScene === 'introScene') {
         this.introScene = true

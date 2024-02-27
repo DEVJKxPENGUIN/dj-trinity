@@ -1,8 +1,6 @@
 import {Color, Mesh, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import settings from "../options/canvas/settings.json";
-import IntroCanvas from "@/scene/intro/IntroCanvas";
 import {gsap} from 'gsap'
-import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 
 export default class AppManager {
 
@@ -33,23 +31,9 @@ export default class AppManager {
     this.draw()
   }
 
-  async changeScene(scene) {
-    await this.removeScene()
-    console.log('remove finished!!!')
-    if (scene === 'introScene') {
-      this.currentScene = new IntroCanvas(this)
-    } else if (scene === 'lobbyScene') {
-      this.currentScene = new LobbyCanvas(this)
-    }
-
-    if (this.currentScene) {
-      await this.currentScene.init()
-      gsap.to('#overlay', {
-        duration: 0.5,
-        opacity: 0,
-        ease: "power2.in",
-      })
-    }
+  async initScene(scene) {
+    this.currentScene = scene
+    this.currentScene.init(this)
   }
 
   async removeScene() {
