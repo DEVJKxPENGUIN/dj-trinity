@@ -72,7 +72,7 @@ echo "${DOCKER_NAME} : running new container..."
 volumeOpt="-v `pwd`/docker/mysql/data:/var/lib/mysql"
 initializeOpt=" -v `pwd`/docker/mysql/init:/docker-entrypoint-initdb.d"
 if [ "$initialize" = true ]; then
-  volumeOpt="$volumOpt $initializeOpt"
+  volumeOpt="$volumeOpt $initializeOpt"
 fi
 docker run --name $DOCKER_NAME -p $PORT:3306 $volumeOpt -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -d mysql:8
 
