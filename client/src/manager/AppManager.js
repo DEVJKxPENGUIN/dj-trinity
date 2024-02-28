@@ -27,6 +27,10 @@ export default class AppManager {
       this.renderer.setSize(window.innerWidth, window.innerHeight)
     }, false)
 
+    // fixme only for debugs
+    // this.controls = new OrbitControls(this.camera, this.renderer.domElement)
+    // this.controls.update()
+
     this.draw = this.draw.bind(this)
     this.draw()
   }
@@ -103,6 +107,9 @@ export default class AppManager {
 
   draw() {
     requestAnimationFrame(this.draw)
+    if(this.controls) {
+      this.controls.update()
+    }
     this.renderer.render(this.scene, this.camera)
   }
 

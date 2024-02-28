@@ -53,8 +53,8 @@ export default {
   },
   methods: {
     async init() {
-      // await this.changeScene('introScene') // default
-      await this.changeScene('lobbyScene') // todo 원복
+      await this.changeScene('introScene') // default
+      // await this.changeScene('lobbyScene') // todo 원복
     },
     async changeScene(nextScene) {
       this.closeScene()

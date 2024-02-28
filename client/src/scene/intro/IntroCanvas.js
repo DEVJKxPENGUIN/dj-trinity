@@ -22,7 +22,7 @@ export default class IntroCanvas {
 
   background() {
     const textureLoader = new TextureLoader()
-    const texture = textureLoader.load('assets/background_backup.webp')
+    const texture = textureLoader.load('assets/background.webp')
     const geometry = new PlaneGeometry(14.6, 10)
     const material = new MeshLambertMaterial({
       map: texture,
