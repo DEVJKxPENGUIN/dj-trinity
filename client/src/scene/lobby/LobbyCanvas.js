@@ -1,6 +1,9 @@
+import {gsap} from "gsap";
+
 export default class LobbyCanvas {
 
-  constructor() {
+  constructor(vue) {
+    this.vue = vue
   }
 
   async init(ctx) {
@@ -11,11 +14,14 @@ export default class LobbyCanvas {
   }
 
   background() {
-
+    // todo
   }
 
   light() {
-
+    // todo
   }
 
+  destroy() {
+    gsap.globalTimeline.clear()
+  }
 }

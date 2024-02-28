@@ -87,7 +87,7 @@ export default {
   methods: {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     async init() {
-      await this.manager.initCanvas(new IntroCanvas())
+      await this.manager.initScene(new IntroCanvas(), null)
       window.addEventListener('keydown', this.keyboard)
       setTimeout(() => {
         gsap.to('#overlay', {

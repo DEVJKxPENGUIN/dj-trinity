@@ -1,8 +1,11 @@
 <template>
   <div class="lobby flex flex-col w-full h-full">
-    <!-- TODO!!! -->
-    <div class="justify-center items-center text-white">
+    <div class="top-bar h-24">
+
     </div>
+    <div class="flex justify-center items-center text-white">
+    </div>
+    <div class="h-24" />
   </div>
 </template>
 
@@ -10,11 +13,17 @@
 import {mapActions, mapState} from "vuex";
 import {gsap} from "gsap";
 import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
+import LobbySocket from "@/scene/lobby/LobbySocket";
+import {get} from "@/manager/apiManager";
 
+const STANDBY = 'standby'
 export default {
   name: 'LobbyScene',
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
+  },
+  props: {
+    manager: null
   },
   created() {
     this.init()
@@ -23,14 +32,20 @@ export default {
     return {
       // js
 
-      //view
+      // view
+      channelId: '',
+      channelUsers: [],
+      channelChats: []
 
     }
   },
   methods: {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
     async init() {
-      await this.manager.initCanvas(new LobbyCanvas())
+      await this.manager.initScene(
+          new LobbyCanvas(this),
+          new LobbySocket(this)
+      )
       window.addEventListener('keydown', this.keyboard)
       setTimeout(() => {
         gsap.to('#overlay', {
@@ -66,6 +81,16 @@ export default {
     handleEsc() {
 
     },
+    async enterChannel(channelInfo) {
+      this.channelId = channelInfo['channelId']
+      await this.updateChannel(channelInfo)
+    },
+    async updateChannel(channelInfo) {
+      this.channelUsers = await get('/users', {userIds: channelInfo['users'].join(',')})
+    },
+    async updateChatBox(receivedChat) {
+      this.channelChats.push(receivedChat)
+    }
   },
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)
@@ -75,5 +100,10 @@ export default {
 </script>
 
 <style scoped>
+.top-bar {
+  background: linear-gradient(to bottom, black, rgba(0, 0, 0, 0));
 
+  /* fixme */
+  border-bottom: 1px white;
+}
 </style>

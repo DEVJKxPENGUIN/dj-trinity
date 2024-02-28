@@ -10,7 +10,8 @@ import {gsap} from 'gsap'
 
 export default class IntroCanvas {
 
-  constructor() {
+  constructor(vue) {
+    this.vue = vue
   }
 
   async init(ctx) {
@@ -69,5 +70,4 @@ export default class IntroCanvas {
   destroy() {
     gsap.globalTimeline.clear()
   }
-
 }
