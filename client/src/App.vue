@@ -12,7 +12,7 @@
   <transition name="slide-fade">
     <SystemPopup v-if="isSystemPopup" class="z-10"/>
   </transition>
-  <LoadingScene />
+  <LoadingScene/>
 </template>
 
 <script>
@@ -55,6 +55,8 @@ export default {
     async init() {
       await this.changeScene('introScene') // default
       // await this.changeScene('lobbyScene') // todo 원복
+
+      window.document.addEventListener('keydown', this.keyboard)
     },
     async changeScene(nextScene) {
       this.closeScene()
@@ -74,6 +76,24 @@ export default {
       this.lobbyScene = false
       this.gameScene = false
     },
+    keyboard(e) {
+      if (e.key === 'Enter' && (e.altKey || e.metaKey)) {
+        e.stopPropagation()
+        this.toggleScreen()
+      }
+    },
+    toggleScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen()
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen()
+        }
+      }
+    }
+  },
+  beforeUnmount() {
+    window.document.addEventListener('keydown', this.keyboard)
   }
 }
 </script>
