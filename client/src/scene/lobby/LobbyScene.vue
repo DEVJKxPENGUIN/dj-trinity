@@ -7,14 +7,14 @@
       </div>
       <div class="flex flex-1 justify-center items-center">
       </div>
-      <div class="flex h-24" />
+      <div class="flex h-24"/>
     </div>
 
     <div class="lobby-row flex flex-row w-full h-full p-2">
       <div class="flex flex-col sm:w-72">
-        <span class="anta-regular text-sm">{{channelId.toUpperCase()}}</span>
-        <LobbyProfile :user="user" class="mt-1" />
-        <LobbyUsers :users="channelUsers" class="mt-1" />
+        <span class="anta-regular text-sm">{{ channelId.toUpperCase() }}</span>
+        <LobbyProfile :user="user" class="mt-1"/>
+        <LobbyUsers :users="channelUsers" class="mt-1"/>
       </div>
     </div>
   </div>
@@ -23,7 +23,6 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
-import {gsap} from "gsap";
 import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 import LobbySocket from "@/scene/lobby/LobbySocket";
 import {get} from "@/manager/apiManager";
@@ -57,7 +56,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
+    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange']),
     async init() {
       this.user = await authenticationManager.userInfo()
       await this.manager.initScene(
@@ -65,13 +64,9 @@ export default {
           new LobbySocket(this)
       )
       window.addEventListener('keydown', this.keyboard)
-      setTimeout(() => {
-        gsap.to('#overlay', {
-          duration: 0.5,
-          opacity: 0,
-          ease: "power2.in",
-        })
-      }, 0)
+      setTimeout(async () => {
+        await this.hideSceneChange()
+      }, 1000)
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {
@@ -107,10 +102,70 @@ export default {
       this.channelUsers = (await get('/users', {userIds: channelInfo['users'].join(',')}))
       .filter(user => user.id !== this.user.id)
 
+      // debug
+      this.channelUsers = [
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
+        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0}
+      ]
+
     },
     async updateChatBox(receivedChat) {
       this.channelChats.push(receivedChat)
-    }
+    },
   },
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)

@@ -19,7 +19,7 @@ export default {
 
 <style scoped>
 .overlay {
-  opacity: 1;
+  opacity: 0;
 }
 
 .sk-folding-cube {

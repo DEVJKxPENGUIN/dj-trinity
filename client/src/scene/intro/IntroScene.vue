@@ -85,16 +85,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
+    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange']),
     async init() {
       await this.manager.initScene(new IntroCanvas(), null)
       window.addEventListener('keydown', this.keyboard)
-      setTimeout(() => {
-        gsap.to('#overlay', {
-          duration: 0.5,
-          opacity: 0,
-          ease: "power2.in",
-        })
+      setTimeout(async () => {
+        await this.hideSceneChange()
       }, 1000)
 
     },

@@ -12,7 +12,7 @@
   <transition name="slide-fade">
     <SystemPopup v-if="isSystemPopup" class="z-10"/>
   </transition>
-  <LoadingScene/>
+  <LoadingScene v-if="isSceneChanging"/>
 </template>
 
 <script>
@@ -35,7 +35,7 @@ export default {
     IntroScene
   },
   computed: {
-    ...mapState(['isSystemPopup'])
+    ...mapState(['isSystemPopup', 'isSceneChanging'])
   },
   created() {
     this.init()

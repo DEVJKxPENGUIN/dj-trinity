@@ -1,6 +1,6 @@
 import {Color, Mesh, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import settings from "../options/canvas/settings.json";
-import {gsap} from 'gsap'
+import store from "@/store/store"
 
 export default class AppManager {
 
@@ -47,19 +47,13 @@ export default class AppManager {
       return Promise.resolve()
     }
 
+    await store.dispatch('showSceneChange')
     return new Promise(resolve => {
-      gsap.to('#overlay', {
-        duration: 0.5,
-        opacity: 1,
-        ease: "power2.out",
-        onComplete: () => {
-          // canvas 이외에 js 관련 세팅한 것이 있다면 해제한다.
-          this.canvas.destroy()
-          this.disposeAll()
-          this.canvas = null;
-          resolve()
-        }
-      })
+      // canvas 이외에 js 관련 세팅한 것이 있다면 해제한다.
+      this.canvas.destroy()
+      this.disposeAll()
+      this.canvas = null;
+      resolve()
     })
   }
 

@@ -9,13 +9,6 @@
         Lv&nbsp;{{ user.level ? user.level : 0 }}
       </div>
     </div>
-
-    <!--    <div>-->
-    <!--      <img :src="user.profile" />-->
-    <!--    </div>-->
-    <!--    <div>-->
-    <!--      {{ user.nickname }}-->
-    <!--    </div>-->
   </div>
 </template>
 

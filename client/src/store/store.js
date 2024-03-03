@@ -1,6 +1,10 @@
 import {createStore} from 'vuex';
+import {gsap} from "gsap";
+import {_vue_app} from "@/main";
 
-export var _systemPopupCallback = () => {console.log('stored callback')}
+export var _systemPopupCallback = () => {
+  console.log('stored callback')
+}
 
 export default createStore({
   state() {
@@ -13,6 +17,7 @@ export default createStore({
 
       // loading
       isLoading: false,
+      isSceneChanging: true,
     };
   },
   mutations: {
@@ -34,6 +39,12 @@ export default createStore({
     },
     hideLoading(state) {
       state.isLoading = false
+    },
+    showSceneChange(state) {
+      state.isSceneChanging = true
+    },
+    hideSceneChange(state) {
+      state.isSceneChanging = false
     }
   },
   actions: {
@@ -48,6 +59,34 @@ export default createStore({
     },
     hideLoading(context) {
       context.commit('hideLoading');
+    },
+    async showSceneChange(context) {
+      return new Promise(resolve => {
+        context.commit('showSceneChange')
+        _vue_app.$nextTick(() => {
+          gsap.to('#overlay', {
+            duration: 0.5,
+            opacity: 1,
+            ease: "power2.out",
+            onComplete: resolve
+          })
+        })
+      })
+    },
+    async hideSceneChange(context) {
+      return new Promise(resolve => {
+        gsap.to('#overlay', {
+          duration: 0.5,
+          opacity: 0,
+          ease: "power2.in",
+          onComplete: () => {
+            context.commit('hideSceneChange')
+            _vue_app.$nextTick(() => {
+              resolve()
+            })
+          }
+        })
+      })
     }
   }
 });
