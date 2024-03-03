@@ -75,11 +75,7 @@
              :class="['orbitron-thin id-check', signupCheckMsg ? 'shake': '']">
           {{ signupCheckMsg }}
         </div>
-
-
       </div>
-
-
     </template>
 
   </Popup>
@@ -249,7 +245,7 @@ export default {
         if (!this.id) {
           throw new Error('ID is empty')
         }
-        const result = await apiHelper.get('/user/' + this.id)
+        const result = await apiHelper.get('/auth/user/' + this.id)
         this.user = result
         callback()
       } catch (e) {
