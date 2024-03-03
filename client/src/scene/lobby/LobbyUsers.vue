@@ -1,11 +1,11 @@
 <template>
   <div
-      class="users flex flex-1 flex-col text-xl w-full h-full backdrop-blur">
-    <div class="top-bar h-6 anta-regular text-sm">
+      class="users flex flex-1 flex-col text-xl w-full backdrop-blur">
+    <div class="top-bar flex flex-row h-6 anta-regular text-sm">
       ONLINE
     </div>
-    <div class="list h-full">
-      <div class="item flex w-full h-12 items-center overflow-hidden" v-for="(user) in users" v-bind:key="user.id">
+    <div class="list flex flex-1 flex-col">
+      <div v-for="(user) in users"  class="item flex w-full h-12 items-center" v-bind:key="user.id">
         <div class="avatar w-10 h-10 m-2">
           <img :src="user.profile"/>
         </div>
@@ -33,9 +33,9 @@ export default {
 <style scoped>
 .users {
   background-color: rgba(0, 0, 0, 0.4);
+  overflow-y: hidden;
 }
 .list {
-  opacity: 60%;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -46,29 +46,10 @@ export default {
   border-radius: 50%;
 }
 .item {
+  opacity: 60%;
 }
 
 .nickname-detail {
   font-size: 9px;
 }
-
-/*
-.list::-webkit-scrollbar-track
-{
-  -webkit-box-shadow: inset 0 0 3px rgba(255, 247, 0, 0.3);
-  background-color: #0015ff;
-}
-
-.list::-webkit-scrollbar
-{
-  width: 2px;
-  background-color: #ff0000;
-}
-
-.list::-webkit-scrollbar-thumb
-{
-  background-color: #000000;
-  outline: 2px solid #ffffff;
-}
- */
 </style>

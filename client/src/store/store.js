@@ -81,9 +81,7 @@ export default createStore({
           ease: "power2.in",
           onComplete: () => {
             context.commit('hideSceneChange')
-            _vue_app.$nextTick(() => {
-              resolve()
-            })
+            resolve()
           }
         })
       })
