@@ -10,11 +10,11 @@
       <div class="flex h-24" />
     </div>
 
-    <div class="lobby-row flex flex-row w-full h-full p-3">
-      <div class="flex flex-col text-xs sm:w-80">
-        {{channelId}}
-        <LobbyProfile :user="user" class="mt-3" />
-
+    <div class="lobby-row flex flex-row w-full h-full p-2">
+      <div class="flex flex-col sm:w-72">
+        <span class="anta-regular text-sm">{{channelId.toUpperCase()}}</span>
+        <LobbyProfile :user="user" class="mt-1" />
+        <LobbyUsers :users="channelUsers" class="mt-1" />
       </div>
     </div>
   </div>
@@ -29,11 +29,12 @@ import LobbySocket from "@/scene/lobby/LobbySocket";
 import {get} from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
 import LobbyProfile from "@/scene/lobby/LobbyProfile.vue";
+import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
 
 const STANDBY = 'standby'
 export default {
   name: 'LobbyScene',
-  components: {LobbyProfile},
+  components: {LobbyUsers, LobbyProfile},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
   },
@@ -103,7 +104,9 @@ export default {
       await this.updateChannel(channelInfo)
     },
     async updateChannel(channelInfo) {
-      this.channelUsers = await get('/users', {userIds: channelInfo['users'].join(',')})
+      this.channelUsers = (await get('/users', {userIds: channelInfo['users'].join(',')}))
+      .filter(user => user.id !== this.user.id)
+
     },
     async updateChatBox(receivedChat) {
       this.channelChats.push(receivedChat)

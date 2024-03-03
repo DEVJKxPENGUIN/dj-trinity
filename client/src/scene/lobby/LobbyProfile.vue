@@ -1,17 +1,21 @@
 <template>
-  <div class="profile flex flex-col text-xl w-full items-center justify-center">
-    <div class="avatar w-32 h-32 m-3">
-        <img :src="user.profile" />
+  <div class="profile flex flex-col text-xl w-full items-center justify-center backdrop-blur">
+    <div class="avatar w-28 h-28 m-1">
+      <img :src="user.profile"/>
     </div>
-    <div class="nickname m-3 w-48">
-      <span>{{user.nickname}}</span>
+    <div class="nickname text-lg m-1 w-48">
+      <span>{{ user.nickname }}</span>
+      <div class="nickname-detail text-center">
+        Lv&nbsp;{{ user.level ? user.level : 0 }}
+      </div>
     </div>
-<!--    <div>-->
-<!--      <img :src="user.profile" />-->
-<!--    </div>-->
-<!--    <div>-->
-<!--      {{ user.nickname }}-->
-<!--    </div>-->
+
+    <!--    <div>-->
+    <!--      <img :src="user.profile" />-->
+    <!--    </div>-->
+    <!--    <div>-->
+    <!--      {{ user.nickname }}-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -28,21 +32,29 @@ export default {
 
 <style scoped>
 .profile {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
 }
+
 .avatar {
-  aspect-ratio : 1 / 1;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 50%;
 }
+
 .avatar img {
   object-fit: cover;
 }
+
 .nickname {
   overflow: hidden;
+
   span {
     transition: 3s linear;
     /*transform: translateX(calc(-100% + var(--container-width))); */
   }
+}
+
+.nickname-detail {
+  font-size: 10px;
 }
 </style>
