@@ -1,3 +1,6 @@
+import store from "@/store/store";
+import {_vue_app} from "@/main";
+
 const apiHost = process.env.VUE_APP_API_HOST
 const gameHost = process.env.VUE_APP_GAME_HOST
 export const post = async (uri, data) => {
@@ -20,9 +23,11 @@ export const post = async (uri, data) => {
   const body = await response.json()
 
   // session expired
-  if(body.code && body.code === "-11") {
-    await refreshToken()
-    return await post(uri, data)
+  if (body.code && body.code === "-11") {
+    const refreshed = await refreshToken()
+    if(refreshed) {
+      return await post(uri, data)
+    }
   } else if (body.code && body.code !== "0") {
     throw new Error(body.message)
   }
@@ -53,9 +58,11 @@ export const get = async (uri, data) => {
   const body = await response.json()
 
   // session expired
-  if(body.code && body.code === "-11") {
-    await refreshToken()
-    return await get(uri, data)
+  if (body.code && body.code === "-11") {
+    const refreshed = await refreshToken()
+    if(refreshed) {
+      return await get(uri, data)
+    }
   } else if (body.code && body.code !== "0") {
     throw new Error(body.message)
   }
@@ -99,8 +106,17 @@ const refreshToken = async () => {
   // refresh token 발급 실패, 재로그인 필요.
   if (body.code && body.code !== "0") {
     // todo 최상단 popup 및 App.vue 에 emit 을 통해 첫화면으로 돌아가야 한다.
-    throw new Error(body.message)
+    await store.dispatch('showSystemPopup', {
+      title: 'Re-login need.',
+      contents: 'Your session expired, Going back start page and re-login please.',
+      button: 'OK',
+      callback: () => {
+        _vue_app.changeScene('introScene')
+      }
+    })
+    return false
   }
 
   sessionStorage.setItem("trinity-at", body.data['accessToken'])
+  return true
 }
