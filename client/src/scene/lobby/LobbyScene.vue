@@ -11,10 +11,17 @@
     </div>
 
     <div class="lobby-row flex flex-row w-full h-full p-2">
-      <div class="flex flex-col sm:w-72">
+      <div class="flex flex-col sm:w-72 overflow-hidden">
         <span class="anta-regular text-sm">{{ channelId.toUpperCase() }}</span>
         <LobbyProfile :user="user" class="mt-1"/>
         <LobbyUsers :users="channelUsers" class="mt-1"/>
+      </div>
+      <div class="flex flex-1 flex-col ">
+        <div class="flex flex-1"></div>
+        <LobbyChat :chats="channelChats" class="mt-1 ml-2 mr-2" />
+      </div>
+      <div class="flex flex-1">
+
       </div>
     </div>
   </div>
@@ -29,11 +36,12 @@ import {get} from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
 import LobbyProfile from "@/scene/lobby/LobbyProfile.vue";
 import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
+import LobbyChat from "@/scene/lobby/LobbyChat.vue";
 
 const STANDBY = 'standby'
 export default {
   name: 'LobbyScene',
-  components: {LobbyUsers, LobbyProfile},
+  components: {LobbyChat, LobbyUsers, LobbyProfile},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
   },
