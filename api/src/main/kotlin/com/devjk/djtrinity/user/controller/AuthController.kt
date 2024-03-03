@@ -22,6 +22,12 @@ class AuthController(
         return ResponseEntity.ok(BaseResponse.success())
     }
 
+    @GetMapping("/user/{userId}")
+    fun getUserInfo(@PathVariable userId: String): ResponseEntity<*> {
+        val response = userService.getUserInfo(userId)
+        return ResponseEntity.ok(BaseResponse.success(response))
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody req: UserLoginRequest, res: HttpServletResponse): ResponseEntity<*> {
         req.validate()

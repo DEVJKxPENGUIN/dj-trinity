@@ -28,10 +28,4 @@ class UserController(
         val response = userService.getUserInfos(userIds)
         return ResponseEntity.ok(BaseResponse.success(response))
     }
-
-    @GetMapping("/user/{userId}")
-    fun getUserInfo(@PathVariable userId: String): ResponseEntity<*> {
-        val response = userService.getUserInfo(userId)
-        return ResponseEntity.ok(BaseResponse.success(response))
-    }
 }

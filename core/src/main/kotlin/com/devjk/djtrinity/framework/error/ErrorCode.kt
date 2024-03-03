@@ -19,6 +19,7 @@ enum class ErrorCode(
     USER_NOT_FOUND(HttpStatus.BAD_REQUEST, -9, "User is not found"),
     USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -10, "Password mismatched"),
     AUTHENTICATION_EXPIRED(HttpStatus.BAD_REQUEST, -11, "cannot find valid token"),
-    CHANNEL_FULL(HttpStatus.SERVICE_UNAVAILABLE, -12, "Channel is full"),
+    AUTHENTICATION_REFRESH_FAILED(HttpStatus.BAD_REQUEST, -12, "refreshToken is invalid"),
+    CHANNEL_FULL(HttpStatus.SERVICE_UNAVAILABLE, -13, "Channel is full"),
     ;
 }

@@ -13,20 +13,28 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @EnableMethodSecurity
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
 ) {
+
+    companion object {
+        val PUBLIC_URLS = arrayOf(
+            "/public/**",
+            "/auth/**",
+            "/ws/**",
+            "/bms/sync",
+            "/download/**",
+        )
+    }
+
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/public/**").permitAll()
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/ws/**").permitAll()
-                    .requestMatchers("/bms/sync").permitAll()
-                    .requestMatchers("/download/**").permitAll()
-                    .requestMatchers("/user/**").permitAll()
-                    .anyRequest().authenticated()
+                PUBLIC_URLS.forEach { path ->
+                    it.requestMatchers(path).permitAll()
+                }
+                it.anyRequest().authenticated()
             }
             .cors {}
             .httpBasic { it.disable() }

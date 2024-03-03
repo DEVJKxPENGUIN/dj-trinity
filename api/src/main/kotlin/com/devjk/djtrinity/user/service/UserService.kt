@@ -57,7 +57,7 @@ class UserService(
                 accessToken,
                 refreshToken,
                 LocalDateTime.now()
-            ) ?: throw BaseException(ErrorCode.AUTHENTICATION_EXPIRED)
+            ) ?: throw BaseException(ErrorCode.AUTHENTICATION_REFRESH_FAILED)
 
         token.use()
 
