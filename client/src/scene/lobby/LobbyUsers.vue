@@ -1,6 +1,6 @@
 <template>
   <div
-      class="users flex flex-1 flex-col text-xl w-full backdrop-blur">
+      class="users flex flex-1 flex-col text-xl w-full backdrop-blur-lg backdrop-brightness-125">
     <div class="top-bar flex flex-row h-6 anta-regular text-sm">
       ONLINE
     </div>
@@ -32,8 +32,12 @@ export default {
 
 <style scoped>
 .users {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.3);
   overflow-y: hidden;
+  -webkit-box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
+  clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 0, 100% 100%, 25px 100%, 0 calc(100% - 25px), 0 0);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 .list {
   overflow-y: scroll;

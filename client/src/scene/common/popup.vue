@@ -3,11 +3,11 @@
       <div class="top flex h-20"/>
       <div class="middle flex flex-col sm:flex-row flex-1">
         <div class="left sm:flex-1"/>
-        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur">
+        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur-lg backdrop-brightness-125">
           <slot name="text"/>
         </div>
         <div class="line h-0 sm:h-full sm:w-0.5 sm:mt-5 sm:mb-5"></div>
-        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur">
+        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur-lg backdrop-brightness-125">
           <slot name="form"/>
         </div>
         <div class="right sm:flex-1"/>
@@ -71,6 +71,8 @@ export default {
 
 .center {
   background-color: rgba(0, 0, 0, .3);
+  -webkit-box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
 }
 
 .line {
