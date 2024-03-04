@@ -18,7 +18,7 @@
       </div>
       <div class="flex flex-1 flex-col ">
         <div class="flex flex-1"></div>
-        <LobbyChat :chats="channelChats" class="mt-1 ml-2 mr-2" />
+        <LobbyChat ref="chat" :chats="channelChats" class="mt-1 ml-2 mr-2" @inputMessage="handleChatInput"  @inputFocus="handleChatInputFocus" />
       </div>
       <div class="flex flex-1">
 
@@ -39,6 +39,7 @@ import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
 import LobbyChat from "@/scene/lobby/LobbyChat.vue";
 
 const STANDBY = 'standby'
+const CHATINPUT = 'chatinput'
 export default {
   name: 'LobbyScene',
   components: {LobbyChat, LobbyUsers, LobbyProfile},
@@ -54,13 +55,15 @@ export default {
   data() {
     return {
       // js
+      state: STANDBY,
+      beforeState: STANDBY,
 
       // view
       channelId: '',
       user: {},
       channelUsers: [],
-      channelChats: []
-
+      channelChats: [],
+      chatMessage: '',
     }
   },
   methods: {
@@ -85,6 +88,9 @@ export default {
         this.handleArrowUp()
       } else if (e.key === 'ArrowDown') {
         this.handleArrowDown()
+      } else if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault()
+        this.handleShiftEnter()
       } else if (e.key === 'Enter') {
         this.handleEnter()
       } else if (e.key === 'Escape') {
@@ -92,6 +98,17 @@ export default {
       }
     },
     handleEnter() {
+      if(this.state === CHATINPUT) {
+        this.sendChat()
+        return
+      }
+    },
+    handleShiftEnter() {
+      if(this.state !== CHATINPUT) {
+        this.state = CHATINPUT
+        this.openChat()
+        return
+      }
     },
     handleArrowUp() {
 
@@ -102,6 +119,16 @@ export default {
     handleEsc() {
 
     },
+    handleChatInput(message) {
+      this.chatMessage = message
+    },
+    handleChatInputFocus(focus) {
+      if(focus) {
+        this.beforeState = this.state
+        this.state = CHATINPUT
+        return
+      }
+    },
     async enterChannel(channelInfo) {
       this.channelId = channelInfo['channelId']
       await this.updateChannel(channelInfo)
@@ -109,72 +136,17 @@ export default {
     async updateChannel(channelInfo) {
       this.channelUsers = (await get('/users', {userIds: channelInfo['users'].join(',')}))
       .filter(user => user.id !== this.user.id)
-
-      // debug
-      this.channelUsers = [
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0},
-        {nickname: 'jskdlfjskd', profile: '/image/trinity.webp', level: 0}
-      ]
-
     },
     async updateChatBox(receivedChat) {
-      console.log('update chats : ', receivedChat)
       this.channelChats.push(receivedChat)
     },
+    openChat() {
+      this.$refs.chat.focus()
+    },
+    sendChat() {
+      this.manager.socket.sendChat(this.user.nickname, this.chatMessage)
+      this.chatMessage = ''
+    }
   },
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)

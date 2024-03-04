@@ -1,11 +1,11 @@
 <template>
-  <div class="chat flex w-full h-80 backdrop-blur-lg backdrop-brightness-125">
+  <div class="chat flex flex-col w-full h-80 backdrop-blur-lg backdrop-brightness-125">
     <!-- TODO 여기서부터 -->
     <div class="top-bar flex flex-row h-6 anta-regular text-sm">
       CHATTING
     </div>
     <div class="list flex flex-1 flex-col">
-      <div v-for="(chat, index) in chats" class="item flex flex-row w-full h-8 items-center" v-bind:key="index" >
+      <div v-for="(chat, index) in chats" class="item flex flex-row w-full h-8 items-center kode-mono" v-bind:key="index" >
         <div class="nickname w-fit">
           {{chat.nickname}}
         </div>
@@ -13,9 +13,12 @@
           {{chat.message}}
         </div>
         <div class="time w-fit">
-          {{chat.sendTime}}
+          [{{formatTime(chat.sendTime)}}]
         </div>
       </div>
+    </div>
+    <div class="chatInput flex w-full kode-mono backdrop-blur-3xl">
+      <textarea :value="chatInput" ref="chatInputRef" type="text" class="input w-full" :placeholder="placeHolder" @input="onInput" @focus="onFocus" @blur="onBlur"></textarea>
     </div>
   </div>
 </template>
@@ -27,8 +30,37 @@ export default {
     chats: {
       type: Array,
       default: () => []
+    },
+    chatInput: {
+      type: String,
+      default: ''
     }
   },
+  data() {
+    return {
+      placeHolder: '[SHIFT + ENTER]'
+    }
+  },
+  methods: {
+    formatTime(time) {
+      const date = new Date(time);
+      return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    },
+    focus() {
+      this.$refs.chatInputRef.focus()
+    },
+    onInput(e) {
+      this.$emit('inputMessage', e.target.value)
+    },
+    onFocus() {
+      this.placeHolder = 'type message..'
+      this.$emit('inputFocus', true)
+    },
+    onBlur() {
+      this.placeHolder = '[SHIFT + ENTER]'
+      this.$emit('inputFocus', false)
+    }
+  }
 }
 </script>
 
@@ -50,5 +82,20 @@ export default {
 
 .item {
   opacity: 60%;
+  font-size: 14px;
+}
+
+.chatInput {
+
+  .input {
+    background: none;
+    border: none;
+    outline: none!important;
+    resize: none;
+    color: rgba(255, 255, 255, .7);
+    font-size: 14px;
+    height: 25px;
+    padding-left: 25px;
+  }
 }
 </style>

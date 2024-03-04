@@ -101,6 +101,7 @@ export default {
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anta&family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kode+Mono&display=swap');
 
 body, html {
   margin: 0;
