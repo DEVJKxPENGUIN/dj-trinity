@@ -38,7 +38,7 @@ export default class LobbyCanvas {
     const light0 = new AmbientLight(0xffffff, 0.01)
     this.ctx.scene.add(light0)
 
-    const light = new PointLight(0xffffff, 10, 100)
+    const light = new PointLight(0xffffff, 5, 100)
     light.position.set(4, 3, 2)
     this.moveLight(light)
     this.ctx.scene.add(light)

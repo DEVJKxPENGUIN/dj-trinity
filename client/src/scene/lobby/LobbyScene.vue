@@ -172,6 +172,7 @@ export default {
 
     },
     async updateChatBox(receivedChat) {
+      console.log('update chats : ', receivedChat)
       this.channelChats.push(receivedChat)
     },
   },
