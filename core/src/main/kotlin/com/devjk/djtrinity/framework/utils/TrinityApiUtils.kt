@@ -12,7 +12,7 @@ class TrinityApiUtils(
 
     fun getUserInfo(userId: String): Mono<JsonNode> {
         return apiWebClient.get()
-            .uri("/user/$userId")
+            .uri("/auth/user/$userId")
             .retrieve()
             .onStatus({ it.is4xxClientError || it.is5xxServerError }) {
                 Mono.error(RuntimeException("API Server Error"))
