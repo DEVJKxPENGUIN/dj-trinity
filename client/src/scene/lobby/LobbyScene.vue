@@ -18,7 +18,7 @@
       </div>
       <div class="flex flex-1 flex-col ">
         <div class="flex flex-1"></div>
-        <LobbyChat ref="chat" :chats="channelChats" class="mt-1 ml-2 mr-2" @inputMessage="handleChatInput"  @inputFocus="handleChatInputFocus" />
+        <LobbyChat ref="chat" :chats="channelChats" v-model:chat-input="chatInput" class="mt-1 ml-2 mr-2" @inputFocus="handleChatInputFocus" />
       </div>
       <div class="flex flex-1">
 
@@ -63,7 +63,7 @@ export default {
       user: {},
       channelUsers: [],
       channelChats: [],
-      chatMessage: '',
+      chatInput: '',
     }
   },
   methods: {
@@ -91,7 +91,8 @@ export default {
       } else if (e.key === 'Enter' && e.shiftKey) {
         e.preventDefault()
         this.handleShiftEnter()
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' && !e.isComposing) {
+        e.preventDefault()
         this.handleEnter()
       } else if (e.key === 'Escape') {
         this.handleEsc()
@@ -104,30 +105,36 @@ export default {
       }
     },
     handleShiftEnter() {
-      if(this.state !== CHATINPUT) {
-        this.state = CHATINPUT
+      if(this.state === STANDBY) {
         this.openChat()
         return
       }
+
+      // todo
+      // 기타 UI 개선, margin 등
+
+
+
     },
     handleArrowUp() {
 
     },
     handleArrowDown() {
-
     },
     handleEsc() {
+      if(this.state === CHATINPUT) {
+        this.outChat()
+        return
+      }
 
-    },
-    handleChatInput(message) {
-      this.chatMessage = message
     },
     handleChatInputFocus(focus) {
       if(focus) {
-        this.beforeState = this.state
-        this.state = CHATINPUT
+        this.openChat()
         return
       }
+
+      this.outChat()
     },
     async enterChannel(channelInfo) {
       this.channelId = channelInfo['channelId']
@@ -141,11 +148,20 @@ export default {
       this.channelChats.push(receivedChat)
     },
     openChat() {
+      this.state = CHATINPUT
       this.$refs.chat.focus()
     },
     sendChat() {
-      this.manager.socket.sendChat(this.user.nickname, this.chatMessage)
-      this.chatMessage = ''
+      if(!this.chatInput) {
+        return
+      }
+
+      this.manager.socket.sendChat(this.user.nickname, this.chatInput)
+      this.chatInput = ''
+    },
+    outChat() {
+      this.state = STANDBY
+      this.$refs.chat.blur()
     }
   },
   beforeUnmount() {

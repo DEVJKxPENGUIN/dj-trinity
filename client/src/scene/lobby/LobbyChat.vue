@@ -4,21 +4,27 @@
     <div class="top-bar flex flex-row h-6 anta-regular text-sm">
       CHATTING
     </div>
-    <div class="list flex flex-1 flex-col">
-      <div v-for="(chat, index) in chats" class="item flex flex-row w-full h-8 items-center kode-mono" v-bind:key="index" >
-        <div class="nickname w-fit">
-          {{chat.nickname}}
+    <div class="list flex flex-1 flex-col" ref="chatList">
+      <div v-for="(chat, index) in chats" class="item flex flex-row w-full items-center kode-mono"
+           v-bind:key="index">
+        <div v-if="chat.nickname" class="nickname flex w-28">
+          <p class="truncate underline decoration-amber-200 decoration-8">{{ chat.nickname }}</p>
         </div>
-        <div class="message flex flex-1">
-          {{chat.message}}
+        <div v-if="chat.nickname" class="flex w-4">
+          <p>▶</p>
         </div>
-        <div class="time w-fit">
-          [{{formatTime(chat.sendTime)}}]
+        <div class="message flex flex-1 w-full text-wrap">
+          <p class="">{{ chat.message }}</p>
+        </div>
+        <div class="time flex w-fit">
+          [{{ formatTime(chat.sendTime) }}]
         </div>
       </div>
     </div>
     <div class="chatInput flex w-full kode-mono backdrop-blur-3xl">
-      <textarea :value="chatInput" ref="chatInputRef" type="text" class="input w-full" :placeholder="placeHolder" @input="onInput" @focus="onFocus" @blur="onBlur"></textarea>
+      <textarea :value="chatInput" ref="chatInputRef" type="text" class="input w-full"
+                :placeholder="placeHolder" @input="onInput" @focus="onFocus"
+                @blur="onBlur"></textarea>
     </div>
   </div>
 </template>
@@ -36,21 +42,36 @@ export default {
       default: ''
     }
   },
+  watch: {
+    chats: {
+      handler() {
+        this.$nextTick(() => {
+          const elem = this.$refs.chatList
+          elem.scrollTo(0, 999999)
+        })
+      },
+      deep: true
+    }
+  },
   data() {
     return {
-      placeHolder: '[SHIFT + ENTER]'
+      placeHolder: '[SHIFT + ENTER]',
     }
   },
   methods: {
     formatTime(time) {
       const date = new Date(time);
-      return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      return date.toLocaleTimeString('en-GB',
+          {hour: '2-digit', minute: '2-digit', second: '2-digit'});
     },
     focus() {
       this.$refs.chatInputRef.focus()
     },
+    blur() {
+      this.$refs.chatInputRef.blur()
+    },
     onInput(e) {
-      this.$emit('inputMessage', e.target.value)
+      this.$emit('update:chat-input', e.target.value)
     },
     onFocus() {
       this.placeHolder = 'type message..'
@@ -83,6 +104,11 @@ export default {
 .item {
   opacity: 60%;
   font-size: 14px;
+  height: 20px;
+}
+
+.nickname {
+  margin-right: 10px;
 }
 
 .chatInput {
@@ -90,7 +116,7 @@ export default {
   .input {
     background: none;
     border: none;
-    outline: none!important;
+    outline: none !important;
     resize: none;
     color: rgba(255, 255, 255, .7);
     font-size: 14px;
