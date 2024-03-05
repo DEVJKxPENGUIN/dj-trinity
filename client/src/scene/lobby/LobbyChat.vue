@@ -113,15 +113,17 @@ export default {
 
 .chatInput {
 
-  .input {
-    background: none;
-    border: none;
-    outline: none !important;
-    resize: none;
-    color: rgba(255, 255, 255, .7);
-    font-size: 14px;
-    height: 25px;
-    padding-left: 25px;
-  }
+
+}
+
+.chatInput .input {
+  background: none;
+  border: none;
+  outline: none !important;
+  resize: none;
+  color: rgba(255, 255, 255, .7);
+  font-size: 14px;
+  height: 25px;
+  padding-left: 25px;
 }
 </style>
