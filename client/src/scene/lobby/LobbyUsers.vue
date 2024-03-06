@@ -1,7 +1,7 @@
 <template>
   <div
       class="users flex flex-1 flex-col text-xl w-full backdrop-blur-lg backdrop-brightness-125">
-    <div class="top-bar flex flex-row h-6 anta-regular text-sm">
+    <div class="top-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
       ONLINE
     </div>
     <div class="list flex flex-1 flex-col">
@@ -14,6 +14,8 @@
           <p class="nickname-detail h-fit">Lv&nbsp;{{user.level ? user.level : 0}}</p>
         </div>
       </div>
+    </div>
+    <div class="bottom-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
     </div>
   </div>
 </template>

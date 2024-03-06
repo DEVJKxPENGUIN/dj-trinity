@@ -1,5 +1,8 @@
 <template>
-  <div class="profile flex flex-col text-xl w-full items-center justify-center backdrop-blur-lg backdrop-brightness-125">
+  <div
+      class="profile flex flex-col text-xl w-full items-center justify-center backdrop-blur-lg backdrop-brightness-125">
+    <div class="top-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
+    </div>
     <div class="avatar w-28 h-28 m-1">
       <img :src="user.profile"/>
     </div>
@@ -8,6 +11,8 @@
       <div class="nickname-detail text-center">
         Lv&nbsp;{{ user.level ? user.level : 0 }}
       </div>
+    </div>
+    <div class="bottom-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
     </div>
   </div>
 </template>
@@ -45,6 +50,7 @@ export default {
 .nickname {
   overflow: hidden;
 }
+
 .nickname span {
   transition: 3s linear;
   /*transform: translateX(calc(-100% + var(--container-width))); */

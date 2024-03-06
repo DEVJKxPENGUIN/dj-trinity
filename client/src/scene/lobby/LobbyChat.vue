@@ -1,7 +1,7 @@
 <template>
   <div class="chat flex flex-col w-full h-80 backdrop-blur-lg backdrop-brightness-125">
     <!-- TODO 여기서부터 -->
-    <div class="top-bar flex flex-row h-6 anta-regular text-sm">
+    <div class="top-bar flex flex-row h-6 anta-regular text-sm backdrop-blur-3xl">
       CHATTING
     </div>
     <div class="list flex flex-1 flex-col" ref="chatList">
@@ -109,11 +109,6 @@ export default {
 
 .nickname {
   margin-right: 10px;
-}
-
-.chatInput {
-
-
 }
 
 .chatInput .input {
