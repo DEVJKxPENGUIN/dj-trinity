@@ -109,12 +109,6 @@ export default {
         this.openChat()
         return
       }
-
-      // todo
-      // 기타 UI 개선, margin 등
-
-
-
     },
     handleArrowUp() {
 
@@ -162,6 +156,7 @@ export default {
     outChat() {
       this.state = STANDBY
       this.$refs.chat.blur()
+      this.chatInput = ''
     }
   },
   beforeUnmount() {
