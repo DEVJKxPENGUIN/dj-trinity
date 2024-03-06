@@ -44,11 +44,10 @@ export default {
 
 .nickname {
   overflow: hidden;
-
-  span {
-    transition: 3s linear;
-    /*transform: translateX(calc(-100% + var(--container-width))); */
-  }
+}
+.nickname span {
+  transition: 3s linear;
+  /*transform: translateX(calc(-100% + var(--container-width))); */
 }
 
 .nickname-detail {
