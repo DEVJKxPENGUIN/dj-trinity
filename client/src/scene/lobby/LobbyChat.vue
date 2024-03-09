@@ -1,11 +1,11 @@
 <template>
-  <div class="chat flex flex-col w-full h-80 backdrop-blur-lg backdrop-brightness-125">
+  <div class="chat flex flex-col w-full h-64 backdrop-blur-lg backdrop-brightness-125">
     <!-- TODO 여기서부터 -->
     <div class="top-bar flex flex-row h-6 anta-regular text-sm backdrop-blur-3xl">
       CHATTING
     </div>
     <div class="list flex flex-1 flex-col" ref="chatList">
-      <div v-for="(chat, index) in chats" class="item flex flex-row w-full items-center kode-mono"
+      <div v-for="(chat, index) in chats" class="item flex flex-row w-full items-center kode-mono p-2"
            v-bind:key="index">
         <div v-if="chat.nickname" class="nickname flex w-28">
           <p class="truncate underline decoration-amber-200 decoration-8">{{ chat.nickname }}</p>

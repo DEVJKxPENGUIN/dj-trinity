@@ -142,4 +142,8 @@ canvas {
 #app {
   display: flex;
 }
+
+* {
+  cursor: default !important;
+}
 </style>

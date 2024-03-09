@@ -41,7 +41,7 @@ done
 if [ ${RUN_TYPE} = "spring" ]; then
 
   # process run options
-  ARGS="--stacktrace --debug"
+  ARGS="--stacktrace --debug --quiet"
   if [ ${DEBUG} = true ]; then
     ARGS="${ARGS} --debug-jvm"
   fi
