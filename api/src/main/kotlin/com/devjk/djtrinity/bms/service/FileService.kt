@@ -109,7 +109,7 @@ class FileService(
         val bmsHeader = bmsService.parseHeaderInfo(bms)
 
         if (StringUtils.isBlank(bmsHeader.stageFile)) {
-            return "../resource/sample.jpeg"
+            return "${bmsNode.rootPath}/../sample.png"
         }
 
         return "${bmsNode.rootPath}/${bmsHeader.stageFile}"
