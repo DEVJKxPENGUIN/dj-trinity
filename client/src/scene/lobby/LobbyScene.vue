@@ -11,13 +11,13 @@
     </div>
 
     <div class="lobby-row flex flex-row w-full h-full p-2">
-      <div class="flex flex-col sm:w-72 overflow-hidden">
+      <div class="flex flex-col w-0 lg:w-72 overflow-hidden">
         <span class="anta-regular text-sm">{{ channelId.toUpperCase() }}</span>
         <LobbyProfile :user="user" class="mt-1"/>
         <LobbyUsers :users="channelUsers" class="mt-1"/>
       </div>
-      <div class="flex flex-1 flex-col ml-2 mr-2">
-        <div class="flex flex-1"></div>
+      <div class="flex flex-1 flex-col h-full ml-2 mr-2">
+        <LobbyMusicSelect :bms-current="bmsCurrent" />
         <LobbyChat ref="chat" :chats="channelChats" v-model:chat-input="chatInput" class="mt-1"
                    @inputFocus="handleChatInputFocus"/>
       </div>
@@ -42,12 +42,13 @@ import LobbyProfile from "@/scene/lobby/LobbyProfile.vue";
 import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
 import LobbyChat from "@/scene/lobby/LobbyChat.vue";
 import LobbyGameList from "@/scene/lobby/LobbyGameList.vue";
+import LobbyMusicSelect from "@/scene/lobby/LobbyMusicSelect.vue";
 
 const STANDBY = 'standby'
 const CHATINPUT = 'chatinput'
 export default {
   name: 'LobbyScene',
-  components: {LobbyGameList, LobbyChat, LobbyUsers, LobbyProfile},
+  components: {LobbyMusicSelect, LobbyGameList, LobbyChat, LobbyUsers, LobbyProfile},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup']),
   },
