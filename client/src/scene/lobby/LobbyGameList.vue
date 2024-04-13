@@ -13,7 +13,7 @@
              'slideUp' : toUp && isCurrentItem(index), 'slideDown' : toDown && isCurrentItem(index)}">
           0
         </div>
-        <div class="w-full pl-3 text-gray-400 text-transition"
+        <div class="w-full pl-3 text-gray-400 text-transition line-clamp-1"
              :class="{'highlight-text' : isCurrentItem(index), 'no-transition' : !isCurrentItem(index)}"
         >
           {{ bms.name.toUpperCase() }}

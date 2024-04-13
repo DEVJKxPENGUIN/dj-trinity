@@ -17,13 +17,14 @@
         <LobbyUsers :users="channelUsers" class="mt-1"/>
       </div>
       <div class="flex flex-1 flex-col h-full ml-2 mr-2">
-        <LobbyMusicSelect :bms-current="bmsCurrent" />
+        <LobbyMusicSelect :bms-v-current="bmsVCurrent" :bms-current="bmsCurrent"/>
         <LobbyChat ref="chat" :chats="channelChats" v-model:chat-input="chatInput" class="mt-1"
                    @inputFocus="handleChatInputFocus"/>
       </div>
       <div class="flex flex-1 flex-col">
         <div class="flex h-40"></div>
-        <LobbyGameList :bms-show-list="bmsShowList" :bms-current="bmsCurrent" :to-down="toDown" :to-up="toUp"
+        <LobbyGameList :bms-show-list="bmsShowList" :bms-current="bmsCurrent" :to-down="toDown"
+                       :to-up="toUp"
                        class="mt-1"/>
       </div>
     </div>
@@ -72,7 +73,8 @@ export default {
       chatInput: '',
       bmsList: [],
       bmsShowList: [],
-      bmsCurrent: {},
+      bmsCurrent: {id: 1, bmsHeader: {}},
+      bmsVCurrent: [],
       bmsVIndex: 0,
       bmsHIndex: 0,
       bmsMaxShowSize: 13,
@@ -205,7 +207,8 @@ export default {
         this.bmsVIndex--
       }
       this.bmsHIndex = 0
-      this.bmsCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]][this.bmsHIndex]
+      this.bmsVCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]]
+      this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       this.bmsShowList.pop()
       let index = this.bmsVIndex - (this.bmsMaxShowSize - 1) / 2
@@ -217,8 +220,8 @@ export default {
         item: this.bmsList[Object.keys(this.bmsList)[index]]
       })
 
-      this.toUp=true
-      this.toDown=false
+      this.toUp = true
+      this.toDown = false
     },
     bmsDown() {
       if (this.bmsVIndex === Object.keys(this.bmsList).length - 1) {
@@ -227,7 +230,8 @@ export default {
         this.bmsVIndex++
       }
       this.bmsHIndex = 0
-      this.bmsCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]][this.bmsHIndex]
+      this.bmsVCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]]
+      this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       this.bmsShowList.shift()
       let index = this.bmsVIndex + (this.bmsMaxShowSize - 1) / 2
@@ -239,17 +243,17 @@ export default {
         item: this.bmsList[Object.keys(this.bmsList)[index]]
       })
 
-      this.toUp=false
-      this.toDown=true
+      this.toUp = false
+      this.toDown = true
     },
     bmsLeft() {
       this.bmsHIndex = (this.bmsHIndex - 1) < 0 ? 0 : this.bmsHIndex - 1
-      this.bmsCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]][this.bmsHIndex]
+      this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
     },
     bmsRight() {
       const length = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]].length
       this.bmsHIndex = (this.bmsHIndex + 1) > length - 1 ? length - 1 : this.bmsHIndex + 1
-      this.bmsCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]][this.bmsHIndex]
+      this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
     },
     initBms() {
       this.bmsShowList = []
@@ -278,7 +282,8 @@ export default {
         name: list[this.bmsVIndex],
         item: this.bmsList[list[this.bmsVIndex]]
       })
-      this.bmsCurrent = this.bmsList[list[this.bmsVIndex]][this.bmsHIndex]
+      this.bmsVCurrent = this.bmsList[list[this.bmsVIndex]]
+      this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       // bottom
       for (let i = 0; i < half; i++) {

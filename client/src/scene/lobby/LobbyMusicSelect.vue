@@ -1,14 +1,32 @@
 <template>
   <div class="music-select flex flex-col h-full justify-center items-center">
     <div class="top-bar flex h-10p"></div>
-    <div class="record flex h-60p">
-      <img class="opacity-50 " :src="'http://localhost:5002/download/bms/stage/' + bmsCurrent.id"/>
+    <div class="center-bar flex h-60p justify-center w-full">
+      <div class="record flex">
+        <img class="opacity-50" :src="'http://localhost:5002/download/bms/stage/' + bmsCurrent.id"/>
+      </div>
+      <div
+          class="title flex orbitron-regular w-full text-center items-end p-5 justify-center h-full">
+        <b class="text-3xl line-clamp-1 ">
+          <span>{{ bmsCurrent.bmsHeader.title }}</span>
+        </b>
+      </div>
+      <div class="arrow-box flex w-full h-full absolute items-center">
+        <div class="flex justify-between w-full p-5">
+          <div :class="['arrow-left', showLeft ? '' : 'opacity-0']" id="arrow-left"></div>
+          <div :class="['arrow-right', showRight ? '' : 'opacity-0']" id="arrow-right"></div>
+        </div>
+      </div>
     </div>
-    <div class="bottom-bar flex h-30p"></div>
+    <div class="bottom-bar flex kode-mono-bold h-30p w-full">
+
+    </div>
   </div>
 </template>
 
 <script>
+import {gsap} from "gsap";
+
 export default {
   name: "LobbyMusicSelect",
   props: {
@@ -16,15 +34,99 @@ export default {
       type: Object,
       default: () => {
       }
+    },
+    bmsVCurrent: {
+      type: Object,
+      default: () => {
+      }
+    }
+  },
+  data() {
+    return {
+      showLeft: false,
+      showRight: false,
     }
   },
   watch: {
-    bmsCurrent() {
-      console.log(this.bmsCurrent)
+    bmsCurrent(current, before) {
+      console.log('current : ', current)
+      console.log('before : ', before)
+      if (!this.isVCurrentChanged(before)) {
+        this.animateArrow(this.isRightChanged(current, before))
+      }
+      setTimeout(() => {
+        this.handleArrowShowing()
+      }, 200)
+
+    },
+    bmsVCurrent() {
+      console.log('vCurrentChanged : ', this.bmsVCurrent)
+    }
+  },
+  methods: {
+    isVCurrentChanged(before) {
+      return !this.bmsVCurrent.some(bms => bms.id === before.id)
+    },
+    isRightChanged(current, before) {
+
+      for (const bms of this.bmsVCurrent) {
+        if (bms.id === current.id) {
+          // moved left
+          return false
+        }
+        if (bms.id === before.id) {
+          // moved right
+          return true
+        }
+      }
+      throw new Error('unreachable')
+    },
+    animateArrow(isRight) {
+      let arrow = '#arrow-left'
+      let x = -5
+      if (isRight) {
+        arrow = '#arrow-right'
+        x = 5
+      }
+
+      this.tl = gsap.timeline({
+        paused: true
+      });
+      this.tl.to(arrow, {
+        duration: 0.1,
+        x: x,
+        borderColor: 'rgba(255,255,255, 0.75)',
+        scale: 1.2,
+        ease: 'power2.inOut'
+      });
+      this.tl.to(arrow, {
+        duration: 0.1,
+        x: 0,
+        borderColor: 'rgba(0, 0, 0, 0.75)',
+        scale: 1.2,
+        ease: 'power2.inOut'
+      });
+      this.tl.play()
+    },
+    handleArrowShowing() {
+      this.showLeft = true
+      this.showRight = true
+      if (this.bmsVCurrent[0].id === this.bmsCurrent.id) {
+        // remove left
+        console.log('left remove')
+        this.showLeft = false
+      }
+      if (this.bmsVCurrent[this.bmsVCurrent.length - 1].id === this.bmsCurrent.id) {
+        // remove right
+        this.showRight = false
+      }
     }
   },
   created() {
-
+    window.addEventListener('keydown', this.keyboard)
+  },
+  beforeUnmount() {
+    window.removeEventListener('keydown', this.keyboard)
   }
 }
 </script>
@@ -33,6 +135,10 @@ export default {
 <style scoped>
 .music-select {
 
+}
+
+.center-bar {
+  position: relative;
 }
 
 .record {
@@ -44,6 +150,7 @@ export default {
   linear-gradient(to right, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-origin: border-box;
   background-clip: content-box, border-box;
+  position: relative;
 }
 
 .record img {
@@ -51,7 +158,7 @@ export default {
 }
 
 .h-10p {
-  height: 15%;
+  height: 12%;
 }
 
 .h-60p {
@@ -59,6 +166,33 @@ export default {
 }
 
 .h-30p {
-  height: 25%;
+  height: 28%;
+}
+
+.title {
+  position: absolute;
+}
+
+.title b {
+  color: #000000;
+  /*text-shadow: 0 -40px 100px, 0 0 2px, 0 0 1em #ffffff, 0 0 0.5em #dedede, 0 0 0.1em #9d9d9d, 0 10px 3px #646464; */
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), whitesmoke, rgba(0, 0, 0, 0));
+  width: 100%;
+}
+
+.arrow-right {
+  height: 25px;
+  width: 25px;
+  border: 5px solid rgba(0, 0, 0, 0.75);
+  border-width: 5px 5px 0 0;
+  transform: rotate(45deg);
+}
+
+.arrow-left {
+  height: 25px;
+  width: 25px;
+  border: 5px solid rgba(0, 0, 0, 0.75);
+  border-width: 5px 5px 0 0;
+  transform: rotate(225deg);
 }
 </style>

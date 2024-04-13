@@ -53,8 +53,8 @@ export default {
   },
   methods: {
     async init() {
-      await this.changeScene('introScene') // default
-      // await this.changeScene('lobbyScene') // todo 원복
+      // await this.changeScene('introScene') // default
+      await this.changeScene('lobbyScene') // todo 원복
 
       window.document.addEventListener('keydown', this.keyboard)
     },
@@ -102,6 +102,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anta&family=Orbitron:wght@400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kode+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
 
 body, html {
   margin: 0;
