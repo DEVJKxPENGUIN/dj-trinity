@@ -18,8 +18,17 @@
         </div>
       </div>
     </div>
-    <div class="bottom-bar flex kode-mono-bold h-30p w-full">
+    <div class="bottom-bar flex kode-mono-bold h-30p w-full mt-1">
+      <div class="current-bms flex flex-col w-full h-full backdrop-blur-lg backdrop-brightness-125">
 
+
+        <!-- todo -->
+
+
+
+
+
+      </div>
     </div>
   </div>
 </template>
@@ -89,20 +98,18 @@ export default {
         x = 5
       }
 
-      this.tl = gsap.timeline({
-        paused: true
-      });
+      this.tl = gsap.timeline({paused: true});
       this.tl.to(arrow, {
         duration: 0.1,
         x: x,
-        borderColor: 'rgba(255,255,255, 0.75)',
+        borderColor: 'rgba(255,255,255, 1)',
         scale: 1.2,
         ease: 'power2.inOut'
       });
       this.tl.to(arrow, {
         duration: 0.1,
         x: 0,
-        borderColor: 'rgba(0, 0, 0, 0.75)',
+        borderColor: 'rgba(255, 255, 255, 0.5)',
         scale: 1.2,
         ease: 'power2.inOut'
       });
@@ -113,7 +120,6 @@ export default {
       this.showRight = true
       if (this.bmsVCurrent[0].id === this.bmsCurrent.id) {
         // remove left
-        console.log('left remove')
         this.showLeft = false
       }
       if (this.bmsVCurrent[this.bmsVCurrent.length - 1].id === this.bmsCurrent.id) {
@@ -135,6 +141,15 @@ export default {
 <style scoped>
 .music-select {
 
+}
+
+.current-bms {
+  background-color: rgba(0, 0, 0, 0.3);
+  overflow-y: hidden;
+  -webkit-box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 35px 28px rgba(0, 0, 0, 0.7);
+  clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 0, 100% 100%, 25px 100%, 0 calc(100% - 25px), 0 0);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .center-bar {
@@ -183,7 +198,7 @@ export default {
 .arrow-right {
   height: 25px;
   width: 25px;
-  border: 5px solid rgba(0, 0, 0, 0.75);
+  border: 5px solid rgba(255, 255, 255, 0.5);
   border-width: 5px 5px 0 0;
   transform: rotate(45deg);
 }
@@ -191,7 +206,7 @@ export default {
 .arrow-left {
   height: 25px;
   width: 25px;
-  border: 5px solid rgba(0, 0, 0, 0.75);
+  border: 5px solid rgba(255, 255, 255, 0.5);
   border-width: 5px 5px 0 0;
   transform: rotate(225deg);
 }

@@ -1,6 +1,5 @@
 <template>
   <div class="chat flex flex-col w-full h-64 backdrop-blur-lg backdrop-brightness-125">
-    <!-- TODO 여기서부터 -->
     <div class="top-bar flex flex-row h-6 anta-regular text-sm backdrop-blur-3xl">
       CHATTING
     </div>
