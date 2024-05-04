@@ -11,8 +11,8 @@ export const login = async (loginInfo) => {
   sessionStorage.setItem("trinity-at", data['accessToken'])
 }
 
-export const userInfo = async () => {
-  return await get('/user', {})
+export const userInfo = async (onExpired) => {
+  return await get('/user', {}, onExpired)
 }
 
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));

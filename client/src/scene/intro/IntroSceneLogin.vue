@@ -10,6 +10,21 @@
 
     <template #form>
 
+      <!-- ALREADY LOGIN -->
+      <div v-if="this.state === 'hasSession'" class="flex flex-col w-4/6 orbitron-regular">
+        <div class="flex flex-col color-main w-full">
+          <p class="color-desc">SEE AGAIN!<br>[&nbsp;{{ user.nickname }}&nbsp;]</p>
+          <p class="color-desc font-desc orbitron-thin">If you want to continue playing with the
+            current account, press Enter.</p>
+        </div>
+        <div class="flex flex-row mt-5 mb-5 input-box w-full" tabindex="0" ref="enterLobby">
+          <label for="password" class="input-desc">ENTER LOBBY</label>
+        </div>
+        <div class="flex flex-row mt-5 mb-5 input-box w-full" tabindex="0" ref="switchAccount">
+          <label for="password" class="input-desc">SWITCH ACCOUNT</label>
+        </div>
+      </div>
+
       <!-- INIT -->
       <div v-if="this.state === 'init'" class="flex flex-col w-4/6 orbitron-regular">
         <div class="flex flex-row mt-5 mb-5 input-box w-full">
@@ -88,6 +103,7 @@ import * as apiHelper from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
 import {mapActions, mapState} from "vuex";
 
+const HAS_SESSION = 'hasSession'
 const INIT = 'init'
 const CHECK_PASSWORD = 'checkPassword'
 const SIGNUP = 'signup'
@@ -97,9 +113,22 @@ export default {
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
   },
-  created() {
+  async created() {
     window.addEventListener('keydown', this.keyboard)
-    this.$nextTick(() => {
+    const hasSession = await this.checkHasSession()
+
+    // has session
+    if (hasSession) {
+      this.state = HAS_SESSION
+      await this.$nextTick(() => {
+        this.$refs.enterLobby.focus()
+      })
+      return
+    }
+
+    // init
+    this.state = INIT
+    await this.$nextTick(() => {
       this.$refs.id.focus()
     })
   },
@@ -109,7 +138,7 @@ export default {
       idCheckMsg: '',
       passwordCheckMsg: '',
       signupCheckMsg: '',
-      state: INIT,
+      state: '',
 
       // view
       id: '',
@@ -139,6 +168,10 @@ export default {
       }
     },
     handleEnter() {
+      if (this.state === HAS_SESSION) {
+        this.handleHasSessionSelect()
+        return
+      }
       if (this.state === INIT) {
         this.handleInitMenuSelect()
         return
@@ -152,6 +185,15 @@ export default {
       }
     },
     handleArrowUp() {
+      if (this.state === HAS_SESSION) {
+        const active = document.activeElement
+        if (this.$refs.switchAccount === active) {
+          this.$refs.enterLobby.focus()
+        } else {
+          this.$refs.enterLobby.focus()
+        }
+        return
+      }
       if (this.state === INIT) {
         this.$refs.id.focus()
         return
@@ -171,6 +213,15 @@ export default {
       }
     },
     handleArrowDown() {
+      if (this.state === HAS_SESSION) {
+        const active = document.activeElement
+        if (this.$refs.enterLobby === active) {
+          this.$refs.switchAccount.focus()
+        } else {
+          this.$refs.switchAccount.focus()
+        }
+        return
+      }
       if (this.state === INIT) {
         this.$refs.newbie.focus()
         return
@@ -190,29 +241,31 @@ export default {
       }
     },
     handleEsc() {
+      if (this.state === HAS_SESSION) {
+        this.$emit('close')
+        return
+      }
       if (this.state === INIT) {
         this.$emit('close')
         return
       }
       if (this.state === CHECK_PASSWORD) {
-        this.state = INIT
-        this.id = ''
-        this.password = ''
-        this.passwordCheckMsg = ''
-        this.$nextTick(() => {
-          this.$refs.id.focus()
-        })
+        this.switchToInit()
         return
       }
       if (this.state === SIGNUP) {
-        this.state = INIT
-        this.id = ''
-        this.signupId = ''
-        this.signupPassword = ''
-        this.signupPasswordCheck = ''
-        this.$nextTick(() => {
-          this.$refs.id.focus()
-        })
+        this.switchToInit()
+      }
+    },
+    handleHasSessionSelect() {
+      const active = document.activeElement
+      if (this.$refs.enterLobby === active) {
+        this.switchToEnterChannel()
+        return
+      }
+      if (this.$refs.switchAccount === active) {
+        this.switchToInit()
+        return
       }
     },
     handleInitMenuSelect() {
@@ -237,6 +290,21 @@ export default {
       if (this.$refs.signupId === active || this.$refs.signupPassword === active
           || this.$refs.signupPasswordCheck === active) {
         this.signup(this.signupSuccess)
+      }
+    },
+    async checkHasSession() {
+      try {
+        this.showLoading()
+        this.user = await authenticationManager.userInfo(() => {
+        })
+        if (this.user) {
+          return true
+        }
+        return false
+      } catch (e) {
+        return false
+      } finally {
+        this.hideLoading()
       }
     },
     async checkUserId(callback) {
@@ -328,6 +396,18 @@ export default {
         contents: 'Log in with your account and enjoy the bms rhythm game world.',
         button: 'GO TO LOGIN',
         callback: this.handleEsc
+      })
+    },
+    switchToInit() {
+      this.state = INIT
+      this.id = ''
+      this.password = ''
+      this.passwordCheckMsg = ''
+      this.signupId = ''
+      this.signupPassword = ''
+      this.signupPasswordCheck = ''
+      this.$nextTick(() => {
+        this.$refs.id.focus()
       })
     },
     switchToPassword() {

@@ -3,7 +3,7 @@ import {_vue_app} from "@/main";
 
 const apiHost = process.env.VUE_APP_API_HOST
 const gameHost = process.env.VUE_APP_GAME_HOST
-export const post = async (uri, data) => {
+export const post = async (uri, data, onExpired) => {
 
   const headers = {
     "Content-Type": "application/json",
@@ -24,8 +24,8 @@ export const post = async (uri, data) => {
 
   // session expired
   if (body.code && body.code === "-11") {
-    const refreshed = await refreshToken()
-    if(refreshed) {
+    const refreshed = await refreshToken(onExpired)
+    if (refreshed) {
       return await post(uri, data)
     }
   } else if (body.code && body.code !== "0") {
@@ -35,7 +35,7 @@ export const post = async (uri, data) => {
   return body.data
 }
 
-export const get = async (uri, data) => {
+export const get = async (uri, data, onExpired) => {
 
   const headers = {
     "Content-Type": "application/json",
@@ -59,8 +59,8 @@ export const get = async (uri, data) => {
 
   // session expired
   if (body.code && body.code === "-11") {
-    const refreshed = await refreshToken()
-    if(refreshed) {
+    const refreshed = await refreshToken(onExpired)
+    if (refreshed) {
       return await get(uri, data)
     }
   } else if (body.code && body.code !== "0") {
@@ -85,7 +85,7 @@ export const createSocket = (path, onOpen, onMessage, onClose) => {
   return socket
 }
 
-const refreshToken = async () => {
+const refreshToken = async (onExpired) => {
   const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -105,15 +105,19 @@ const refreshToken = async () => {
 
   // refresh token 발급 실패, 재로그인 필요.
   if (body.code && body.code !== "0") {
-    // todo 최상단 popup 및 App.vue 에 emit 을 통해 첫화면으로 돌아가야 한다.
-    await store.dispatch('showSystemPopup', {
-      title: 'Re-login need.',
-      contents: 'Your session expired, Going back start page and re-login please.',
-      button: 'OK',
-      callback: () => {
-        _vue_app.changeScene('introScene')
-      }
-    })
+    if (onExpired) {
+      onExpired()
+    } else {
+      // todo 최상단 popup 및 App.vue 에 emit 을 통해 첫화면으로 돌아가야 한다.
+      await store.dispatch('showSystemPopup', {
+        title: 'Re-login need.',
+        contents: 'Your session expired, Going back start page and re-login please.',
+        button: 'OK',
+        callback: () => {
+          _vue_app.changeScene('introScene')
+        }
+      })
+    }
     return false
   }
 
