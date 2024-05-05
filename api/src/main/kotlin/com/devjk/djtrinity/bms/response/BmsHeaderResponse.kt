@@ -7,7 +7,7 @@ import com.google.gson.Gson
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class BmsHeaderResponse(
     private val id: Long,
-    private val bmsHeader: BmsHeader
+    val bmsHeader: BmsHeader
 ) {
     override fun toString(): String {
         return Gson().toJson(this)

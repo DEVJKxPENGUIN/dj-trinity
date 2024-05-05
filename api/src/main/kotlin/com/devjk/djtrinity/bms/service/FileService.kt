@@ -36,7 +36,11 @@ class FileService(
                         e.printStackTrace()
                         null
                     }
-                }
+                }.sortedWith(compareBy(
+                    {it.bmsHeader.player},
+                    {it.bmsHeader.playLevel},
+                    {it.bmsHeader.total}
+                ))
             }
     }
 
