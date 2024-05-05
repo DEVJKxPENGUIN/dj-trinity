@@ -35,7 +35,37 @@ class Bms private constructor(header: String, data: String) {
     init {
         bmsData.addAll(BmsHeader.preProcess(header))
         bmsData.addAll(BmsData.of(data))
+
+        // set custom calculate bms Information
+        bmsHeader.player = getPlayerInfo()
+        bmsHeader.keys = getKeyInfo()
+
         bmsData.sort()
+    }
+
+    private fun getPlayerInfo(): String {
+        val secondChannelData = bmsData.filter {
+            val channel = it.getChannel()
+            channel.isSecondPlayerType()
+        }
+        return if (secondChannelData.isEmpty()) "1" else "3"
+    }
+
+    private fun getKeyInfo(): Double {
+        val maxKey = bmsData.mapNotNull {
+            val channel = it.getChannel()
+            if (channel.isPlayerType()) {
+                val code = channel.value[1].code
+                if (code == 6 || code == 7) {
+                    null
+                } else {
+                    code
+                }
+            } else {
+                null
+            }
+        }.sortedDescending()[0]
+        return if (maxKey >= 8) (maxKey - 2).toDouble() else maxKey.toDouble()
     }
 
     override fun toString(): String {

@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class BmsHeader private constructor(
+    // bms header
     var player: String? = null,
     var genre: String? = null,
     var title: String? = null,
@@ -24,6 +25,10 @@ class BmsHeader private constructor(
     var stop: Array<Double?>? = null,
     var difficulty: Double? = null,
     var random: Double? = null,
+
+    // custom values
+    var keys: Double? = null,
+
     header: String,
     parseWav: Boolean
 ) {
@@ -49,7 +54,8 @@ class BmsHeader private constructor(
                 while ((reader.readLine().also { line = it }) != null) {
                     Bms.readBmsLine(line!!)?.let {
                         if (it.keys.first() == "#RANDOM") {
-                            random = ThreadLocalRandom.current().nextInt(1, it.values.first().toInt() + 1)
+                            random = ThreadLocalRandom.current()
+                                .nextInt(1, it.values.first().toInt() + 1)
                         }
                     }
                 }
@@ -59,7 +65,13 @@ class BmsHeader private constructor(
                 var line: String?
                 while ((reader.readLine().also { line = it }) != null) {
                     Bms.readBmsLine(line!!)?.let {
-                        isRead = processRandomAndIfState(it.keys.first(), it.values.first(), isRead, bmsData, random)
+                        isRead = processRandomAndIfState(
+                            it.keys.first(),
+                            it.values.first(),
+                            isRead,
+                            bmsData,
+                            random
+                        )
                     }
                 }
             }
@@ -110,7 +122,8 @@ class BmsHeader private constructor(
         BufferedReader(StringReader(header)).use { reader ->
             var line: String?
             while ((reader.readLine().also { line = it }) != null) {
-                Bms.readBmsLine(line!!)?.let { setByKey(it.keys.first(), it.values.first(), parseWav) }
+                Bms.readBmsLine(line!!)
+                    ?.let { setByKey(it.keys.first(), it.values.first(), parseWav) }
             }
         }
     }

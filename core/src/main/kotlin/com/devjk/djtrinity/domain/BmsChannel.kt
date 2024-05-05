@@ -70,9 +70,19 @@ enum class BmsChannel(val value: String, val description: String) {
     companion object {
         fun from(value: String): BmsChannel {
             return Arrays.stream(entries.toTypedArray())
-                    .filter { it.value == value }
-                    .findFirst()
-                    .orElseThrow { RuntimeException("no available channel : $value") }
+                .filter { it.value == value }
+                .findFirst()
+                .orElseThrow { RuntimeException("no available channel : $value") }
         }
+    }
+
+    fun isPlayerType(): Boolean {
+        val code = value[0].code
+        return code in 1..6
+    }
+
+    fun isSecondPlayerType(): Boolean {
+        val code = value[0].code
+        return code == 2 || code == 4 || code == 6
     }
 }

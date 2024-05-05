@@ -57,6 +57,10 @@ class BmsData private constructor(
         }
     }
 
+    fun getChannel(): BmsChannel {
+        return bmsChannel
+    }
+
     override fun compareTo(other: BmsData): Int {
         val barCompare = bar.compareTo(other.bar)
         if (barCompare != 0) {
