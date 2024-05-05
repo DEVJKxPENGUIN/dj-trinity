@@ -77,12 +77,12 @@ enum class BmsChannel(val value: String, val description: String) {
     }
 
     fun isPlayerType(): Boolean {
-        val code = value[0].code
+        val code = value[0].digitToInt()
         return code in 1..6
     }
 
     fun isSecondPlayerType(): Boolean {
-        val code = value[0].code
+        val code = value[0].digitToInt()
         return code == 2 || code == 4 || code == 6
     }
 }

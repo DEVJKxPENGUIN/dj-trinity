@@ -30,8 +30,9 @@ class FileService(
             .mapValues { bmsList ->
                 bmsList.value.mapNotNull { bmsNode ->
                     try {
-                        val bms = readBms(bmsNode)
-                        BmsHeaderResponse(bmsNode.id!!, bmsService.parseHeaderInfo(bms))
+                        val bmsStr = readBms(bmsNode)
+                        val bms = bmsService.parse(bmsStr)
+                        BmsHeaderResponse(bmsNode.id!!, bms.bmsHeader())
                     } catch (e: Exception) {
                         e.printStackTrace()
                         null

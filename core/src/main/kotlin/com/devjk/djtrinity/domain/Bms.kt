@@ -68,6 +68,10 @@ class Bms private constructor(header: String, data: String) {
         return if (maxKey >= 8) (maxKey - 2).toDouble() else maxKey.toDouble()
     }
 
+    fun bmsHeader(): BmsHeader {
+        return bmsHeader
+    }
+
     override fun toString(): String {
         return Gson().toJson(this)
     }
