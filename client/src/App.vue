@@ -4,7 +4,7 @@
     <IntroScene v-if="introScene" :manager="manager" @changeScene="changeScene"/>
   </transition>
   <transition name="fade">
-    <LobbyScene v-if="lobbyScene" :manager="manager"/>
+    <LobbyScene v-if="lobbyScene" :manager="manager" @changeScene="changeScene"/>
   </transition>
   <transition name="fade">
     <GameScene v-if="gameScene" :manager="manager"/>

@@ -127,6 +127,11 @@ export default {
         this.sendChat()
         return
       }
+      if(this.state === STANDBY) {
+        // todo -> 추후 Multiplay, option settings 등 플로우가 추가될 여지가 있음.
+        this.switchToGameScene()
+        return
+      }
     },
     handleShiftEnter() {
       if (this.state === STANDBY) {
@@ -301,7 +306,10 @@ export default {
           item: this.bmsList[list[index]]
         })
       }
-    }
+    },
+    switchToGameScene() {
+      this.$emit('changeScene', 'gameScene')
+    },
   },
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)
