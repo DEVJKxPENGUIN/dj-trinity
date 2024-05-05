@@ -2,11 +2,13 @@ package com.devjk.djtrinity.domain
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.google.gson.Gson
+import org.slf4j.LoggerFactory
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 class Bms private constructor(header: String, data: String) {
     private val bmsHeader: BmsHeader = BmsHeader.fromAll(header)
     private val bmsData: ArrayList<BmsData> = arrayListOf()
+    private val log = LoggerFactory.getLogger(this.javaClass)
 
     companion object {
         val HEADER_FIELD = "*---------------------- HEADER FIELD"
@@ -51,8 +53,8 @@ class Bms private constructor(header: String, data: String) {
         return if (secondChannelData.isEmpty()) "1" else "3"
     }
 
-    private fun getKeyInfo(): Double {
-        val maxKey = bmsData.mapNotNull {
+    private fun getKeyInfo(): Double? {
+        val channels = bmsData.mapNotNull {
             val channel = it.getChannel()
             if (channel.isPlayerType()) {
                 val code = channel.value[1].code
@@ -64,8 +66,14 @@ class Bms private constructor(header: String, data: String) {
             } else {
                 null
             }
-        }.sortedDescending()[0]
-        return if (maxKey >= 8) (maxKey - 2).toDouble() else maxKey.toDouble()
+        }.sortedDescending()
+
+        if (channels.isEmpty()) {
+            return null
+        }
+
+        val maxKey = channels[0]
+        return if (maxKey >= 8) (maxKey - 2).toDouble() else 5.0
     }
 
     fun bmsHeader(): BmsHeader {
