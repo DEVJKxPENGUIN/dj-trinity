@@ -69,7 +69,7 @@ class Bms private constructor(header: String, data: String) {
         }.sortedDescending()
 
         if (channels.isEmpty()) {
-            return null
+            return 7.0
         }
 
         val maxKey = channels[0]
