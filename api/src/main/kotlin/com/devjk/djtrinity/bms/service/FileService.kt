@@ -36,10 +36,13 @@ class FileService(
                         e.printStackTrace()
                         null
                     }
+                }.filter {
+                    // 1p (SP) mode 만 지원.
+                    it.bmsHeader.player == "1"
                 }.sortedWith(compareBy(
-                    {it.bmsHeader.player},
-                    {it.bmsHeader.playLevel},
-                    {it.bmsHeader.total}
+                    { it.bmsHeader.player },
+                    { it.bmsHeader.playLevel },
+                    { it.bmsHeader.total }
                 ))
             }
     }
