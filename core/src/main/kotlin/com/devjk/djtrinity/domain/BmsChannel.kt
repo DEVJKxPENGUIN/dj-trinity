@@ -65,7 +65,25 @@ enum class BmsChannel(val value: String, val description: String) {
     PLAYER2_LN_6("66", "PLAYER 2, 롱노트6"),
     PLAYER2_LN_7("67", "PLAYER 2, 롱노트7"),
     PLAYER2_LN_8("68", "PLAYER 2, 롱노트8"),
-    PLAYER2_LN_9("69", "PLAYER 2, 롱노트9");
+    PLAYER2_LN_9("69", "PLAYER 2, 롱노트9"),
+    PLAYER1_LM_1("D1", "PLAYER 1, 랜드마인1"),
+    PLAYER1_LM_2("D2", "PLAYER 1, 랜드마인2"),
+    PLAYER1_LM_3("D3", "PLAYER 1, 랜드마인3"),
+    PLAYER1_LM_4("D4", "PLAYER 1, 랜드마인4"),
+    PLAYER1_LM_5("D5", "PLAYER 1, 랜드마인5"),
+    PLAYER1_LM_6("D6", "PLAYER 1, 랜드마인6"),
+    PLAYER1_LM_7("D7", "PLAYER 1, 랜드마인7"),
+    PLAYER1_LM_8("D8", "PLAYER 1, 랜드마인8"),
+    PLAYER1_LM_9("D9", "PLAYER 1, 랜드마인9"),
+    PLAYER2_LM_1("E1", "PLAYER 2, 랜드마인1"),
+    PLAYER2_LM_2("E2", "PLAYER 2, 랜드마인2"),
+    PLAYER2_LM_3("E3", "PLAYER 2, 랜드마인3"),
+    PLAYER2_LM_4("E4", "PLAYER 2, 랜드마인4"),
+    PLAYER2_LM_5("E5", "PLAYER 2, 랜드마인5"),
+    PLAYER2_LM_6("E6", "PLAYER 2, 랜드마인6"),
+    PLAYER2_LM_7("E7", "PLAYER 2, 랜드마인7"),
+    PLAYER2_LM_8("E8", "PLAYER 2, 랜드마인8"),
+    PLAYER2_LM_9("E9", "PLAYER 2, 랜드마인9");
 
     companion object {
         fun from(value: String): BmsChannel {
@@ -77,12 +95,12 @@ enum class BmsChannel(val value: String, val description: String) {
     }
 
     fun isPlayerType(): Boolean {
-        val code = value[0].digitToInt()
-        return code in 1..6
+        val code = value[0]
+        return code == '1' || code == '2' || code == '3' || code == '4' || code == '5' || code == '6' || code == 'D' || code == 'E'
     }
 
     fun isSecondPlayerType(): Boolean {
-        val code = value[0].digitToInt()
-        return code == 2 || code == 4 || code == 6
+        val code = value[0]
+        return code == '2' || code == '4' || code == '6' || code == 'E'
     }
 }
