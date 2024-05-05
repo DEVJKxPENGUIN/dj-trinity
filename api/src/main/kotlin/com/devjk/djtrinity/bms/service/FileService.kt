@@ -41,6 +41,7 @@ class FileService(
                     it.bmsHeader.player == "1"
                 }.sortedWith(compareBy(
                     { it.bmsHeader.player },
+                    { it.bmsHeader.keys },
                     { it.bmsHeader.playLevel },
                     { it.bmsHeader.total }
                 ))
