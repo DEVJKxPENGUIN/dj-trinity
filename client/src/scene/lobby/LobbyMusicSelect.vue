@@ -19,13 +19,57 @@
       </div>
     </div>
     <div class="bottom-bar flex kode-mono-bold h-30p w-full mt-1">
-      <div class="current-bms flex flex-col w-full h-full backdrop-blur-lg backdrop-brightness-125">
-
-
-        <!-- todo -->
-
-
-
+      <div
+          class="current-bms flex flex-col w-full h-full overflow-hidden backdrop-blur-lg anta-regular backdrop-brightness-125">
+        <div class="top-bar flex flex-row h-6 text-sm backdrop-blur-3xl">
+          [&nbsp;{{ bmsHIndex + 1 }}&nbsp;/&nbsp;{{ bmsVCurrent.length }}&nbsp;]&nbsp;{{
+            bmsDirCurrent
+          }}
+        </div>
+        <div class="flex flex-row">
+          <div class="w-32">TITLE</div>
+          <div class="flex">
+            {{ bmsCurrent.bmsHeader.title }}
+          </div>
+        </div>
+        <div class="flex flex-row">
+          <div class="w-32">ARTIST</div>
+          <div class="flex">
+            {{ bmsCurrent.bmsHeader.artist }}
+          </div>
+        </div>
+        <div class="flex flex-row">
+          <div class="w-32">GENRE</div>
+          <div class="flex">
+            {{ bmsCurrent.bmsHeader.genre }}
+          </div>
+        </div>
+        <div class="flex flex-wrap">
+          <div class="flex flex-row w-1/2">
+            <div class="w-32">DIFFICULTY</div>
+            <div class="flex">
+              {{ bmsCurrent.bmsHeader.difficulty }}
+            </div>
+          </div>
+          <div class="flex flex-row w-1/2">
+            <div class="w-32">LEVEL</div>
+            <div class="flex">
+              {{ bmsCurrent.bmsHeader.playLevel }}
+            </div>
+          </div>
+          <div class="flex flex-row w-1/2">
+            <div class="w-32">BPM</div>
+            <div class="flex">
+              {{ bmsCurrent.bmsHeader.startBpm }}
+            </div>
+          </div>
+          <div class="flex flex-row w-1/2">
+            <div class="w-32">TOTAL</div>
+            <div class="flex">
+              {{ bmsCurrent.bmsHeader.total }}
+            </div>
+          </div>
+        </div>
 
 
       </div>
@@ -48,6 +92,14 @@ export default {
       type: Object,
       default: () => {
       }
+    },
+    bmsDirCurrent: {
+      type: String,
+      default: ''
+    },
+    bmsHIndex: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -58,8 +110,6 @@ export default {
   },
   watch: {
     bmsCurrent(current, before) {
-      console.log('current : ', current)
-      console.log('before : ', before)
       if (!this.isVCurrentChanged(before)) {
         this.animateArrow(this.isRightChanged(current, before))
       }
@@ -77,7 +127,6 @@ export default {
       return !this.bmsVCurrent.some(bms => bms.id === before.id)
     },
     isRightChanged(current, before) {
-
       for (const bms of this.bmsVCurrent) {
         if (bms.id === current.id) {
           // moved left

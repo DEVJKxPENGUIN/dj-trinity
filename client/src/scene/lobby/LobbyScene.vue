@@ -17,8 +17,9 @@
         <LobbyUsers :users="channelUsers" class="mt-1"/>
       </div>
       <div class="flex flex-1 flex-col h-full ml-2 mr-2">
-        <LobbyMusicSelect :bms-v-current="bmsVCurrent" :bms-current="bmsCurrent"/>
-        <LobbyChat ref="chat" :chats="channelChats" v-model:chat-input="chatInput" class="mt-1"
+        <LobbyMusicSelect class="h-3/4" :bms-v-current="bmsVCurrent" :bms-current="bmsCurrent"
+                          :bms-dir-current="bmsDirCurrent" :bms-h-index="bmsHIndex"/>
+        <LobbyChat class="mt-1 h-1/4" ref="chat" :chats="channelChats" v-model:chat-input="chatInput"
                    @inputFocus="handleChatInputFocus"/>
       </div>
       <div class="flex flex-1 flex-col">
@@ -73,6 +74,7 @@ export default {
       chatInput: '',
       bmsList: [],
       bmsShowList: [],
+      bmsDirCurrent: {},
       bmsCurrent: {id: 1, bmsHeader: {}},
       bmsVCurrent: [],
       bmsVIndex: 0,
@@ -207,7 +209,8 @@ export default {
         this.bmsVIndex--
       }
       this.bmsHIndex = 0
-      this.bmsVCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]]
+      this.bmsDirCurrent = Object.keys(this.bmsList)[this.bmsVIndex]
+      this.bmsVCurrent = this.bmsList[this.bmsDirCurrent]
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       this.bmsShowList.pop()
@@ -230,6 +233,7 @@ export default {
         this.bmsVIndex++
       }
       this.bmsHIndex = 0
+      this.bmsDirCurrent = Object.keys(this.bmsList)[this.bmsVIndex]
       this.bmsVCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]]
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
@@ -282,7 +286,8 @@ export default {
         name: list[this.bmsVIndex],
         item: this.bmsList[list[this.bmsVIndex]]
       })
-      this.bmsVCurrent = this.bmsList[list[this.bmsVIndex]]
+      this.bmsDirCurrent = list[this.bmsVIndex]
+      this.bmsVCurrent = this.bmsList[this.bmsDirCurrent]
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       // bottom
