@@ -47,7 +47,6 @@
 import IntroSceneLogin from "@/scene/intro/IntroSceneLogin.vue";
 import {mapActions, mapState} from "vuex";
 import IntroCanvas from "@/scene/intro/IntroCanvas";
-import {gsap} from 'gsap'
 
 const PRESS_ENTER = 'pressEnter'
 const MENU_SELECT = 'menuSelect'
@@ -89,10 +88,7 @@ export default {
     async init() {
       await this.manager.initScene(new IntroCanvas(), null)
       window.addEventListener('keydown', this.keyboard)
-      setTimeout(async () => {
-        await this.hideSceneChange()
-      }, 1000)
-
+      await this.hideSceneChange()
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {

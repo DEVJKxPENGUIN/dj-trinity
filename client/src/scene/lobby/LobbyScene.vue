@@ -95,9 +95,7 @@ export default {
           new LobbySocket(this)
       )
       window.addEventListener('keydown', this.keyboard)
-      setTimeout(async () => {
-        await this.hideSceneChange()
-      }, 1000)
+      await this.hideSceneChange()
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {
