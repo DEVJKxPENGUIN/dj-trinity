@@ -27,7 +27,7 @@ class BmsHeader private constructor(
     var random: Double? = null,
 
     // custom values
-    var keys: Double? = null,
+    var keys: Int? = null,
 
     header: String,
     parseWav: Boolean

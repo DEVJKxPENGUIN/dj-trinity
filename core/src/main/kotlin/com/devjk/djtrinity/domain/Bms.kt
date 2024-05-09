@@ -53,11 +53,11 @@ class Bms private constructor(header: String, data: String) {
         return if (secondChannelData.isEmpty()) "1" else "3"
     }
 
-    private fun getKeyInfo(): Double? {
+    private fun getKeyInfo(): Int {
         val channels = bmsData.mapNotNull {
             val channel = it.getChannel()
             if (channel.isPlayerType()) {
-                val code = channel.value[1].code
+                val code = channel.value[1].digitToInt()
                 if (code == 6 || code == 7) {
                     null
                 } else {
@@ -69,11 +69,11 @@ class Bms private constructor(header: String, data: String) {
         }.sortedDescending()
 
         if (channels.isEmpty()) {
-            return 7.0
+            return 7
         }
 
         val maxKey = channels[0]
-        return if (maxKey >= 8) (maxKey - 2).toDouble() else 5.0
+        return if (maxKey >= 8) (maxKey - 2) else 5
     }
 
     fun bmsHeader(): BmsHeader {
