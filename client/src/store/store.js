@@ -18,6 +18,9 @@ export default createStore({
       // loading
       isLoading: false,
       isSceneChanging: true,
+
+      // game state
+      bmsCurrent: {id: 1, bmsHeader: {}}
     };
   },
   mutations: {
@@ -45,20 +48,23 @@ export default createStore({
     },
     hideSceneChange(state) {
       state.isSceneChanging = false
+    },
+    setBmsCurrent(state, bmsCurrent) {
+      state.bmsCurrent = bmsCurrent
     }
   },
   actions: {
     showSystemPopup({commit}, payload) {
-      commit('showSystemPopup', payload);
+      commit('showSystemPopup', payload)
     },
     hideSystemPopup(context) {
-      context.commit('hideSystemPopup');
+      context.commit('hideSystemPopup')
     },
     showLoading(context) {
-      context.commit('showLoading');
+      context.commit('showLoading')
     },
     hideLoading(context) {
-      context.commit('hideLoading');
+      context.commit('hideLoading')
     },
     async showSceneChange(context) {
       return new Promise(resolve => {
@@ -85,6 +91,9 @@ export default createStore({
           }
         })
       })
+    },
+    setBmsCurrent(context, bmsCurrent) {
+      context.commit('setBmsCurrent', bmsCurrent)
     }
   }
 });

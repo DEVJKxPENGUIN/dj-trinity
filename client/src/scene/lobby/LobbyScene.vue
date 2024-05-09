@@ -19,7 +19,8 @@
       <div class="flex flex-1 flex-col h-full ml-2 mr-2">
         <LobbyMusicSelect class="h-3/4" :bms-v-current="bmsVCurrent" :bms-current="bmsCurrent"
                           :bms-dir-current="bmsDirCurrent" :bms-h-index="bmsHIndex"/>
-        <LobbyChat class="mt-1 h-1/4" ref="chat" :chats="channelChats" v-model:chat-input="chatInput"
+        <LobbyChat class="mt-1 h-1/4" ref="chat" :chats="channelChats"
+                   v-model:chat-input="chatInput"
                    @inputFocus="handleChatInputFocus"/>
       </div>
       <div class="flex flex-1 flex-col">
@@ -38,7 +39,6 @@ import {mapActions, mapState} from "vuex";
 import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 import LobbySocket from "@/scene/lobby/LobbySocket";
 import * as apiManager from "@/manager/apiManager";
-import {get} from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
 import LobbyProfile from "@/scene/lobby/LobbyProfile.vue";
 import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
@@ -85,7 +85,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange']),
+    ...mapActions(
+        ['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange', 'setBmsCurrent']),
     async init() {
       this.user = await authenticationManager.userInfo()
       this.bmsList = await apiManager.get('/bms/list', {})
@@ -125,7 +126,7 @@ export default {
         this.sendChat()
         return
       }
-      if(this.state === STANDBY) {
+      if (this.state === STANDBY) {
         // todo -> 추후 Multiplay, option settings 등 플로우가 추가될 여지가 있음.
         this.switchToGameScene()
         return
@@ -182,7 +183,7 @@ export default {
       await this.updateChannel(channelInfo)
     },
     async updateChannel(channelInfo) {
-      this.channelUsers = (await get('/users', {userIds: channelInfo['users'].join(',')}))
+      this.channelUsers = (await apiManager.get('/users', {userIds: channelInfo['users'].join(',')}))
       .filter(user => user.id !== this.user.id)
     },
     async updateChatBox(receivedChat) {
@@ -306,6 +307,7 @@ export default {
       }
     },
     switchToGameScene() {
+      this.setBmsCurrent(this.bmsCurrent)
       this.$emit('changeScene', 'gameScene')
     },
   },
