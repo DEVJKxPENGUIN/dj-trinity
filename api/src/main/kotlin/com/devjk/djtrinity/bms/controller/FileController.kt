@@ -1,6 +1,5 @@
 package com.devjk.djtrinity.bms.controller
 
-import com.devjk.djtrinity.bms.response.BmsResponse
 import com.devjk.djtrinity.bms.service.FileService
 import com.devjk.djtrinity.framework.common.BaseResponse
 import org.springframework.http.ResponseEntity
@@ -25,8 +24,8 @@ class FileController(
     }
 
     @GetMapping("/{nodeId}")
-    fun parseBms(@PathVariable nodeId: Long): ResponseEntity<BmsResponse> {
+    fun parseBms(@PathVariable nodeId: Long): ResponseEntity<*> {
         val response = fileService.parseBms(nodeId)
-        return ResponseEntity.ok().body(response)
+        return ResponseEntity.ok(BaseResponse.success(response))
     }
 }

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 class Bms private constructor(header: String, data: String) {
     private val bmsHeader: BmsHeader = BmsHeader.fromAll(header)
     private val bmsData: ArrayList<BmsData> = arrayListOf()
-    private val log = LoggerFactory.getLogger(this.javaClass)
 
     companion object {
         val HEADER_FIELD = "*---------------------- HEADER FIELD"
