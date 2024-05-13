@@ -33,6 +33,7 @@ class BmsHeader private constructor(
     parseWav: Boolean
 ) {
 
+    constructor() : this(header = "", parseWav = false)
 
     companion object {
         fun fromInfo(bms: String): BmsHeader {

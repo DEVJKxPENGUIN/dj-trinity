@@ -9,6 +9,8 @@ data class BmsHeaderResponse(
     private val id: Long,
     val bmsHeader: BmsHeader
 ) {
+    constructor() : this(0, BmsHeader())
+
     override fun toString(): String {
         return Gson().toJson(this)
     }

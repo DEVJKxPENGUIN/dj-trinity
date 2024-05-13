@@ -9,6 +9,7 @@ import com.devjk.djtrinity.framework.error.ErrorCode
 import com.devjk.djtrinity.framework.error.exception.BaseException
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.io.BufferedReader
 import java.io.File
@@ -23,6 +24,7 @@ class FileService(
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
+    @Cacheable(value = ["BMS-LIST"])
     fun getBmsListAll(): Map<String, List<BmsHeaderResponse>> {
         return bmsNodeRepository.findAll()
             .groupBy { it.rootPath }
