@@ -1,19 +1,23 @@
 <template>
-    <div v-if="show" class="popup flex flex-col">
-      <div class="top flex h-20"/>
-      <div class="middle flex flex-col sm:flex-row flex-1">
-        <div class="left sm:flex-1"/>
-        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur-lg backdrop-brightness-125">
-          <slot name="text"/>
-        </div>
-        <div class="line h-0 sm:h-full sm:w-0.5 sm:mt-5 sm:mb-5"></div>
-        <div class="center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-blur-lg backdrop-brightness-125">
-          <slot name="form"/>
-        </div>
-        <div class="right sm:flex-1"/>
+  <div v-if="show" class="popup flex flex-col">
+    <div class="top flex h-20"/>
+    <div class="middle flex flex-col sm:flex-row flex-1">
+      <div class="left sm:flex-1"/>
+      <div
+          :class="'center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-brightness-125 ' + blur"
+      >
+        <slot name="text"/>
       </div>
-      <div class="bottom flex h-20"/>
+      <div class="line h-0 sm:h-full sm:w-0.5 sm:mt-5 sm:mb-5"></div>
+      <div
+          :class="'center flex h-1/2 sm:h-full w-full sm:w-128 justify-center items-center backdrop-brightness-125 ' + blur"
+      >
+        <slot name="form"/>
+      </div>
+      <div class="right sm:flex-1"/>
     </div>
+    <div class="bottom flex h-20"/>
+  </div>
 
 </template>
 
@@ -24,7 +28,11 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default:true
+      default: true
+    },
+    blur: {
+      type: String,
+      default: 'backdrop-blur-lg'
     }
   },
   created() {

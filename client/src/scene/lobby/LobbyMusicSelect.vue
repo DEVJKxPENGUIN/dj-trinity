@@ -117,9 +117,6 @@ export default {
         this.handleArrowShowing()
       }, 200)
 
-    },
-    bmsVCurrent() {
-      console.log('vCurrentChanged : ', this.bmsVCurrent)
     }
   },
   methods: {

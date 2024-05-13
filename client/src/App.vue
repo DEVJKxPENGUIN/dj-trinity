@@ -7,7 +7,7 @@
     <LobbyScene v-if="lobbyScene" :manager="manager" @changeScene="changeScene"/>
   </transition>
   <transition name="fade">
-    <GameScene v-if="gameScene" :manager="manager"/>
+    <GameScene v-if="gameScene" :manager="manager" @changeScene="changeScene"/>
   </transition>
   <transition name="slide-fade">
     <SystemPopup v-if="isSystemPopup" class="z-10"/>

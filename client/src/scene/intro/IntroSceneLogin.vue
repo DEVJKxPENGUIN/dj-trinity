@@ -503,22 +503,4 @@ input::placeholder {
   font-size: 14px;
   text-align: center;
 }
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  20%, 60% {
-    transform: translateX(-3px);
-  }
-  40%, 80% {
-    transform: translateX(3px);
-  }
-}
-
-.shake {
-  display: inline-block;
-  animation: shake 0.1s ease;
-}
-
 </style>
