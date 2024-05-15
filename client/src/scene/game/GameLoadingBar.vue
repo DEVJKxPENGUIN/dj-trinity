@@ -34,7 +34,9 @@ export default {
 
       const p = (this.current / this.total) * 100
       this.percent = Math.floor(p / 10) * 10
-      console.log(this.percent)
+      if(this.percent === 100) {
+        console.log(this.percent + '/' + this.current + '/' + this.total)
+      }
     }
   },
   data() {

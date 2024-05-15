@@ -39,6 +39,13 @@ export default class GameCanvas {
     this.ctx.scene.remove(this.loadingBackground)
 
     // todo remove background, draw game UI
+    this.drawBmsGear()
+  }
+
+  drawBmsGear() {
+    const uiSettings = this.vue.uiSettings
+
+    alert('uiSettings : ' + uiSettings)
 
   }
 

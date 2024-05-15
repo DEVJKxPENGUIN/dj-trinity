@@ -19,6 +19,7 @@ import GameCanvas from "@/scene/game/GameCanvas";
 import GameSocket from "@/scene/game/GameSocket";
 import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
+import uiSettings from '../../options/ui/game.json'
 
 const GAME_PREPARING = 'gamePreparing'
 const GAME_BEFORE_START = 'gameBeforeStart'
@@ -41,7 +42,8 @@ export default {
 
       bms: {},
       bmsSounds: new Map(),
-      loadState: []
+      loadState: [],
+      uiSettings: null,
     }
   },
   methods: {
@@ -84,22 +86,32 @@ export default {
     },
     async initGame() {
       this.showGameLoading = true
-      await this.loadBmsResources()
+      await this.loadAll()
     },
-    async loadBmsResources() {
+    async loadAll() {
       if (!this.bmsCurrent.id) {
         throw new Error('no bmsId');
       }
 
-      this.bms = (await apiManager.get('/bms/' + this.bmsCurrent.id)).bms
-
-      await this.loadSounds()
+      this.loadUISettings()
+      await this.loadBms()
+      this.loadSounds()
     },
-    async loadSounds() {
+    async loadBms() {
+      this.loadState[1] = {
+        title: 'bms',
+        count: 0,
+        size: 1,
+      }
+
+      this.bms = (await apiManager.get('/bms/' + this.bmsCurrent.id)).bms
+      this.loadState[1].count++
+    },
+    loadSounds() {
       const header = this.bms.bmsHeader;
 
       // download bms sounds
-      this.loadState[0] = {
+      this.loadState[2] = {
         title: 'sounds',
         count: 0,
         size: 0,
@@ -110,7 +122,7 @@ export default {
           return;
         }
 
-        this.loadState[0].size++
+        this.loadState[2].size++
         this.bmsSounds.set(
             i,
             new Howl({
@@ -126,11 +138,24 @@ export default {
 
       this.bmsSounds.forEach(sound => {
         sound.once('load', () => {
-          this.loadState[0].count++
+          this.loadState[2].count++
         })
         sound.once('loaderror', () => {
-          this.loadState[0].count++
+          this.loadState[2].count++
         })
+      })
+    },
+    loadUISettings() {
+      this.loadState[0] = {
+        title: 'ui-settings',
+        count: 0,
+        size: 1,
+      }
+
+      // fixme -> change to get personal ui settings from server
+      this.$nextTick(() => {
+        this.uiSettings = uiSettings
+        this.loadState[0].count++
       })
     },
     switchToGameBeforeStart() {
