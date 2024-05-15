@@ -53,11 +53,27 @@ export default {
     }
   },
   created() {
+    this.checkLoadFinished = setInterval(() => {
+      for (let i = 0; i < this.loadState.length; i++) {
+        const item = this.loadState[i]
+        if (item.size !== item.count) {
+          return
+        }
+      }
+
+      // finished checking all loadState completed
+      this.$emit('close')
+    }, 2000)
   },
   data() {
-    return {}
+    return {
+      checkLoadFinished: null
+    }
   },
-  methods: {toUpperCase}
+  methods: {toUpperCase},
+  beforeUnmount() {
+    clearInterval(this.checkLoadFinished)
+  }
 }
 </script>
 

@@ -16,11 +16,11 @@ export default class GameCanvas {
   async init(ctx) {
     this.ctx = ctx
 
-    this.background()
+    this.loadBackground()
     this.light()
   }
 
-  background() {
+  loadBackground() {
     const texture = new TextureLoader().load(
         process.env.VUE_APP_API_HOST + '/download/bms/stage/'
         + this.vue.bmsCurrent.id)
@@ -30,27 +30,21 @@ export default class GameCanvas {
       map: texture,
       transparent: true
     })
-    const background = new Mesh(geometry, material)
-    background.position.set(0, 0, 0)
-    // this.moveBackground(background)
-    this.ctx.scene.add(background)
+    this.loadingBackground = new Mesh(geometry, material)
+    this.loadingBackground.position.set(0, 0, 0)
+    this.ctx.scene.add(this.loadingBackground)
+  }
+
+  switchLoadingToGame() {
+    this.ctx.scene.remove(this.loadingBackground)
+
+    // todo remove background, draw game UI
+
   }
 
   light() {
     const light0 = new AmbientLight(0xffffff, 0.1)
     this.ctx.scene.add(light0)
-  }
-
-  moveBackground(background) {
-    gsap.to(background.position, {
-      duration: 60,
-      x: 0.5,
-      y: -2.0,
-      z: 0.5,
-      repeat: -1,
-      repeatDelay: 0,
-      yoyo: true,
-    })
   }
 
   destroy() {

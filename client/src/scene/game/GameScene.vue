@@ -1,12 +1,11 @@
 <template>
-  <div>
-
+  <div class="flex">
     <transition name="slide-fade">
       <GameLoading
           v-if="showGameLoading"
           :bms-current="bmsCurrent"
           :load-state="loadState"
-          @close="onFinishGameLoading"
+          @close="switchToGameBeforeStart"
       />
     </transition>
   </div>
@@ -22,6 +21,7 @@ import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 
 const GAME_PREPARING = 'gamePreparing'
+const GAME_BEFORE_START = 'gameBeforeStart'
 export default {
   name: 'GameScene',
   components: {GameLoading},
@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       state: GAME_PREPARING,
-      showGameLoading: true,
+      showGameLoading: false,
 
       bms: {},
       bmsSounds: new Map(),
@@ -49,13 +49,13 @@ export default {
         ['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange']),
     async init() {
       this.user = await authenticationManager.userInfo()
-      this.initGame()
       await this.manager.initScene(
           new GameCanvas(this),
           new GameSocket(this)
       )
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
+      await this.initGame()
     },
     keyboard(e) {
       if (this.isLoading || this.isSystemPopup) {
@@ -82,9 +82,9 @@ export default {
         return
       }
     },
-    initGame() {
-      this.loadBmsResources()
-
+    async initGame() {
+      this.showGameLoading = true
+      await this.loadBmsResources()
     },
     async loadBmsResources() {
       if (!this.bmsCurrent.id) {
@@ -133,8 +133,10 @@ export default {
         })
       })
     },
-    onFinishGameLoading() {
-      // todo
+    switchToGameBeforeStart() {
+      this.showGameLoading = false
+      this.manager.canvas.switchLoadingToGame()
+      this.state = GAME_BEFORE_START
     },
     beforeUnmount() {
       window.removeEventListener('keydown', this.keyboard)
