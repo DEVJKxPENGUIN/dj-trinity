@@ -14,9 +14,14 @@
       <!-- LOADING STATE -->
       <div class="flex flex-col w-4/6 orbitron-regular">
         <div v-for="item in loadState" v-bind:key="item" class="flex flex-col color-main w-full">
-          <p class="color-desc font-desc orbitron-thin">{{ item.title }}</p>
-          <p class="color-desc font-desc orbitron-thin">{{ item.count }}</p>
-          <p class="color-desc font-desc orbitron-thin">{{ item.size }}</p>
+          <p class="color-desc font-desc orbitron-thin">{{ toUpperCase(item.title) }}</p>
+          <div class="flex flex-row h-2">
+            <GameLoadingBar :total="item.size" :current="item.count"/>
+            <p class="flex color-desc font-desc orbitron-thin items-center">[{{ item.count }}</p>
+            <p class="flex color-desc font-desc orbitron-thin items-center">/</p>
+            <p class="flex color-desc font-desc orbitron-thin items-center">{{ item.size }}]</p>
+          </div>
+
         </div>
       </div>
     </template>
@@ -27,10 +32,12 @@
 <script>
 import {mapState} from "vuex";
 import Popup from "@/scene/common/popup.vue";
+import {toUpperCase} from "uri-js/dist/esnext/util";
+import GameLoadingBar from "@/scene/game/GameLoadingBar.vue";
 
 export default {
   name: "GameLoading",
-  components: {Popup},
+  components: {GameLoadingBar, Popup},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
   },
@@ -50,7 +57,7 @@ export default {
   data() {
     return {}
   },
-  methods: {}
+  methods: {toUpperCase}
 }
 </script>
 
