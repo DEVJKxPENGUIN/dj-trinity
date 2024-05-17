@@ -14,7 +14,6 @@ export default class GameCanvasDrawer {
   constructor(canvas) {
     this.canvas = canvas
     this.vue = canvas.vue
-    this.manager = canvas.vue.manager
     this.ctx = canvas.ctx
   }
 
@@ -37,10 +36,10 @@ export default class GameCanvasDrawer {
   gearLine(gear) {
     const outLine = gear['outline']
     const color = outLine['color']
-    const x = this.manager.pixelToObj(outLine['x'])
-    const y = this.manager.pixelToObj(outLine['y'])
-    const width = this.manager.pixelToObj(outLine['width'])
-    const height = this.manager.pixelToObj(outLine['height'])
+    const x = this.ctx.pixelToObj(outLine['x'])
+    const y = this.ctx.pixelToObj(outLine['y'])
+    const width = this.ctx.pixelToObj(outLine['width'])
+    const height = this.ctx.pixelToObj(outLine['height'])
 
     const mat = new LineBasicMaterial({
       color: color
@@ -60,9 +59,9 @@ export default class GameCanvasDrawer {
     const scratch = gear['scratch']
     const scratchLine = scratch['line']
     const color = scratchLine['color']
-    const x = this.manager.pixelToObj(scratchLine['x'])
-    const y = this.manager.pixelToObj(scratchLine['y'])
-    const height = this.manager.pixelToObj(scratchLine['height'])
+    const x = this.ctx.pixelToObj(scratchLine['x'])
+    const y = this.ctx.pixelToObj(scratchLine['y'])
+    const height = this.ctx.pixelToObj(scratchLine['height'])
 
     const mat = new LineBasicMaterial({
       color: color
@@ -81,11 +80,10 @@ export default class GameCanvasDrawer {
     for (let i = 1; i <= key; i++) {
       const k = gear['key' + i]
       const kLine = k['line']
-      console.log(kLine)
       const color = kLine['color']
-      const x = this.manager.pixelToObj(kLine['x'])
-      const y = this.manager.pixelToObj(kLine['y'])
-      const height = this.manager.pixelToObj(kLine['height'])
+      const x = this.ctx.pixelToObj(kLine['x'])
+      const y = this.ctx.pixelToObj(kLine['y'])
+      const height = this.ctx.pixelToObj(kLine['height'])
 
       const mat = new LineBasicMaterial({
         color: color

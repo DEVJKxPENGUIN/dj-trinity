@@ -1,5 +1,6 @@
 <template>
   <div class="flex">
+    <div class="absolute text-white anta-regular">FPS : {{ gameData ? gameData.fps : 0 }}</div>
     <transition name="slide-fade">
       <GameLoading
           v-if="showGameLoading"
@@ -44,6 +45,7 @@ export default {
       bmsSounds: new Map(),
       loadState: [],
       uiSettings: null,
+      gameData: null,
     }
   },
   methods: {
@@ -53,7 +55,8 @@ export default {
       this.user = await authenticationManager.userInfo()
       await this.manager.initScene(
           new GameCanvas(this),
-          new GameSocket(this)
+          new GameSocket(this),
+          new Worker(new URL('./GameWorker.js', import.meta.url))
       )
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
@@ -160,6 +163,11 @@ export default {
     switchToGameBeforeStart() {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
+      this.manager.worker.postMessage(JSON.parse(JSON.stringify(this.bms)))
+      this.manager.worker.onmessage = (e) => {
+        this.gameData = e.data
+      }
+
       this.state = GAME_BEFORE_START
     },
     handleError(title, contents) {

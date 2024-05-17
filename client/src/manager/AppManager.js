@@ -31,15 +31,19 @@ export default class AppManager {
     this.draw()
   }
 
-  async initScene(canvas, socket) {
+  async initScene(canvas, socket, worker) {
     this.canvas = canvas
     if (this.canvas) {
       await this.canvas.init(this)
     }
+
     this.socket = socket
     if (this.socket) {
       await this.socket.init(this)
     }
+
+    // worker do not init
+    this.worker = worker
   }
 
   async removeScene() {
@@ -50,9 +54,22 @@ export default class AppManager {
     await store.dispatch('showSceneChange')
     return new Promise(resolve => {
       // canvas 이외에 js 관련 세팅한 것이 있다면 해제한다.
-      this.canvas.destroy()
-      this.disposeAll()
-      this.canvas = null;
+      if (this.canvas) {
+        this.canvas.destroy()
+        this.disposeAll()
+        this.canvas = null
+      }
+
+      if (this.socket) {
+        this.socket.destroy()
+        this.socket = null
+      }
+
+      if (this.worker) {
+        this.worker.terminate()
+        this.worker = null
+      }
+
       resolve()
     })
   }
@@ -112,8 +129,11 @@ export default class AppManager {
   }
 
   draw() {
-    requestAnimationFrame(this.draw)
     this.renderer.render(this.scene, this.camera)
+    if (this.canvas && this.canvas.update) {
+      this.canvas.update()
+    }
+    requestAnimationFrame(this.draw)
   }
 
 }

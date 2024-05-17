@@ -22,6 +22,7 @@ export default class GameSocket {
   }
 
   destroy() {
-    this.socket.close()
+    // todo
+    // this.socket.close()
   }
 }

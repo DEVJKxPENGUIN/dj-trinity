@@ -6,7 +6,6 @@ export default class GameCanvas {
 
   constructor(vue) {
     this.vue = vue
-    this.manager = vue.manager
   }
 
   async init(ctx) {
@@ -70,6 +69,12 @@ export default class GameCanvas {
   light() {
     const light0 = new AmbientLight(0xffffff, 0.1)
     this.ctx.scene.add(light0)
+  }
+
+  update() {
+
+    // todo update bar and blocks
+
   }
 
   destroy() {
