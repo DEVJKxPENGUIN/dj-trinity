@@ -1,37 +1,24 @@
 import {gsap} from "gsap";
-import {
-  AmbientLight,
-  Mesh,
-  MeshLambertMaterial,
-  PlaneGeometry,
-  TextureLoader
-} from "three";
+import {AmbientLight} from "three";
+import GameCanvasDrawer from "@/scene/game/GameCanvasRenderer";
 
 export default class GameCanvas {
 
   constructor(vue) {
     this.vue = vue
+    this.manager = vue.manager
   }
 
   async init(ctx) {
     this.ctx = ctx
+    this.drawer = new GameCanvasDrawer(this)
 
     this.loadBackground()
     this.light()
   }
 
   loadBackground() {
-    const texture = new TextureLoader().load(
-        process.env.VUE_APP_API_HOST + '/download/bms/stage/'
-        + this.vue.bmsCurrent.id)
-
-    const geometry = new PlaneGeometry(14, 14)
-    const material = new MeshLambertMaterial({
-      map: texture,
-      transparent: true
-    })
-    this.loadingBackground = new Mesh(geometry, material)
-    this.loadingBackground.position.set(0, 0, 0)
+    this.loadingBackground = this.drawer.loadingBackgroundMesh()
     this.ctx.scene.add(this.loadingBackground)
   }
 
@@ -39,13 +26,44 @@ export default class GameCanvas {
     this.ctx.scene.remove(this.loadingBackground)
 
     // todo remove background, draw game UI
-    this.drawBmsGear()
+    this.drawGear()
   }
 
-  drawBmsGear() {
+  drawGear() {
     const uiSettings = this.vue.uiSettings
+    const key = this.vue.bms.bmsHeader.keys
+    const keySettings = uiSettings['key_' + key]
+    if (!keySettings) {
+      this.vue.handleError(
+          'Unable to load skin.',
+          'your skin do not assist KEY [' + this.vue.bms.bmsHeader.keys
+          + '], use another skin to play this.'
+      )
+      return
+    }
 
-    alert('uiSettings : ' + uiSettings)
+    const gear = keySettings['gear']
+    if (uiSettings.showGuideline) {
+      /** gear.scratch */
+      this.scratchLine = this.drawer.scratchLine(gear)
+      this.ctx.scene.add(this.scratchLine)
+
+      /** gear.keyLines */
+      this.keyLines = this.drawer.keyLines(gear, key)
+      this.keyLines.forEach(line => {
+        this.ctx.scene.add(line)
+      })
+
+      /** gear.line */
+      this.line = this.drawer.gearLine(gear)
+      this.ctx.scene.add(this.line)
+
+      /** gear.blocks */
+      // todo --> blocks 그려야 하는데, 어떻게? 다그려?
+
+    }
+
+    // todo render images
 
   }
 

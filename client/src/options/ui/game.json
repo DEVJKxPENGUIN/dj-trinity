@@ -1,3 +1,102 @@
 {
-  "showGuideline": true
+  "showGuideline": true,
+  "key_7": {
+    "gear": {
+      "outline": {
+        "color": "rgb(255, 255, 255)",
+        "x": -222.5,
+        "y": -250,
+        "width": 445,
+        "height": 850
+      },
+      "scratch": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": -142.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 80
+        }
+      },
+      "key1": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": -87.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 55
+        }
+      },
+      "key2": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": -47.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 40
+        }
+      },
+      "key3": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": 7.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 55
+        }
+      },
+      "key4": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": 72.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 65
+        }
+      },
+      "key5": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": 127.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 55
+        }
+      },
+      "key6": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": 167.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 40
+        }
+      },
+      "key7": {
+        "line": {
+          "color": "rgb(50, 50, 50)",
+          "x": 222.5,
+          "y": -250,
+          "height": 850
+        },
+        "block": {
+          "width": 55
+        }
+      }
+    }
+  }
 }

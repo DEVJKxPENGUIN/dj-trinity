@@ -95,6 +95,22 @@ export default class AppManager {
     }
   }
 
+  objToPixel(sizeOfObject) {
+    const vFov = (this.camera.fov * Math.PI) / 180;
+    const height = 2 * Math.tan(vFov / 2) * this.camera.position.z;
+    const aspect = window.innerWidth / window.innerHeight;
+    const width = height * aspect;
+    return window.innerWidth * ((1 / width) * sizeOfObject) // (e.g. sizeOfObject = 0.2)
+  }
+
+  pixelToObj(sizeOfPixel) {
+    const vFov = (this.camera.fov * Math.PI) / 180;
+    const height = 2 * Math.tan(vFov / 2) * this.camera.position.z;
+    const aspect = window.innerWidth / window.innerHeight;
+    const width = height * aspect;
+    return sizeOfPixel * (width / window.innerWidth);
+  }
+
   draw() {
     requestAnimationFrame(this.draw)
     this.renderer.render(this.scene, this.camera)

@@ -79,7 +79,6 @@ export default {
     },
     handleEsc() {
       if (this.state === GAME_PREPARING) {
-        console.log('handleEsc')
         this.$emit('changeScene', 'lobbyScene')
         return
       }
@@ -162,6 +161,16 @@ export default {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
       this.state = GAME_BEFORE_START
+    },
+    handleError(title, contents) {
+      this.$store.dispatch('showSystemPopup', {
+        title: title,
+        contents: contents,
+        button: 'OK',
+        callback: () => {
+          this.$emit('changeScene', 'lobbyScene')
+        }
+      })
     },
     beforeUnmount() {
       window.removeEventListener('keydown', this.keyboard)
