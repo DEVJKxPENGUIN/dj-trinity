@@ -22,6 +22,11 @@
         "width": 445,
         "height": 850
       },
+      "bar": {
+        "color": "rgb(100, 100, 100)",
+        "x": -222.5,
+        "width": 445
+      },
       "scratch": {
         "line": {
           "color": "rgb(50, 50, 50)",
@@ -30,7 +35,10 @@
           "height": 850
         },
         "block": {
-          "width": 80
+          "color": "rgb(255, 0, 128)",
+          "x": -142.5,
+          "width": 80,
+          "height": 20
         }
       },
       "key1": {
@@ -41,7 +49,10 @@
           "height": 850
         },
         "block": {
-          "width": 55
+          "color": "rgb(255, 255, 0)",
+          "x": -87.5,
+          "width": 55,
+          "height": 20
         }
       },
       "key2": {
@@ -52,7 +63,10 @@
           "height": 850
         },
         "block": {
-          "width": 40
+          "color": "rgb(0, 0, 255)",
+          "x": -47.5,
+          "width": 40,
+          "height": 20
         }
       },
       "key3": {
@@ -63,7 +77,10 @@
           "height": 850
         },
         "block": {
-          "width": 55
+          "color": "rgb(255, 255, 0)",
+          "x": 7.5,
+          "width": 55,
+          "height": 20
         }
       },
       "key4": {
@@ -74,7 +91,10 @@
           "height": 850
         },
         "block": {
-          "width": 65
+          "color": "rgb(255, 254, 0)",
+          "x": 72.5,
+          "width": 65,
+          "height": 20
         }
       },
       "key5": {
@@ -85,7 +105,10 @@
           "height": 850
         },
         "block": {
-          "width": 55
+          "color": "rgb(255, 255, 0)",
+          "x": 127.5,
+          "width": 55,
+          "height": 20
         }
       },
       "key6": {
@@ -96,7 +119,10 @@
           "height": 850
         },
         "block": {
-          "width": 40
+          "color": "rgb(0, 0, 255)",
+          "x": 167.5,
+          "width": 40,
+          "height": 20
         }
       },
       "key7": {
@@ -107,7 +133,10 @@
           "height": 850
         },
         "block": {
-          "width": 55
+          "color": "rgb(255, 255, 0)",
+          "x": 222.5,
+          "width": 55,
+          "height": 20
         }
       }
     },

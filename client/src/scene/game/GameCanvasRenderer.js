@@ -5,6 +5,7 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshLambertMaterial,
+  Object3D,
   PlaneGeometry,
   TextureLoader,
   Vector2
@@ -101,6 +102,79 @@ export default class GameCanvasDrawer {
       arr.push(line)
     }
     return arr
+  }
+
+  barPool(gear) {
+    const poolSize = 20
+    const pool = []
+    for (let i = 0; i < poolSize; i++) {
+      pool.push(this.bar(gear))
+    }
+
+    return pool
+  }
+
+  bar(gear) {
+    const bar = gear['bar']
+    const color = bar['color']
+    const x = this.ctx.pixelToObj(bar['x'])
+    const width = this.ctx.pixelToObj(bar['width'])
+
+    const mat = new LineBasicMaterial({
+      color: color
+    })
+
+    const points = []
+    points.push(new Vector2(x, 0))
+    points.push(new Vector2(x + width, 0))
+    const geo = new BufferGeometry().setFromPoints(points)
+
+    const line = new Line(geo, mat)
+    const obj = new Object3D()
+    obj.add(line)
+    obj.position.y = 100
+    return obj
+  }
+
+  blockPool(gear, key) {
+    const poolSize = 20
+    const pool = []
+
+    for (let i = 0; i <= key; i++) {
+      const keyPool = []
+      for (let j = 0; j < poolSize; j++) {
+        keyPool.push(this.block(gear, i))
+      }
+      pool.push(keyPool)
+    }
+
+    return pool
+  }
+
+  block(gear, key) {
+    const block = key === 0 ? gear['scratch']['block'] : gear['key'
+    + key]['block']
+    const color = block['color']
+    const x = this.ctx.pixelToObj(block['x'])
+    const width = this.ctx.pixelToObj(block['width'])
+    const height = this.ctx.pixelToObj(block['height'])
+
+    const mat = new LineBasicMaterial({
+      color: color
+    })
+
+    const points = []
+    points.push(new Vector2(x, 0))
+    points.push(new Vector2(x + width, 0))
+    points.push(new Vector2(x + width, height))
+    points.push(new Vector2(x, height))
+    const geo = new BufferGeometry().setFromPoints(points)
+
+    const line = new Line(geo, mat)
+    const obj = new Object3D()
+    obj.add(line)
+    obj.position.y = 100
+    return obj
   }
 
   timeBox(ui) {

@@ -13,7 +13,7 @@ class GameWorker {
     this.blocks = bms.bmsData
     this.initGame()
     this.initBms()
-    this.initBars()
+    this.updateBarTime()
 
     this.gameLoop()
   }
@@ -88,7 +88,7 @@ class GameWorker {
     }
   }
 
-  initBars() {
+  updateBarTime() {
     const elapsedTime = this.elapsedTime;
 
     let lastTime = this.initialTime;
@@ -164,6 +164,8 @@ class GameWorker {
   }
 
   handleGameState(state) {
+    console.log(state)
+
     // at first playing, record start time
     if (this.state === GAME_READY && state === GAME_PLAYING) {
       this.startTime = performance.now()
@@ -175,6 +177,7 @@ class GameWorker {
   update() {
     const now = performance.now()
     this.updateTimeAndFps(now)
+    this.updateBarTime()
 
   }
 

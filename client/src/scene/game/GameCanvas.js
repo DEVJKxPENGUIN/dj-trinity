@@ -21,6 +21,11 @@ export default class GameCanvas {
     this.ctx.scene.add(this.loadingBackground)
   }
 
+  light() {
+    const light0 = new AmbientLight(0xffffff, 0.1)
+    this.ctx.scene.add(light0)
+  }
+
   switchLoadingToGame() {
     this.ctx.scene.remove(this.loadingBackground)
 
@@ -29,9 +34,9 @@ export default class GameCanvas {
   }
 
   drawGame() {
-    const uiSettings = this.vue.uiSettings
+    this.uiSettings = this.vue.uiSettings
     const key = this.vue.bms.bmsHeader.keys
-    const keySettings = uiSettings['key_' + key]
+    const keySettings = this.uiSettings['key_' + key]
     if (!keySettings) {
       this.vue.handleError(
           'Unable to load skin.',
@@ -41,13 +46,14 @@ export default class GameCanvas {
       return
     }
 
-    this.drawGear(uiSettings, key, keySettings)
-    this.drawUI(uiSettings, key, keySettings)
+    this.drawGear()
+    this.drawUI()
   }
 
-  drawGear(uiSettings, key, keySettings) {
-    const gear = keySettings['gear']
-    if (uiSettings['showGuideline']) {
+  drawGear() {
+    const key = this.vue.bms.bmsHeader.keys
+    const gear = this.getGear()
+    if (this.uiSettings['showGuideline']) {
       /** gear.scratch */
       this.scratchLine = this.drawer.scratchLine(gear)
       this.ctx.scene.add(this.scratchLine)
@@ -62,19 +68,22 @@ export default class GameCanvas {
       this.line = this.drawer.gearLine(gear)
       this.ctx.scene.add(this.line)
 
-      /** gear.blocks */
-      // todo --> blocks 그려야 하는데, 어떻게? 다그려?
+      /** gear.bar-pool */
+      this.barPool = this.drawer.barPool(gear)
 
+      /** gear.block-pool */
+      this.blockPool = this.drawer.blockPool(gear, key)
     }
 
     // render images and fonts
 
   }
 
-  drawUI(uiSettings, key, keySettings) {
-
+  drawUI() {
+    const key = this.vue.bms.bmsHeader.keys
+    const keySettings = this.uiSettings['key_' + key]
     const ui = keySettings['ui']
-    if (uiSettings['showGuideline']) {
+    if (this.uiSettings['showGuideline']) {
       /** ui.gameTime */
       this.timeBox = this.drawer.timeBox(ui)
       this.ctx.scene.add(this.timeBox)
@@ -83,25 +92,72 @@ export default class GameCanvas {
     // render images and fonts
     this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
     this.ctx.scene.add(this.elapsedTime)
-
-  }
-
-  light() {
-    const light0 = new AmbientLight(0xffffff, 0.1)
-    this.ctx.scene.add(light0)
   }
 
   update() {
     this.updateElapsedTime()
+    this.updateBars()
 
   }
 
   updateElapsedTime() {
-    if (this.vue.gameData && this.elapsedTime) {
-      const elapsed = this.getFormatTime(
-          Math.round(this.vue.gameData.elapsedTime * 0.001))
-      this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
+    if (!(this.vue.gameData && this.elapsedTime)) {
+      return
     }
+
+    const elapsed = this.getFormatTime(
+        Math.round(this.vue.gameData.elapsedTime * 0.001))
+    this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
+  }
+
+  updateBars() {
+    // 1. 사용중인 bar 객체가 없다면 pool 에서 받아 씬에 등록하고 위치를 조정한다.
+    // 2. 사용중인 bar 객체가 있다면 위치만 조정한다.
+    // 3. 이미 판정선을 지났는데 barContainer에 있다면 bar 객체는 scene 에서 제거하고 pool 에 반납한다.
+    if (!(this.vue.gameData && this.barPool)) {
+      return
+    }
+
+    if (!this.barContainer) {
+      this.barContainer = []
+    }
+
+    const bars = this.vue.gameData.bars
+    const elapsedTime = this.vue.gameData.elapsedTime
+
+    for (let i = 0; i < bars.length; i++) {
+      const bmsHeight = this.getGear()['outline']['y']
+      // const y = bmsHeight - bars[i].y
+      const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
+
+      // 판정선을 지난 bar
+      if (bars[i]['time'] < elapsedTime) {
+        if (this.barContainer[i]) {
+          console.log('finished : ', i + ' / ' + y + ' / ' + bars[i]['time'])
+          this.ctx.scene.remove(this.barContainer[i])
+          this.barPool.push(this.barContainer[i])
+          this.barContainer[i] = null
+        }
+        continue
+      }
+
+      // 판정선을 지나지 않음. 컨테이너에 없다면 pool 에서 꺼내옴
+      if (!this.barContainer[i]) {
+        if (this.barPool.length === 0) {
+          const newBar = this.drawer.bar(this.getGear())
+          this.barPool.push(newBar)
+        }
+        this.barContainer[i] = this.barPool.pop()
+        this.ctx.scene.add(this.barContainer[i])
+      }
+      this.barContainer[i].position.y = y
+    }
+  }
+
+  getGear() {
+    const key = this.vue.bms.bmsHeader.keys
+    const keySettings = this.uiSettings['key_' + key]
+    return keySettings['gear']
   }
 
   getFormatTime(totalSeconds) {
