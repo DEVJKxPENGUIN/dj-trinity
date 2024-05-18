@@ -3,11 +3,13 @@ import {
   Line,
   LineBasicMaterial,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   PlaneGeometry,
   TextureLoader,
   Vector2
 } from "three";
+import {TextGeometry} from "three/addons";
 
 export default class GameCanvasDrawer {
 
@@ -101,4 +103,69 @@ export default class GameCanvasDrawer {
     return arr
   }
 
+  timeBox(ui) {
+    const time = ui['time']
+    const timeBox = time['box']
+    const color = timeBox['color']
+    const x = this.ctx.pixelToObj(timeBox['x'])
+    const y = this.ctx.pixelToObj(timeBox['y'])
+    const width = this.ctx.pixelToObj(timeBox['width'])
+    const height = this.ctx.pixelToObj(timeBox['height'])
+
+    const mat = new LineBasicMaterial({
+      color: color
+    })
+
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+
+    return new Line(geo, mat)
+  }
+
+  elapsedTime(ui, text) {
+    const time = ui['time']
+    const timeText = time['text']
+    const color = timeText['color']
+    const fontKey = timeText['font']
+    const size = timeText['size']
+    const isCenter = timeText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(timeText['x'])
+    const y = this.ctx.pixelToObj(timeText['y'])
+
+    const geo = new TextGeometry(text, {
+      font: font,
+      size: size,
+      height: 0,
+      curveSegments: 12,
+      bevelEnabled: false
+    })
+    const mat = new MeshBasicMaterial({color: color});
+    const mesh = new Mesh(geo, mat)
+    mesh.position.x = x
+    mesh.position.y = y
+    return mesh
+  }
+
+  updateText(mesh, text) {
+    const geo = mesh.geometry
+    const newGeo = new TextGeometry(text, {
+      font: geo.parameters.options.font,
+      size: geo.parameters.options.size,
+      height: geo.parameters.options.height,
+      curveSegments: geo.parameters.options.curveSegments,
+      bevelEnabled: geo.parameters.options.bevelEnabled,
+      bevelThickness: geo.parameters.options.bevelThickness,
+      bevelSize: geo.parameters.options.bevelSize,
+      bevelOffset: geo.parameters.options.bevelOffset,
+      bevelSegments: geo.parameters.options.bevelSegments
+    })
+
+    mesh.geometry.dispose()
+    mesh.geometry = newGeo
+  }
 }

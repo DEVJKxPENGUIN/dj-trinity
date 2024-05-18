@@ -1,3 +1,8 @@
+const GAME_PREPARING = 'gamePreparing'
+const GAME_READY = 'gameReady'
+const GAME_PLAYING = 'gamePlaying'
+const GAME_PAUSED = 'gamePaused'
+
 class GameWorker {
 
   constructor() {
@@ -10,10 +15,10 @@ class GameWorker {
     this.initBms()
     this.initBars()
 
-    this.update()
+    this.gameLoop()
   }
 
-  update() {
+  async gameLoop() {
     const targetDelay = 1000 / this.targetFps
     let lastTime = performance.now()
     let lastFpsTime = lastTime
@@ -27,7 +32,7 @@ class GameWorker {
       accumulator += delta
 
       while (accumulator >= targetDelay) {
-        // todo update game state
+        this.update()
         postMessage(this)
 
         accumulator -= targetDelay // update 시 연산시간 제거
@@ -36,11 +41,14 @@ class GameWorker {
         frameCount++
         const elapsedTime = currentTime - lastFpsTime
         if (elapsedTime >= 1000) {
-          this.fps = frameCount / (elapsedTime / 1000)
+          this.fps = Math.round(frameCount / (elapsedTime / 1000))
           frameCount = 0
           lastFpsTime = currentTime
         }
       }
+
+      // loop 제어권 반환
+      await new Promise(resolve => setTimeout(resolve, 0))
     }
   }
 
@@ -48,8 +56,11 @@ class GameWorker {
     // option
     this.initialTime = 2000
     this.elapsedTime = 0
+    this.startTime = null;
+    this.pauseTime = 0;
     this.targetFps = 300
     this.fps = 0
+    this.state = GAME_READY
 
     // in-game
     this.speed = 0.8
@@ -151,9 +162,59 @@ class GameWorker {
       lastPos = 0;
     }
   }
+
+  handleGameState(state) {
+    // at first playing, record start time
+    if (this.state === GAME_READY && state === GAME_PLAYING) {
+      this.startTime = performance.now()
+    }
+    this.state = state
+  }
+
+  // called in gameLoop
+  update() {
+    const now = performance.now()
+    this.updateTimeAndFps(now)
+
+  }
+
+  updateTimeAndFps(now) {
+    if (!this.startTime) {
+      this.startTime = 0;
+    }
+    if (this.state === GAME_READY) {
+      console.log('ready: ', this.elapsedTime)
+      return;
+    }
+    // fixme for debug
+    if (!this.de) {
+      console.log('ready: ', this.elapsedTime)
+      this.de = true
+    }
+    if (this.state === GAME_PAUSED) {
+      this.pauseTime = now - this.elapsedTime - this.startTime;
+    }
+    this.elapsedTime = now - this.startTime - this.pauseTime;
+  }
 }
 
-onmessage = function (e) {
-  const worker = new GameWorker()
-  worker.doProcess(e.data) // data should be vue
+let _worker;
+onmessage = (e) => {
+  const command = e.data.command
+  const data = e.data.body
+
+  if (command === 'switchLoadingToGame') {
+    _worker = new GameWorker()
+    _worker.doProcess(data) // data should be vue
+    return
+  }
+
+  // todo -> GameScene 에서 Enter 에 따라 state 를 변화시키고 Worker 에 노티를 준다.
+  // todo -> 이에 따라 elapsedTime 이 업데이트 될 것이고 이 값부터 GameCanvas 의 update 를 통해 그려주는거부터 한다.
+  // todo -> 이거 while(true) 문때문에 이 message 가 안먹히는건지 확인필요함.
+  // todo -> 재귀로 바꿔보자 gameLoop 쪽을.
+  if (command === 'handleGameState') {
+    _worker.handleGameState(data)
+    return
+  }
 }

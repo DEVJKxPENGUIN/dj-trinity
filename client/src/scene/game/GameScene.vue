@@ -21,9 +21,12 @@ import GameSocket from "@/scene/game/GameSocket";
 import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
+import {Font, TTFLoader} from "three/addons";
 
 const GAME_PREPARING = 'gamePreparing'
-const GAME_BEFORE_START = 'gameBeforeStart'
+const GAME_READY = 'gameReady'
+const GAME_PLAYING = 'gamePlaying'
+const GAME_PAUSED = 'gamePaused'
 export default {
   name: 'GameScene',
   components: {GameLoading},
@@ -43,6 +46,7 @@ export default {
 
       bms: {},
       bmsSounds: new Map(),
+      fonts: new Map(),
       loadState: [],
       uiSettings: null,
       gameData: null,
@@ -74,6 +78,7 @@ export default {
       } else if (e.key === 'Enter' && e.shiftKey) {
         e.preventDefault()
       } else if (e.key === 'Enter' && !e.isComposing) {
+        this.handleEnter()
         e.preventDefault()
       } else if (e.key === 'Escape') {
         this.handleEsc()
@@ -86,6 +91,22 @@ export default {
         return
       }
     },
+    handleEnter() {
+      if (this.state === GAME_READY) {
+        this.startGame()
+        return
+      }
+
+      if (this.state === GAME_PLAYING) {
+        this.pauseGame()
+        return
+      }
+
+      if (this.state === GAME_PAUSED) {
+        this.resumeGame()
+        return
+      }
+    },
     async initGame() {
       this.showGameLoading = true
       await this.loadAll()
@@ -95,9 +116,10 @@ export default {
         throw new Error('no bmsId');
       }
 
-      this.loadUISettings()
+      await this.loadUISettings()
       await this.loadBms()
       this.loadSounds()
+      this.loadFonts()
     },
     async loadBms() {
       this.loadState[1] = {
@@ -147,28 +169,69 @@ export default {
         })
       })
     },
-    loadUISettings() {
-      this.loadState[0] = {
-        title: 'ui-settings',
+    async loadUISettings() {
+      return new Promise(resolve => {
+        this.loadState[0] = {
+          title: 'ui-settings',
+          count: 0,
+          size: 1,
+        }
+
+        // fixme -> change to get personal ui settings from server
+        this.$nextTick(() => {
+          this.uiSettings = uiSettings
+          this.loadState[0].count++
+          resolve()
+        })
+      })
+    },
+    loadFonts() {
+      this.loadState[3] = {
+        title: 'fonts',
         count: 0,
-        size: 1,
+        size: 0,
       }
 
-      // fixme -> change to get personal ui settings from server
-      this.$nextTick(() => {
-        this.uiSettings = uiSettings
-        this.loadState[0].count++
+      const loader = new TTFLoader()
+      this.uiSettings['downloads']['fonts'].forEach(fontInfo => {
+        const fontName = fontInfo['name']
+        const fontPath = fontInfo['path']
+
+        this.loadState[3].size++
+        loader.load(fontPath, json => {
+          this.fonts.set(fontName, new Font(json))
+          this.loadState[3].count++
+        })
       })
     },
     switchToGameBeforeStart() {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
-      this.manager.worker.postMessage(JSON.parse(JSON.stringify(this.bms)))
+      this.manager.worker.postMessage(
+          {'command': 'switchLoadingToGame', 'body': JSON.parse(JSON.stringify(this.bms))})
       this.manager.worker.onmessage = (e) => {
         this.gameData = e.data
       }
 
-      this.state = GAME_BEFORE_START
+      this.state = GAME_READY
+    },
+    startGame() {
+      console.log('game started')
+      this.state = GAME_PLAYING
+      this.manager.worker.postMessage(
+          {'command': 'handleGameState', 'body': GAME_PLAYING})
+    },
+    pauseGame() {
+      console.log('game paused')
+      this.state = GAME_PAUSED
+      this.manager.worker.postMessage(
+          {'command': 'handleGameState', 'body': GAME_PAUSED})
+    },
+    resumeGame() {
+      console.log('game resumed')
+      this.state = GAME_PLAYING
+      this.manager.worker.postMessage(
+          {'command': 'handleGameState', 'body': GAME_PLAYING})
     },
     handleError(title, contents) {
       this.$store.dispatch('showSystemPopup', {

@@ -25,10 +25,10 @@ export default class GameCanvas {
     this.ctx.scene.remove(this.loadingBackground)
 
     // todo remove background, draw game UI
-    this.drawGear()
+    this.drawGame()
   }
 
-  drawGear() {
+  drawGame() {
     const uiSettings = this.vue.uiSettings
     const key = this.vue.bms.bmsHeader.keys
     const keySettings = uiSettings['key_' + key]
@@ -41,8 +41,13 @@ export default class GameCanvas {
       return
     }
 
+    this.drawGear(uiSettings, key, keySettings)
+    this.drawUI(uiSettings, key, keySettings)
+  }
+
+  drawGear(uiSettings, key, keySettings) {
     const gear = keySettings['gear']
-    if (uiSettings.showGuideline) {
+    if (uiSettings['showGuideline']) {
       /** gear.scratch */
       this.scratchLine = this.drawer.scratchLine(gear)
       this.ctx.scene.add(this.scratchLine)
@@ -62,7 +67,22 @@ export default class GameCanvas {
 
     }
 
-    // todo render images
+    // render images and fonts
+
+  }
+
+  drawUI(uiSettings, key, keySettings) {
+
+    const ui = keySettings['ui']
+    if (uiSettings['showGuideline']) {
+      /** ui.gameTime */
+      this.timeBox = this.drawer.timeBox(ui)
+      this.ctx.scene.add(this.timeBox)
+    }
+
+    // render images and fonts
+    this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
+    this.ctx.scene.add(this.elapsedTime)
 
   }
 
@@ -72,9 +92,24 @@ export default class GameCanvas {
   }
 
   update() {
+    this.updateElapsedTime()
 
-    // todo update bar and blocks
+  }
 
+  updateElapsedTime() {
+    if (this.vue.gameData && this.elapsedTime) {
+      const elapsed = this.getFormatTime(
+          Math.round(this.vue.gameData.elapsedTime * 0.001))
+      this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
+    }
+  }
+
+  getFormatTime(totalSeconds) {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    const formattedSeconds = String(seconds).padStart(2, '0');
+    return `${formattedMinutes}:${formattedSeconds}`;
   }
 
   destroy() {

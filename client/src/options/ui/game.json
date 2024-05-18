@@ -1,5 +1,18 @@
 {
   "showGuideline": true,
+  "downloads": {
+    "fonts": [
+      {
+        "name": "Galmuri",
+        "path": "http://localhost:5001/assets/fonts/GalmuriMono11.ttf"
+      },
+      {
+        "name": "Orbitron",
+        "path": "http://localhost:5001/assets/fonts/Orbitron-Regular.ttf"
+      }
+    ],
+    "images": []
+  },
   "key_7": {
     "gear": {
       "outline": {
@@ -95,6 +108,25 @@
         },
         "block": {
           "width": 55
+        }
+      }
+    },
+    "ui": {
+      "time": {
+        "box": {
+          "color": "rgb(255, 255, 255)",
+          "x": 222.5,
+          "y": -100,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.1,
+          "color": "rgb(255, 255, 255)",
+          "x": 232.5,
+          "y": -87,
+          "isCenter": false
         }
       }
     }

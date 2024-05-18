@@ -15,7 +15,10 @@ export default class AppManager {
         window.innerWidth / window.innerHeight, 0.1, 500)
     this.camera.position.z = 10
 
-    this.renderer = new WebGLRenderer({})
+    this.renderer = new WebGLRenderer({
+      antialias: true,
+      powerPreference: "high-performance"
+    })
     this.renderer.setPixelRatio(window.devicePixelRatio) // 고해상도 디스플레이 대응
     this.renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.insertBefore(this.renderer.domElement,
