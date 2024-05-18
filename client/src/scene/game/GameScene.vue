@@ -216,19 +216,16 @@ export default {
       this.state = GAME_READY
     },
     startGame() {
-      console.log('game started')
       this.state = GAME_PLAYING
       this.manager.worker.postMessage(
           {'command': 'handleGameState', 'body': GAME_PLAYING})
     },
     pauseGame() {
-      console.log('game paused')
       this.state = GAME_PAUSED
       this.manager.worker.postMessage(
           {'command': 'handleGameState', 'body': GAME_PAUSED})
     },
     resumeGame() {
-      console.log('game resumed')
       this.state = GAME_PLAYING
       this.manager.worker.postMessage(
           {'command': 'handleGameState', 'body': GAME_PLAYING})

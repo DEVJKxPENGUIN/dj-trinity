@@ -183,13 +183,7 @@ class GameWorker {
       this.startTime = 0;
     }
     if (this.state === GAME_READY) {
-      console.log('ready: ', this.elapsedTime)
       return;
-    }
-    // fixme for debug
-    if (!this.de) {
-      console.log('ready: ', this.elapsedTime)
-      this.de = true
     }
     if (this.state === GAME_PAUSED) {
       this.pauseTime = now - this.elapsedTime - this.startTime;
@@ -209,10 +203,6 @@ onmessage = (e) => {
     return
   }
 
-  // todo -> GameScene 에서 Enter 에 따라 state 를 변화시키고 Worker 에 노티를 준다.
-  // todo -> 이에 따라 elapsedTime 이 업데이트 될 것이고 이 값부터 GameCanvas 의 update 를 통해 그려주는거부터 한다.
-  // todo -> 이거 while(true) 문때문에 이 message 가 안먹히는건지 확인필요함.
-  // todo -> 재귀로 바꿔보자 gameLoop 쪽을.
   if (command === 'handleGameState') {
     _worker.handleGameState(data)
     return
