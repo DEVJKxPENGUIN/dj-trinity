@@ -95,9 +95,20 @@ export default class GameCanvas {
   }
 
   update() {
+    this.updateData()
     this.updateElapsedTime()
     this.updateBars()
 
+  }
+
+  updateData() {
+    if (!this.vue.gameData) {
+      return
+    }
+
+    // _변수명 : canvas.js 에서는 data 류 객체를 뜻한다.
+    this._elapsedTime = this.vue.gameData.elapsedTime
+    this._bars = this.vue.gameData.bars
   }
 
   updateElapsedTime() {
@@ -106,7 +117,7 @@ export default class GameCanvas {
     }
 
     const elapsed = this.getFormatTime(
-        Math.round(this.vue.gameData.elapsedTime * 0.001))
+        Math.round(this._elapsedTime * 0.001))
     this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
   }
 
@@ -122,13 +133,18 @@ export default class GameCanvas {
       this.barContainer = []
     }
 
-    const bars = this.vue.gameData.bars
-    const elapsedTime = this.vue.gameData.elapsedTime
+    const bars = this._bars
+    const elapsedTime = this._elapsedTime
 
     for (let i = 0; i < bars.length; i++) {
       const bmsHeight = this.getGear()['outline']['y']
       // const y = bmsHeight - bars[i].y
       const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
+
+      // 아직 화면에 그릴 필요가 없음.
+      if (y > 20) {
+        break;
+      }
 
       // 판정선을 지난 bar
       if (bars[i]['time'] < elapsedTime) {
@@ -147,6 +163,7 @@ export default class GameCanvas {
           const newBar = this.drawer.bar(this.getGear())
           this.barPool.push(newBar)
         }
+        console.log('get bar from pool : ', y + ' / ' + bars[i]['time'])
         this.barContainer[i] = this.barPool.pop()
         this.ctx.scene.add(this.barContainer[i])
       }

@@ -117,11 +117,13 @@ export default class GameCanvasDrawer {
   bar(gear) {
     const bar = gear['bar']
     const color = bar['color']
+    const linewidth = bar['linewidth']
     const x = this.ctx.pixelToObj(bar['x'])
     const width = this.ctx.pixelToObj(bar['width'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      linewidth: linewidth
     })
 
     const points = []

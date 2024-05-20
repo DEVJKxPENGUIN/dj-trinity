@@ -17,7 +17,7 @@ export default class AppManager {
 
     this.renderer = new WebGLRenderer({
       antialias: true,
-      powerPreference: "high-performance"
+      powerPreference: "high-performance",
     })
     this.renderer.setPixelRatio(window.devicePixelRatio) // 고해상도 디스플레이 대응
     this.renderer.setSize(window.innerWidth, window.innerHeight)
@@ -116,16 +116,16 @@ export default class AppManager {
   }
 
   objToPixel(sizeOfObject) {
-    const vFov = (this.camera.fov * Math.PI) / 180;
-    const height = 2 * Math.tan(vFov / 2) * this.camera.position.z;
+    const vFov = (this.camera.fov * Math.PI) * 0.005555; // / 180 연산임
+    const height = 2 * Math.tan(vFov * 0.5) * this.camera.position.z;
     const aspect = window.innerWidth / window.innerHeight;
     const width = height * aspect;
     return window.innerWidth * ((1 / width) * sizeOfObject) // (e.g. sizeOfObject = 0.2)
   }
 
   pixelToObj(sizeOfPixel) {
-    const vFov = (this.camera.fov * Math.PI) / 180;
-    const height = 2 * Math.tan(vFov / 2) * this.camera.position.z;
+    const vFov = (this.camera.fov * Math.PI) * 0.005555; // / 180 연산임
+    const height = 2 * Math.tan(vFov * 0.5) * this.camera.position.z;
     const aspect = window.innerWidth / window.innerHeight;
     const width = height * aspect;
     return sizeOfPixel * (width / window.innerWidth);

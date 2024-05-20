@@ -63,7 +63,7 @@ class GameWorker {
     this.state = GAME_READY
 
     // in-game
-    this.speed = 0.8
+    this.speed = 0.4
     this.stop = 0
   }
 
@@ -135,7 +135,8 @@ class GameWorker {
         } else if (bmsChannel === 'SEQUENCE_STOP') {
           if (this.header.stop[block['value']]) {
             const stopTime = this.header.stop[block['value']]
-                / 192 / bpm * 60000 * 4;
+                * 0.005208 // / 192
+                / bpm * 60000 * 4;
             block['stop'] = stopTime;
             lastTime += stopTime;
           }

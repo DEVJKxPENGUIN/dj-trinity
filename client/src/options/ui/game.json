@@ -25,7 +25,8 @@
       "bar": {
         "color": "rgb(100, 100, 100)",
         "x": -222.5,
-        "width": 445
+        "width": 445,
+        "linewidth": 2
       },
       "scratch": {
         "line": {
