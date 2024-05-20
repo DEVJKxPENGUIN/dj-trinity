@@ -4,6 +4,17 @@ import GameCanvasDrawer from "@/scene/game/GameCanvasRenderer";
 
 export default class GameCanvas {
 
+  BLOCK_RENDER_MAP = {
+    PLAYER1_1: 1,
+    PLAYER1_2: 2,
+    PLAYER1_3: 3,
+    PLAYER1_4: 4,
+    PLAYER1_5: 5,
+    PLAYER1_6: 0,
+    PLAYER1_8: 6,
+    PLAYER1_9: 7
+  }
+
   constructor(vue) {
     this.vue = vue
   }
@@ -98,6 +109,7 @@ export default class GameCanvas {
     this.updateData()
     this.updateElapsedTime()
     this.updateBars()
+    this.updateBlocks()
 
   }
 
@@ -135,21 +147,19 @@ export default class GameCanvas {
 
     const bars = this._bars
     const elapsedTime = this._elapsedTime
+    const bmsHeight = this.getGear()['outline']['y']
 
     for (let i = 0; i < bars.length; i++) {
-      const bmsHeight = this.getGear()['outline']['y']
-      // const y = bmsHeight - bars[i].y
       const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
 
       // 아직 화면에 그릴 필요가 없음.
       if (y > 20) {
-        break;
+        break
       }
 
       // 판정선을 지난 bar
       if (bars[i]['time'] < elapsedTime) {
         if (this.barContainer[i]) {
-          console.log('finished : ', i + ' / ' + y + ' / ' + bars[i]['time'])
           this.ctx.scene.remove(this.barContainer[i])
           this.barPool.push(this.barContainer[i])
           this.barContainer[i] = null
@@ -163,13 +173,70 @@ export default class GameCanvas {
           const newBar = this.drawer.bar(this.getGear())
           this.barPool.push(newBar)
         }
-        console.log('get bar from pool : ', y + ' / ' + bars[i]['time'])
         this.barContainer[i] = this.barPool.pop()
         this.ctx.scene.add(this.barContainer[i])
       }
       this.barContainer[i].position.y = y
     }
   }
+
+  updateBlocks() {
+    if (!(this.vue.gameData && this.blockPool)) {
+      return
+    }
+
+    if (!this.blockContainer) {
+      this.blockContainer = []
+    }
+
+    const bars = this._bars
+    const elapsedTime = this._elapsedTime
+    const bmsHeight = this.getGear()['outline']['y']
+
+    for (let i = 0; i < bars.length; i++) {
+      for (let j = 0; j < bars[i].length; j++) {
+        const block = bars[i][j];
+        const bmsChannel = block['bmsChannel'];
+        if (!this.blockContainer[i]) {
+          this.blockContainer[i] = []
+        }
+
+        let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+        if (!keyIndex) {
+          continue
+        }
+
+        const y = this.ctx.pixelToObj(bmsHeight + block.y)
+        // 아직 화면에 그릴 필요가 없음.
+        if (y > 20) {
+          break
+        }
+
+        // 판정선을 지난 block
+        if (block['time'] < elapsedTime) {
+          if (this.blockContainer[i][keyIndex]) {
+            console.log('touched : ', block)
+            this.ctx.scene.remove(this.blockContainer[i][keyIndex])
+            this.blockPool[keyIndex].push(this.blockContainer[i][keyIndex])
+            this.blockContainer[i][keyIndex] = null
+          }
+          continue
+        }
+
+        // 판정선을 지나지 않음. 컨테이너에 없다면 pool 에서 꺼내옴
+        if (!this.blockContainer[i][keyIndex]) {
+          if (this.blockPool[keyIndex].length === 0) {
+            const newBlock = this.drawer.block(this.getGear(), keyIndex)
+            this.blockPool[keyIndex].push(newBlock)
+          }
+          this.blockContainer[i][keyIndex] = this.blockPool[keyIndex].pop()
+          this.ctx.scene.add(this.blockContainer[i][keyIndex])
+        }
+
+        this.blockContainer[i][keyIndex].position.y = y
+      }
+    }
+  };
 
   getGear() {
     const key = this.vue.bms.bmsHeader.keys

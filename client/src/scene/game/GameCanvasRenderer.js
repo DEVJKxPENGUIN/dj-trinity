@@ -170,6 +170,7 @@ export default class GameCanvasDrawer {
     points.push(new Vector2(x + width, 0))
     points.push(new Vector2(x + width, height))
     points.push(new Vector2(x, height))
+    points.push(new Vector2(x, 0))
     const geo = new BufferGeometry().setFromPoints(points)
 
     const line = new Line(geo, mat)
