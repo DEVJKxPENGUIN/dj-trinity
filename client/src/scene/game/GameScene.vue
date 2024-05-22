@@ -41,15 +41,27 @@ export default {
   },
   data() {
     return {
+      // scene
       state: GAME_PREPARING,
       showGameLoading: false,
 
+      // resources
       bms: {},
       bmsSounds: new Map(),
       fonts: new Map(),
       loadState: [],
       uiSettings: null,
-      gameData: null,
+
+      // in-game
+      startTime: null,
+      pauseTime: 0,
+      elapsedTime: 0,
+      lastFrameTime: null,
+      initialTime: 2000,
+      speed: 0.8,
+      stop: 0,
+      startBpm: 0,
+      bpm: 0
     }
   },
   methods: {
@@ -60,7 +72,6 @@ export default {
       await this.manager.initScene(
           new GameCanvas(this),
           new GameSocket(this),
-          new Worker(new URL('./GameWorker.js', import.meta.url))
       )
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
@@ -207,28 +218,20 @@ export default {
     switchToGameBeforeStart() {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
-      this.manager.worker.postMessage(
-          {'command': 'switchLoadingToGame', 'body': JSON.parse(JSON.stringify(this.bms))})
-      this.manager.worker.onmessage = (e) => {
-        this.gameData = e.data
-      }
+
+      // todo -> loop
 
       this.state = GAME_READY
     },
     startGame() {
       this.state = GAME_PLAYING
-      this.manager.worker.postMessage(
-          {'command': 'handleGameState', 'body': GAME_PLAYING})
+      this.startTime = performance.now()
     },
     pauseGame() {
       this.state = GAME_PAUSED
-      this.manager.worker.postMessage(
-          {'command': 'handleGameState', 'body': GAME_PAUSED})
     },
     resumeGame() {
       this.state = GAME_PLAYING
-      this.manager.worker.postMessage(
-          {'command': 'handleGameState', 'body': GAME_PLAYING})
     },
     handleError(title, contents) {
       this.$store.dispatch('showSystemPopup', {

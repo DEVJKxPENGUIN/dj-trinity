@@ -2,6 +2,11 @@ import {gsap} from "gsap";
 import {AmbientLight} from "three";
 import GameCanvasDrawer from "@/scene/game/GameCanvasRenderer";
 
+const GAME_PREPARING = 'gamePreparing'
+const GAME_READY = 'gameReady'
+const GAME_PLAYING = 'gamePlaying'
+const GAME_PAUSED = 'gamePaused'
+
 export default class GameCanvas {
 
   BLOCK_RENDER_MAP = {
@@ -41,6 +46,7 @@ export default class GameCanvas {
     this.ctx.scene.remove(this.loadingBackground)
 
     // todo remove background, draw game UI
+    this.initBms()
     this.drawGame()
   }
 
@@ -80,10 +86,24 @@ export default class GameCanvas {
       this.ctx.scene.add(this.line)
 
       /** gear.bar-pool */
-      this.barPool = this.drawer.barPool(gear)
+      this.barPool = []
+      for (let i = 0; i < this.bars.length; i++) {
+        this.barPool[i] = this.drawer.bar(gear)
+        this.ctx.scene.add(this.barPool[i])
+      }
 
       /** gear.block-pool */
-      this.blockPool = this.drawer.blockPool(gear, key)
+      this.blockPool = []
+      for (let i = 0; i < this.vue.bms.bmsData.length; i++) {
+        const block = this.vue.bms.bmsData[i]
+        const bmsChannel = block['bmsChannel'];
+        let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+        if (keyIndex === null || keyIndex === undefined) {
+          continue
+        }
+        this.blockPool[i] = this.drawer.block(gear, keyIndex)
+        this.ctx.scene.add(this.blockPool[i])
+      }
     }
 
     // render images and fonts
@@ -105,31 +125,131 @@ export default class GameCanvas {
     this.ctx.scene.add(this.elapsedTime)
   }
 
+  initBms() {
+    const header = this.vue.bms.bmsHeader;
+    const data = this.vue.bms.bmsData;
+    this.vue.startBpm = header.startBpm;
+    this.vue.bpm = header.startBpm;
+
+    this.bars = data.reduce((acc, cur) => {
+      if (acc[cur.bar]) {
+        acc[cur.bar].push(cur);
+        return acc;
+      }
+      acc[cur.bar] = [cur];
+      return acc;
+    }, []);
+
+    for (let i = 0; i < this.bars.length; i++) {
+      if (!this.bars[i]) {
+        this.bars[i] = []
+      }
+    }
+
+    this.calculateBarTime()
+  }
+
+  calculateBarTime() {
+    const elapsedTime = this.vue.elapsedTime;
+
+    let lastTime = this.vue.initialTime;
+    let lastPos = 0;
+    let lastY = 0;
+    let bpm = this.vue.startBpm;
+    let isFirstShow = true;
+    for (let i = 0; i < this.bars.length; i++) {
+      let barShorten = 1;
+
+      for (let j = 0; j < this.bars[i].length; j++) {
+        const block = this.bars[i][j];
+        const bmsChannel = block['bmsChannel'];
+        if (bmsChannel === 'BAR_SHORTEN') {
+          barShorten = block['value'];
+          continue;
+        }
+        block['time'] = lastTime + (block['position'] - lastPos) * (1 / bpm
+            * 60000 * 4) * barShorten;
+        if (block['time'] > elapsedTime) {
+          let time;
+          if (isFirstShow) {
+            time = elapsedTime;
+            isFirstShow = false;
+          } else {
+            time = lastTime;
+          }
+
+          if (this.vue.stop < block['time']) {
+            block['y'] = lastY + (block['time'] - Math.max(time, this.vue.stop))
+                * bpm * 0.005
+                * this.vue.speed;
+            lastY = block['y']
+          }
+        }
+
+        lastTime = block['time'];
+        lastPos = block['position'];
+
+        if (bmsChannel === 'BPM') {
+          bpm = block['value'];
+        } else if (bmsChannel === 'BPM_EXTENDED') {
+          bpm = this.vue.bms.bmsHeader.bpm[block['value']];
+        } else if (bmsChannel === 'SEQUENCE_STOP') {
+          if (this.vue.bms.bmsHeader.stop[block['value']]) {
+            const stopTime = this.vue.bms.bmsHeader.stop[block['value']] / 192
+                / bpm * 60000 * 4;
+            block['stop'] = stopTime;
+            lastTime += stopTime;
+          }
+        }
+      }
+
+      this.bars[i]['time'] = lastTime + (1 - lastPos) * barShorten * (60000
+          / bpm) * 4;
+      if (this.bars[i]['time'] > elapsedTime) {
+        let time;
+        if (isFirstShow) {
+          time = elapsedTime;
+          isFirstShow = false;
+        } else {
+          time = lastTime;
+        }
+
+        this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
+            * 0.005
+            * this.vue.speed;
+        lastY = this.bars[i]['y'];
+      }
+      lastTime = this.bars[i]['time'];
+      lastPos = 0;
+    }
+  }
+
   update() {
-    this.updateData()
-    this.updateElapsedTime()
-    this.updateBars()
-    this.updateBlocks()
+    const now = performance.now()
+    this.updateElapsedTime(now)
 
+    if (this.vue.state === GAME_PLAYING) {
+      this.calculateBarTime()
+      this.updateBars()
+      this.updateBlocks()
+      this.processBlocks()
+    }
   }
 
-  updateData() {
-    if (!this.vue.gameData) {
+  updateElapsedTime(now) {
+    if (!this.vue.startTime) {
+      this.vue.startTime = 0
+    }
+    if (this.vue.state === GAME_READY || this.vue.state === GAME_PREPARING) {
       return
     }
-
-    // _변수명 : canvas.js 에서는 data 류 객체를 뜻한다.
-    this._elapsedTime = this.vue.gameData.elapsedTime
-    this._bars = this.vue.gameData.bars
-  }
-
-  updateElapsedTime() {
-    if (!(this.vue.gameData && this.elapsedTime)) {
-      return
+    if (this.vue.state === GAME_PAUSED) {
+      this.vue.pauseTime = now - this.vue.elapsedTime - this.vue.startTime
     }
+    this.vue.elapsedTime = now - this.vue.startTime - this.vue.pauseTime
 
     const elapsed = this.getFormatTime(
-        Math.round(this._elapsedTime * 0.001))
+        Math.round(this.vue.elapsedTime * 0.001))
     this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
   }
 
@@ -137,106 +257,87 @@ export default class GameCanvas {
     // 1. 사용중인 bar 객체가 없다면 pool 에서 받아 씬에 등록하고 위치를 조정한다.
     // 2. 사용중인 bar 객체가 있다면 위치만 조정한다.
     // 3. 이미 판정선을 지났는데 barContainer에 있다면 bar 객체는 scene 에서 제거하고 pool 에 반납한다.
-    if (!(this.vue.gameData && this.barPool)) {
-      return
-    }
-
-    if (!this.barContainer) {
-      this.barContainer = []
-    }
-
-    const bars = this._bars
-    const elapsedTime = this._elapsedTime
+    const bars = this.bars
+    const elapsedTime = this.vue.elapsedTime
     const bmsHeight = this.getGear()['outline']['y']
 
     for (let i = 0; i < bars.length; i++) {
       const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
-
-      // 아직 화면에 그릴 필요가 없음.
-      if (y > 20) {
-        break
-      }
-
-      // 판정선을 지난 bar
+      this.barPool[i].position.y = y
       if (bars[i]['time'] < elapsedTime) {
-        if (this.barContainer[i]) {
-          this.ctx.scene.remove(this.barContainer[i])
-          this.barPool.push(this.barContainer[i])
-          this.barContainer[i] = null
-        }
-        continue
+        this.barPool[i].position.y = -30
       }
-
-      // 판정선을 지나지 않음. 컨테이너에 없다면 pool 에서 꺼내옴
-      if (!this.barContainer[i]) {
-        if (this.barPool.length === 0) {
-          const newBar = this.drawer.bar(this.getGear())
-          this.barPool.push(newBar)
-        }
-        this.barContainer[i] = this.barPool.pop()
-        this.ctx.scene.add(this.barContainer[i])
-      }
-      this.barContainer[i].position.y = y
     }
   }
 
   updateBlocks() {
-    if (!(this.vue.gameData && this.blockPool)) {
-      return
-    }
+    const bars = this.bars
+    const elapsedTime = this.vue.elapsedTime
+    const gear = this.getGear()
+    const bmsHeight = gear['outline']['y']
 
-    if (!this.blockContainer) {
-      this.blockContainer = []
-    }
-
-    const bars = this._bars
-    const elapsedTime = this._elapsedTime
-    const bmsHeight = this.getGear()['outline']['y']
-
+    let idx = 0
     for (let i = 0; i < bars.length; i++) {
       for (let j = 0; j < bars[i].length; j++) {
         const block = bars[i][j];
         const bmsChannel = block['bmsChannel'];
-        if (!this.blockContainer[i]) {
-          this.blockContainer[i] = []
-        }
 
         let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
-        if (!keyIndex) {
+        if (keyIndex === null || keyIndex === undefined) {
+          idx++
           continue
         }
 
         const y = this.ctx.pixelToObj(bmsHeight + block.y)
-        // 아직 화면에 그릴 필요가 없음.
-        if (y > 20) {
-          break
-        }
+        const blockHeight = this.ctx.pixelToObj(
+            gear[keyIndex === 0 ? 'scratch' : 'key'
+                + keyIndex]['block']['height'])
 
-        // 판정선을 지난 block
+        this.blockPool[idx].position.y = y - blockHeight * 0.5
         if (block['time'] < elapsedTime) {
-          if (this.blockContainer[i][keyIndex]) {
-            console.log('touched : ', block)
-            this.ctx.scene.remove(this.blockContainer[i][keyIndex])
-            this.blockPool[keyIndex].push(this.blockContainer[i][keyIndex])
-            this.blockContainer[i][keyIndex] = null
-          }
-          continue
+          this.blockPool[idx].position.y = -30
         }
-
-        // 판정선을 지나지 않음. 컨테이너에 없다면 pool 에서 꺼내옴
-        if (!this.blockContainer[i][keyIndex]) {
-          if (this.blockPool[keyIndex].length === 0) {
-            const newBlock = this.drawer.block(this.getGear(), keyIndex)
-            this.blockPool[keyIndex].push(newBlock)
-          }
-          this.blockContainer[i][keyIndex] = this.blockPool[keyIndex].pop()
-          this.ctx.scene.add(this.blockContainer[i][keyIndex])
-        }
-
-        this.blockContainer[i][keyIndex].position.y = y
+        idx++
       }
     }
-  };
+  }
+
+  processBlocks() {
+    const elapsedTime = this.vue.elapsedTime;
+
+    for (let i = 0; i < this.bars.length; i++) {
+      for (let j = 0; j < this.bars[i].length; j++) {
+        const block = this.bars[i][j];
+
+        if (block['played'] === true) {
+          continue;
+        }
+
+        if (block['time'] > elapsedTime) {
+          return;
+        }
+
+        const bmsChannel = block['bmsChannel'];
+        if (bmsChannel === 'BPM') {
+          this.vue.bpm = block['value'];
+        } else if (bmsChannel === 'BPM_EXTENDED') {
+          this.vue.bpm = this.vue.bms.bmsHeader.bpm[block['value']];
+        } else if (bmsChannel === "SEQUENCE_STOP") {
+          this.vue.stop = block['time'] + block['stop'];
+        } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
+            'BACKGROUND')) {
+          try {
+            this.vue.bmsSounds.get(block['value']).play();
+          } catch (e) {
+            console.error(e)
+          }
+        }
+
+        block['played'] = true;
+      }
+    }
+
+  }
 
   getGear() {
     const key = this.vue.bms.bmsHeader.keys

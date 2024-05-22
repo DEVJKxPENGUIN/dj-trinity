@@ -104,16 +104,6 @@ export default class GameCanvasDrawer {
     return arr
   }
 
-  barPool(gear) {
-    const poolSize = 20
-    const pool = []
-    for (let i = 0; i < poolSize; i++) {
-      pool.push(this.bar(gear))
-    }
-
-    return pool
-  }
-
   bar(gear) {
     const bar = gear['bar']
     const color = bar['color']
@@ -138,20 +128,6 @@ export default class GameCanvasDrawer {
     return obj
   }
 
-  blockPool(gear, key) {
-    const poolSize = 20
-    const pool = []
-
-    for (let i = 0; i <= key; i++) {
-      const keyPool = []
-      for (let j = 0; j < poolSize; j++) {
-        keyPool.push(this.block(gear, i))
-      }
-      pool.push(keyPool)
-    }
-
-    return pool
-  }
 
   block(gear, key) {
     const block = key === 0 ? gear['scratch']['block'] : gear['key'

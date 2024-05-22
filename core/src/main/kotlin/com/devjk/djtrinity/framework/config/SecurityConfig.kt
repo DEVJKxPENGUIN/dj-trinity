@@ -21,7 +21,8 @@ class SecurityConfig(
             "/public/**",
             "/auth/**",
             "/ws/**",
-            "/bms/sync",
+//            "/bms/sync",
+            "/bms/**",
             "/download/**",
         )
     }

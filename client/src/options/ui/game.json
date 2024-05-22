@@ -4,11 +4,11 @@
     "fonts": [
       {
         "name": "Galmuri",
-        "path": "http://localhost:5001/assets/fonts/GalmuriMono11.ttf"
+        "path": "assets/fonts/GalmuriMono11.ttf"
       },
       {
         "name": "Orbitron",
-        "path": "http://localhost:5001/assets/fonts/Orbitron-Regular.ttf"
+        "path": "assets/fonts/Orbitron-Regular.ttf"
       }
     ],
     "images": []

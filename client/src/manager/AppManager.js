@@ -1,6 +1,7 @@
 import {Color, Mesh, PerspectiveCamera, Scene, WebGLRenderer} from "three";
 import settings from "../options/canvas/settings.json";
 import store from "@/store/store"
+import Stats from "stats.js"
 
 export default class AppManager {
 
@@ -16,8 +17,7 @@ export default class AppManager {
     this.camera.position.z = 10
 
     this.renderer = new WebGLRenderer({
-      antialias: true,
-      powerPreference: "high-performance",
+      powerPreference: "high-performance"
     })
     this.renderer.setPixelRatio(window.devicePixelRatio) // 고해상도 디스플레이 대응
     this.renderer.setSize(window.innerWidth, window.innerHeight)
@@ -30,11 +30,16 @@ export default class AppManager {
       this.renderer.setSize(window.innerWidth, window.innerHeight)
     }, false)
 
+    // for debug
+    this.stats = new Stats()
+    this.stats.showPanel(0)
+    document.body.appendChild(this.stats.dom)
+
     this.draw = this.draw.bind(this)
     this.draw()
   }
 
-  async initScene(canvas, socket, worker) {
+  async initScene(canvas, socket) {
     this.canvas = canvas
     if (this.canvas) {
       await this.canvas.init(this)
@@ -44,9 +49,6 @@ export default class AppManager {
     if (this.socket) {
       await this.socket.init(this)
     }
-
-    // worker do not init
-    this.worker = worker
   }
 
   async removeScene() {
@@ -66,11 +68,6 @@ export default class AppManager {
       if (this.socket) {
         this.socket.destroy()
         this.socket = null
-      }
-
-      if (this.worker) {
-        this.worker.terminate()
-        this.worker = null
       }
 
       resolve()
@@ -132,10 +129,12 @@ export default class AppManager {
   }
 
   draw() {
+    this.stats.begin()
     this.renderer.render(this.scene, this.camera)
     if (this.canvas && this.canvas.update) {
       this.canvas.update()
     }
+    this.stats.end()
     requestAnimationFrame(this.draw)
   }
 
