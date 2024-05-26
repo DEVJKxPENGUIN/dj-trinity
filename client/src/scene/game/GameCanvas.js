@@ -149,6 +149,7 @@ export default class GameCanvas {
     this.calculateBarTime()
   }
 
+  // todo -> 최적화 해야함.
   calculateBarTime() {
     const elapsedTime = this.vue.elapsedTime;
 
@@ -254,16 +255,14 @@ export default class GameCanvas {
   }
 
   updateBars() {
-    // 1. 사용중인 bar 객체가 없다면 pool 에서 받아 씬에 등록하고 위치를 조정한다.
-    // 2. 사용중인 bar 객체가 있다면 위치만 조정한다.
-    // 3. 이미 판정선을 지났는데 barContainer에 있다면 bar 객체는 scene 에서 제거하고 pool 에 반납한다.
     const bars = this.bars
     const elapsedTime = this.vue.elapsedTime
     const bmsHeight = this.getGear()['outline']['y']
 
     for (let i = 0; i < bars.length; i++) {
-      const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
-      this.barPool[i].position.y = y
+      // const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
+      const y = bars[i].y * 0.01
+      this.barPool[i].position.y = y + this.ctx.pixelToObj(bmsHeight)
       if (bars[i]['time'] < elapsedTime) {
         this.barPool[i].position.y = -30
       }
@@ -288,12 +287,14 @@ export default class GameCanvas {
           continue
         }
 
-        const y = this.ctx.pixelToObj(bmsHeight + block.y)
+        // const y = this.ctx.pixelToObj(bmsHeight + block.y)
+        const y = block.y * 0.01
         const blockHeight = this.ctx.pixelToObj(
             gear[keyIndex === 0 ? 'scratch' : 'key'
                 + keyIndex]['block']['height'])
 
         this.blockPool[idx].position.y = y - blockHeight * 0.5
+            + this.ctx.pixelToObj(bmsHeight)
         if (block['time'] < elapsedTime) {
           this.blockPool[idx].position.y = -30
         }
@@ -326,11 +327,13 @@ export default class GameCanvas {
           this.vue.stop = block['time'] + block['stop'];
         } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
             'BACKGROUND')) {
-          try {
-            this.vue.bmsSounds.get(block['value']).play();
-          } catch (e) {
-            console.error(e)
-          }
+          setImmediate(() => {
+            try {
+              this.vue.bmsSounds.get(block['value']).play();
+            } catch (e) {
+              console.error(e)
+            }
+          })
         }
 
         block['played'] = true;

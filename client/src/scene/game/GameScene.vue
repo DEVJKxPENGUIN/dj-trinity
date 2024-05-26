@@ -167,6 +167,7 @@ export default {
                 "/" +
                 soundFile,
               ],
+              preload: true
             })
         );
       });
@@ -218,8 +219,6 @@ export default {
     switchToGameBeforeStart() {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
-
-      // todo -> loop
 
       this.state = GAME_READY
     },
