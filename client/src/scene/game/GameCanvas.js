@@ -85,6 +85,10 @@ export default class GameCanvas {
       this.line = this.drawer.gearLine(gear)
       this.ctx.scene.add(this.line)
 
+      /** gear.judgeLine */
+      this.judgeLine = this.drawer.judgeLine(gear)
+      this.ctx.scene.add(this.judgeLine)
+
       /** gear.bar-pool */
       this.barPool = []
       for (let i = 0; i < this.bars.length; i++) {
@@ -257,7 +261,7 @@ export default class GameCanvas {
   updateBars() {
     const bars = this.bars
     const elapsedTime = this.vue.elapsedTime
-    const bmsHeight = this.getGear()['outline']['y']
+    const bmsHeight = this.getGear()['judgeLine']['y']
 
     for (let i = 0; i < bars.length; i++) {
       // const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
@@ -273,7 +277,7 @@ export default class GameCanvas {
     const bars = this.bars
     const elapsedTime = this.vue.elapsedTime
     const gear = this.getGear()
-    const bmsHeight = gear['outline']['y']
+    const bmsHeight = gear['judgeLine']['y']
 
     let idx = 0
     for (let i = 0; i < bars.length; i++) {

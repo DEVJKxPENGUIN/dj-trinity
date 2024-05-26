@@ -104,6 +104,29 @@ export default class GameCanvasDrawer {
     return arr
   }
 
+  judgeLine(gear) {
+    const judgeLine = gear['judgeLine']
+    const color = judgeLine['color']
+    const x = this.ctx.pixelToObj(judgeLine['x'])
+    const y = this.ctx.pixelToObj(judgeLine['y'])
+    const width = this.ctx.pixelToObj(judgeLine['width'])
+    const height = this.ctx.pixelToObj(judgeLine['height'])
+
+    const mat = new LineBasicMaterial({
+      color: color
+    })
+
+    const points = []
+    points.push(new Vector2(x, y - height / 2))
+    points.push(new Vector2(x + width, y - height / 2))
+    points.push(new Vector2(x + width, y + height / 2))
+    points.push(new Vector2(x, y + height / 2))
+    points.push(new Vector2(x, y - height / 2))
+    const geo = new BufferGeometry().setFromPoints(points)
+
+    return new Line(geo, mat)
+  }
+
   bar(gear) {
     const bar = gear['bar']
     const color = bar['color']
@@ -127,7 +150,6 @@ export default class GameCanvasDrawer {
     obj.position.y = 100
     return obj
   }
-
 
   block(gear, key) {
     const block = key === 0 ? gear['scratch']['block'] : gear['key'

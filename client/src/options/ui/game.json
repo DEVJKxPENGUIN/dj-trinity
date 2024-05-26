@@ -28,6 +28,13 @@
         "width": 445,
         "linewidth": 2
       },
+      "judgeLine": {
+        "color": "rgb(100, 100, 100)",
+        "x": -222.5,
+        "y": -200,
+        "width": 445,
+        "height": 20
+      },
       "scratch": {
         "line": {
           "color": "rgb(50, 50, 50)",
