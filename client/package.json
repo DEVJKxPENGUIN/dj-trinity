@@ -36,6 +36,11 @@
     "tailwindcss": "^3.4.1",
     "vue-cli-plugin-electron-builder": "~2.1.1"
   },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.0.3"
+    }
+  },
   "eslintConfig": {
     "root": true,
     "env": {

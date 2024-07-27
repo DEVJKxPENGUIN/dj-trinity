@@ -9,6 +9,9 @@ while (("$#")); do
   if [ "-app" = $1 ]; then
     RUN_MODULE="app"
   fi
+  if [ "-appBuild" = $1 ]; then
+    RUN_MODULE="appBuild"
+  fi
   if [ "-web" = $1 ]; then
     RUN_MODULE="web"
   fi
@@ -27,6 +30,11 @@ if [ ${RUN_TYPE} = "client" ]; then
   if [ "$RUN_MODULE" = "app" ]; then
     # FULL_ARGS="npm run --prefix ./client ${MODE}:electron"
     FULL_ARGS="npm run --prefix ./client electron:serve"
+  fi
+
+  if [ "$RUN_MODULE" = "appBuild" ]; then
+    # FULL_ARGS="npm run --prefix ./client ${MODE}:electron"
+    FULL_ARGS="npm run --prefix ./client electron:build"
   fi
 
   if [ "$RUN_MODULE" = "web" ]; then
