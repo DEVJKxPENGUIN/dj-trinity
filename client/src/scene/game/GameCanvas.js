@@ -295,10 +295,6 @@ export default class GameCanvas {
           continue;
         }
 
-        if (block['played'] === true) {
-          continue;
-        }
-
         if (block['time'] > elapsedTime) {
           let time = lastTime
           if (isFirstShow) {
@@ -307,13 +303,14 @@ export default class GameCanvas {
           }
 
           if (this.vue.stop < block['time']) {
-            block['y'] = lastY + (block['time'] - Math.max(time, this.vue.stop))
+            const y = lastY + (block['time'] - Math.max(time, this.vue.stop))
                 * bpm * 0.005
                 * this.vue.speed;
-            lastY = block['y']
-            if (block['y'] > window.innerHeight) {
+            if (y > 500) {
               return
             }
+            block['y'] = y
+            lastY = block['y']
           }
         }
 
@@ -340,13 +337,14 @@ export default class GameCanvas {
           isFirstShow = false
         }
 
-        this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
+        const y = lastY + (this.bars[i]['time'] - time) * bpm
             * 0.005
             * this.vue.speed;
-        lastY = this.bars[i]['y'];
-        if (this.bars[i]['y'] > window.innerHeight) {
+        if (y > 500) {
           return
         }
+        this.bars[i]['y'] = y
+        lastY = this.bars[i]['y'];
       }
       lastTime = this.bars[i]['time']
     }
@@ -355,7 +353,6 @@ export default class GameCanvas {
   update() {
     const now = performance.now()
     this.updateElapsedTime(now)
-
     if (this.vue.state === GAME_PLAYING) {
       this.updatePositions()
       this.updateBars()
@@ -393,7 +390,7 @@ export default class GameCanvas {
         this.barPool[i].position.y = -30
       }
 
-      if (this.bars[i]['y'] > window.innerHeight) {
+      if (this.bars[i]['y'] === undefined) {
         return
       }
     }
@@ -426,7 +423,7 @@ export default class GameCanvas {
           this.blockPool[i][j].position.y = -30
         }
 
-        if (block['y'] > window.innerHeight) {
+        if (block['y'] === undefined) {
           return
         }
       }
@@ -479,9 +476,12 @@ export default class GameCanvas {
   }
 
   getGear() {
-    const key = this.vue.bms.bmsHeader.keys
-    const keySettings = this.uiSettings['key_' + key]
-    return keySettings['gear']
+    if (this.gear === undefined) {
+      const key = this.vue.bms.bmsHeader.keys
+      const keySettings = this.uiSettings['key_' + key]
+      return this.gear = keySettings['gear']
+    }
+    return this.gear
   }
 
   getFormatTime(totalSeconds) {
