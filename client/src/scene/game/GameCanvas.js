@@ -98,15 +98,19 @@ export default class GameCanvas {
 
       /** gear.block-pool */
       this.blockPool = []
-      for (let i = 0; i < this.vue.bms.bmsData.length; i++) {
-        const block = this.vue.bms.bmsData[i]
-        const bmsChannel = block['bmsChannel'];
-        let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
-        if (keyIndex === null || keyIndex === undefined) {
-          continue
+      for (let i = 0; i < this.bars.length; i++) {
+        this.blockPool[i] = []
+        for (let j = 0; j < this.bars[i].length; j++) {
+          const block = this.bars[i][j]
+          const bmsChannel = block['bmsChannel'];
+          let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+          if (keyIndex === null || keyIndex === undefined) {
+            continue
+          }
+          this.blockPool[i][j] = this.drawer.block(gear, keyIndex)
+          this.ctx.scene.add(this.blockPool[i][j])
+
         }
-        this.blockPool[i] = this.drawer.block(gear, keyIndex)
-        this.ctx.scene.add(this.blockPool[i])
       }
     }
 
@@ -134,6 +138,9 @@ export default class GameCanvas {
     const data = this.vue.bms.bmsData;
     this.vue.startBpm = header.startBpm;
     this.vue.bpm = header.startBpm;
+    this.lastI = 0
+    this.lastJ = 0
+    this.lastBlockTime = this.vue.initialTime
 
     this.bars = data.reduce((acc, cur) => {
       if (acc[cur.bar]) {
@@ -151,36 +158,152 @@ export default class GameCanvas {
     }
 
     this.calculateBarTime()
+    console.log(this.bars)
   }
 
-  // todo -> 최적화 해야함.
+  // old - 최적화 전.
+  // calculateBarTime() {
+  //   const elapsedTime = this.vue.elapsedTime;
+  //
+  //   let lastTime = this.vue.initialTime;
+  //   let lastPos = 0;
+  //   let lastY = 0;
+  //   let bpm = this.vue.startBpm;
+  //   let isFirstShow = true;
+  //   for (let i = 0; i < this.bars.length; i++) {
+  //     let barShorten = 1;
+  //
+  //     for (let j = 0; j < this.bars[i].length; j++) {
+  //       const block = this.bars[i][j];
+  //       const bmsChannel = block['bmsChannel'];
+  //       if (bmsChannel === 'BAR_SHORTEN') {
+  //         barShorten = block['value'];
+  //         continue;
+  //       }
+  //       block['time'] = lastTime + (block['position'] - lastPos) * (1 / bpm
+  //           * 60000 * 4) * barShorten;
+  //       if (block['time'] > elapsedTime) {
+  //         let time;
+  //         if (isFirstShow) {
+  //           time = elapsedTime;
+  //           isFirstShow = false;
+  //         } else {
+  //           time = lastTime;
+  //         }
+  //
+  //         if (this.vue.stop < block['time']) {
+  //           block['y'] = lastY + (block['time'] - Math.max(time, this.vue.stop))
+  //               * bpm * 0.005
+  //               * this.vue.speed;
+  //           lastY = block['y']
+  //         }
+  //       }
+  //
+  //       lastTime = block['time'];
+  //       lastPos = block['position'];
+  //
+  //       if (bmsChannel === 'BPM') {
+  //         bpm = block['value'];
+  //       } else if (bmsChannel === 'BPM_EXTENDED') {
+  //         bpm = this.vue.bms.bmsHeader.bpm[block['value']];
+  //       } else if (bmsChannel === 'SEQUENCE_STOP') {
+  //         if (this.vue.bms.bmsHeader.stop[block['value']]) {
+  //           const stopTime = this.vue.bms.bmsHeader.stop[block['value']] / 192
+  //               / bpm * 60000 * 4;
+  //           block['stop'] = stopTime;
+  //           lastTime += stopTime;
+  //         }
+  //       }
+  //     }
+  //
+  //     this.bars[i]['time'] = lastTime + (1 - lastPos) * barShorten * (60000
+  //         / bpm) * 4;
+  //     if (this.bars[i]['time'] > elapsedTime) {
+  //       let time;
+  //       if (isFirstShow) {
+  //         time = elapsedTime;
+  //         isFirstShow = false;
+  //       } else {
+  //         time = lastTime;
+  //       }
+  //
+  //       this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
+  //           * 0.005
+  //           * this.vue.speed;
+  //       lastY = this.bars[i]['y'];
+  //     }
+  //     lastTime = this.bars[i]['time'];
+  //     lastPos = 0;
+  //   }
+  // }
+
   calculateBarTime() {
-    const elapsedTime = this.vue.elapsedTime;
+    let lastTime = this.vue.initialTime
+    let lastPos = 0
+    let bpm = this.vue.startBpm
 
-    let lastTime = this.vue.initialTime;
-    let lastPos = 0;
-    let lastY = 0;
-    let bpm = this.vue.startBpm;
-    let isFirstShow = true;
     for (let i = 0; i < this.bars.length; i++) {
-      let barShorten = 1;
-
+      let barShorten = 1
       for (let j = 0; j < this.bars[i].length; j++) {
-        const block = this.bars[i][j];
+        const block = this.bars[i][j]
+        const bmsChannel = block['bmsChannel']
+        if (bmsChannel === 'BAR_SHORTEN') {
+          barShorten = block['value']
+          continue
+        }
+
+        block['time'] = lastTime + (block['position'] - lastPos)
+            * (1 / bpm * 60000 * 4) * barShorten
+
+        lastTime = block['time']
+        lastPos = block['position']
+
+        if (bmsChannel === 'BPM') {
+          bpm = block['value']
+        } else if (bmsChannel === 'BPM_EXTENDED') {
+          bpm = this.vue.bms.bmsHeader.bpm[block['value']]
+        } else if (bmsChannel === 'SEQUENCE_STOP') {
+          if (this.vue.bms.bmsHeader.stop[block['value']]) {
+            block['stop'] = this.vue.bms.bmsHeader.stop[block['value']] / 192
+                / bpm * 60000 * 4
+            lastTime += block['stop']
+          }
+        }
+      }
+
+      this.bars[i]['time'] = lastTime + (1 - lastPos) * barShorten * (60000
+          / bpm) * 4
+      lastTime = this.bars[i]['time']
+      lastPos = 0
+    }
+
+  }
+
+  updatePositions() {
+    const elapsedTime = this.vue.elapsedTime
+    let lastTime = this.vue.initialTime
+    let lastY = 0
+    let bpm = this.vue.bpm
+    let isFirstShow = true;
+    for (let i = this.lastI; i < this.bars.length; i++) {
+      for (let j = i === this.lastI ? this.lastJ : 0; j < this.bars[i].length;
+          j++) {
+
+        const block = this.bars[i][j]
         const bmsChannel = block['bmsChannel'];
         if (bmsChannel === 'BAR_SHORTEN') {
-          barShorten = block['value'];
           continue;
         }
-        block['time'] = lastTime + (block['position'] - lastPos) * (1 / bpm
-            * 60000 * 4) * barShorten;
+
+        if (block['played'] === true) {
+          continue;
+        }
+
         if (block['time'] > elapsedTime) {
-          let time;
+          let time = lastTime
           if (isFirstShow) {
-            time = elapsedTime;
-            isFirstShow = false;
-          } else {
-            time = lastTime;
+            time = elapsedTime
+            isFirstShow = false
           }
 
           if (this.vue.stop < block['time']) {
@@ -188,11 +311,13 @@ export default class GameCanvas {
                 * bpm * 0.005
                 * this.vue.speed;
             lastY = block['y']
+            if (block['y'] > window.innerHeight) {
+              return
+            }
           }
         }
 
-        lastTime = block['time'];
-        lastPos = block['position'];
+        lastTime = block['time']
 
         if (bmsChannel === 'BPM') {
           bpm = block['value'];
@@ -208,24 +333,22 @@ export default class GameCanvas {
         }
       }
 
-      this.bars[i]['time'] = lastTime + (1 - lastPos) * barShorten * (60000
-          / bpm) * 4;
       if (this.bars[i]['time'] > elapsedTime) {
-        let time;
+        let time = lastTime
         if (isFirstShow) {
-          time = elapsedTime;
-          isFirstShow = false;
-        } else {
-          time = lastTime;
+          time = elapsedTime
+          isFirstShow = false
         }
 
         this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
             * 0.005
             * this.vue.speed;
         lastY = this.bars[i]['y'];
+        if (this.bars[i]['y'] > window.innerHeight) {
+          return
+        }
       }
-      lastTime = this.bars[i]['time'];
-      lastPos = 0;
+      lastTime = this.bars[i]['time']
     }
   }
 
@@ -234,7 +357,7 @@ export default class GameCanvas {
     this.updateElapsedTime(now)
 
     if (this.vue.state === GAME_PLAYING) {
-      this.calculateBarTime()
+      this.updatePositions()
       this.updateBars()
       this.updateBlocks()
       this.processBlocks()
@@ -263,12 +386,15 @@ export default class GameCanvas {
     const elapsedTime = this.vue.elapsedTime
     const bmsHeight = this.getGear()['judgeLine']['y']
 
-    for (let i = 0; i < bars.length; i++) {
-      // const y = this.ctx.pixelToObj(bmsHeight + bars[i].y)
-      const y = bars[i].y * 0.01
+    for (let i = this.lastI; i < bars.length; i++) {
+      const y = bars[i]['y'] * 0.01
       this.barPool[i].position.y = y + this.ctx.pixelToObj(bmsHeight)
       if (bars[i]['time'] < elapsedTime) {
         this.barPool[i].position.y = -30
+      }
+
+      if (this.bars[i]['y'] > window.innerHeight) {
+        return
       }
     }
   }
@@ -279,30 +405,30 @@ export default class GameCanvas {
     const gear = this.getGear()
     const bmsHeight = gear['judgeLine']['y']
 
-    let idx = 0
-    for (let i = 0; i < bars.length; i++) {
-      for (let j = 0; j < bars[i].length; j++) {
+    for (let i = this.lastI; i < bars.length; i++) {
+      for (let j = i === this.lastI ? this.lastJ : 0; j < bars[i].length; j++) {
         const block = bars[i][j];
         const bmsChannel = block['bmsChannel'];
 
         let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
         if (keyIndex === null || keyIndex === undefined) {
-          idx++
           continue
         }
 
-        // const y = this.ctx.pixelToObj(bmsHeight + block.y)
         const y = block.y * 0.01
         const blockHeight = this.ctx.pixelToObj(
             gear[keyIndex === 0 ? 'scratch' : 'key'
                 + keyIndex]['block']['height'])
 
-        this.blockPool[idx].position.y = y - blockHeight * 0.5
+        this.blockPool[i][j].position.y = y - blockHeight * 0.5
             + this.ctx.pixelToObj(bmsHeight)
         if (block['time'] < elapsedTime) {
-          this.blockPool[idx].position.y = -30
+          this.blockPool[i][j].position.y = -30
         }
-        idx++
+
+        if (block['y'] > window.innerHeight) {
+          return
+        }
       }
     }
   }
@@ -310,11 +436,16 @@ export default class GameCanvas {
   processBlocks() {
     const elapsedTime = this.vue.elapsedTime;
 
-    for (let i = 0; i < this.bars.length; i++) {
-      for (let j = 0; j < this.bars[i].length; j++) {
+    for (let i = this.lastI; i < this.bars.length; i++) {
+      for (let j = i === this.lastI ? this.lastJ : 0; j < this.bars[i].length;
+          j++) {
         const block = this.bars[i][j];
-
+        const bmsChannel = block['bmsChannel']
         if (block['played'] === true) {
+          continue;
+        }
+
+        if (bmsChannel === 'BAR_SHORTEN') {
           continue;
         }
 
@@ -322,7 +453,6 @@ export default class GameCanvas {
           return;
         }
 
-        const bmsChannel = block['bmsChannel'];
         if (bmsChannel === 'BPM') {
           this.vue.bpm = block['value'];
         } else if (bmsChannel === 'BPM_EXTENDED') {
@@ -341,6 +471,8 @@ export default class GameCanvas {
         }
 
         block['played'] = true;
+        this.lastI = i
+        this.lastJ = j
       }
     }
 
