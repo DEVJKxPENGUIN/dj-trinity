@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import java.nio.file.Files
+import java.nio.file.Path
 
 @Controller
 @RequestMapping("/download/bms")
@@ -19,7 +21,7 @@ class FileDownloadController(
 ) {
 
     @GetMapping("/stage/{nodeId}")
-    fun downloadBmp01(@PathVariable nodeId: Long): ResponseEntity<Resource> {
+    fun downloadStageImage(@PathVariable nodeId: Long): ResponseEntity<Resource> {
         val path = fileService.getStageFilePath(nodeId)
         val resource = fileDownloadService.loadFileAsResource(path)
         return ResponseEntity.status(HttpStatus.OK).headers {
@@ -28,11 +30,28 @@ class FileDownloadController(
     }
 
     @GetMapping("/sound/{nodeId}/{fileName}")
-    fun downloadWav(@PathVariable nodeId: Long, @PathVariable fileName: String): ResponseEntity<Resource> {
+    fun downloadWav(
+        @PathVariable nodeId: Long,
+        @PathVariable fileName: String
+    ): ResponseEntity<Resource> {
         val path = fileService.getAvailableSoundPath(nodeId, fileName)
         val resource = fileDownloadService.loadFileAsResource(path)
         return ResponseEntity.status(HttpStatus.OK).headers {
             it.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${resource.filename}")
+        }.body(resource)
+    }
+
+    @GetMapping("/bmp/{nodeId}")
+    fun downloadBmp(@PathVariable nodeId: Long): ResponseEntity<Resource> {
+        val path = fileService.getBmpFilePath(nodeId)
+        val resource = fileDownloadService.loadFileAsResource(path)
+
+        val contentType =
+            Files.probeContentType(Path.of(path)) ?: "application/octet-stream"
+
+        return ResponseEntity.status(HttpStatus.OK).headers {
+            it.add(HttpHeaders.CONTENT_TYPE, contentType)
+            it.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=${resource.filename}")
         }.body(resource)
     }
 }

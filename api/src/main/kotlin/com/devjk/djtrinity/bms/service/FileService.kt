@@ -165,4 +165,19 @@ class FileService(
                 )
             }
     }
+
+    fun getBmpFilePath(nodeId: Long): String {
+        val bmsNode = findBmsByNodeId(nodeId)
+        val bms = read(File(bmsNode.fullPath()))
+        val bmsHeader = bmsService.parseHeaderInfo(bms)
+
+        if (StringUtils.isBlank(bmsHeader.bmp01)) {
+            // fixme
+            return ""
+        }
+
+        return "${bmsNode.rootPath}/${bmsHeader.bmp01}"
+
+
+    }
 }
