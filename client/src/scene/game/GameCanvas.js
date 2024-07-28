@@ -140,7 +140,6 @@ export default class GameCanvas {
     this.vue.bpm = header.startBpm;
     this.lastI = 0
     this.lastJ = 0
-    this.lastBlockTime = this.vue.initialTime
 
     this.bars = data.reduce((acc, cur) => {
       if (acc[cur.bar]) {
@@ -158,84 +157,7 @@ export default class GameCanvas {
     }
 
     this.calculateBarTime()
-    console.log(this.bars)
   }
-
-  // old - 최적화 전.
-  // calculateBarTime() {
-  //   const elapsedTime = this.vue.elapsedTime;
-  //
-  //   let lastTime = this.vue.initialTime;
-  //   let lastPos = 0;
-  //   let lastY = 0;
-  //   let bpm = this.vue.startBpm;
-  //   let isFirstShow = true;
-  //   for (let i = 0; i < this.bars.length; i++) {
-  //     let barShorten = 1;
-  //
-  //     for (let j = 0; j < this.bars[i].length; j++) {
-  //       const block = this.bars[i][j];
-  //       const bmsChannel = block['bmsChannel'];
-  //       if (bmsChannel === 'BAR_SHORTEN') {
-  //         barShorten = block['value'];
-  //         continue;
-  //       }
-  //       block['time'] = lastTime + (block['position'] - lastPos) * (1 / bpm
-  //           * 60000 * 4) * barShorten;
-  //       if (block['time'] > elapsedTime) {
-  //         let time;
-  //         if (isFirstShow) {
-  //           time = elapsedTime;
-  //           isFirstShow = false;
-  //         } else {
-  //           time = lastTime;
-  //         }
-  //
-  //         if (this.vue.stop < block['time']) {
-  //           block['y'] = lastY + (block['time'] - Math.max(time, this.vue.stop))
-  //               * bpm * 0.005
-  //               * this.vue.speed;
-  //           lastY = block['y']
-  //         }
-  //       }
-  //
-  //       lastTime = block['time'];
-  //       lastPos = block['position'];
-  //
-  //       if (bmsChannel === 'BPM') {
-  //         bpm = block['value'];
-  //       } else if (bmsChannel === 'BPM_EXTENDED') {
-  //         bpm = this.vue.bms.bmsHeader.bpm[block['value']];
-  //       } else if (bmsChannel === 'SEQUENCE_STOP') {
-  //         if (this.vue.bms.bmsHeader.stop[block['value']]) {
-  //           const stopTime = this.vue.bms.bmsHeader.stop[block['value']] / 192
-  //               / bpm * 60000 * 4;
-  //           block['stop'] = stopTime;
-  //           lastTime += stopTime;
-  //         }
-  //       }
-  //     }
-  //
-  //     this.bars[i]['time'] = lastTime + (1 - lastPos) * barShorten * (60000
-  //         / bpm) * 4;
-  //     if (this.bars[i]['time'] > elapsedTime) {
-  //       let time;
-  //       if (isFirstShow) {
-  //         time = elapsedTime;
-  //         isFirstShow = false;
-  //       } else {
-  //         time = lastTime;
-  //       }
-  //
-  //       this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
-  //           * 0.005
-  //           * this.vue.speed;
-  //       lastY = this.bars[i]['y'];
-  //     }
-  //     lastTime = this.bars[i]['time'];
-  //     lastPos = 0;
-  //   }
-  // }
 
   calculateBarTime() {
     let lastTime = this.vue.initialTime
@@ -306,7 +228,7 @@ export default class GameCanvas {
             const y = lastY + (block['time'] - Math.max(time, this.vue.stop))
                 * bpm * 0.005
                 * this.vue.speed;
-            if (y > 500) {
+            if (y > 1000) {
               return
             }
             block['y'] = y
@@ -340,7 +262,7 @@ export default class GameCanvas {
         const y = lastY + (this.bars[i]['time'] - time) * bpm
             * 0.005
             * this.vue.speed;
-        if (y > 500) {
+        if (y > 1000) {
           return
         }
         this.bars[i]['y'] = y
