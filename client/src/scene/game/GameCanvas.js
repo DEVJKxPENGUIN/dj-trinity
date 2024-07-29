@@ -136,8 +136,10 @@ export default class GameCanvas {
   }
 
   drawVga() {
-    this.vgaBackground = this.drawer.vgaBackgroundMesh()
-    this.ctx.scene.add(this.vgaBackground)
+    for (const [k, video] of this.vue.vga.videoMap) {
+      this.vgaBackground = this.drawer.vgaBackgroundMesh(video)
+      this.ctx.scene.add(this.vgaBackground)
+    }
   }
 
   initBms() {
@@ -397,8 +399,8 @@ export default class GameCanvas {
               console.error(e)
             }
           })
-        } else if (bmsChannel === 'BGA' && block['value'] === 1) {
-          this.vue.vga.play()
+        } else if (bmsChannel === 'BGA') {
+          this.vue.vga.play(block['value'])
         }
 
         block['played'] = true;

@@ -220,18 +220,33 @@ export default {
       })
     },
     async loadVga() {
+      const header = this.bms.bmsHeader;
+
+      // download bms vga
       this.loadState[4] = {
         title: 'vga',
         count: 0,
-        size: 1,
+        size: 0,
+      }
+
+      for (const bmpFile of header.bmp) {
+        if (!bmpFile) {
+          continue;
+        }
+        this.loadState[4].size++
       }
 
       const videoManager = new VideoManager()
-      await videoManager.load('/download/bms/bmp/' + this.bmsCurrent.id)
+      for (const bmpFile of header.bmp) {
+        const i = header.bmp.indexOf(bmpFile);
+        if (!bmpFile) {
+          continue;
+        }
 
-      // fixme -> size 가져와서 쪼개서 들고오는 것으로 수정
+        await videoManager.load(i, '/download/bms/bmp/' + this.bmsCurrent.id + '/' + bmpFile)
+        this.loadState[4].count++
+      }
       this.vga = videoManager
-      this.loadState[4].count++
     },
     switchToGameBeforeStart() {
       this.showGameLoading = false

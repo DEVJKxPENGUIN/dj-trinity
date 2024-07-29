@@ -37,8 +37,8 @@ export default class GameCanvasDrawer {
     return mesh
   }
 
-  vgaBackgroundMesh() {
-    const texture = new VideoTexture(this.vue.vga.video)
+  vgaBackgroundMesh(video) {
+    const texture = new VideoTexture(video)
     const geometry = new PlaneGeometry(14, 14)
     const material = new MeshBasicMaterial({
       map: texture,

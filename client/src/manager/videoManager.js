@@ -9,11 +9,13 @@ export default class VideoManager {
   PAUSED = 2
 
   constructor() {
-    this.video = document.createElement('video')
+    this.videoMap = new Map()
     this.state = this.STOPPED
+    this.currentIndex = null
+    this.ffmpeg = null
   }
 
-  async load(uri) {
+  async load(index, uri) {
     const response = await fetch(`${apiHost}${uri}`)
     if (!response.ok) {
       throw new Error('Network response was not ok.')
@@ -29,8 +31,10 @@ export default class VideoManager {
     }
 
     const videoUrl = URL.createObjectURL(blob)
-    this.video.src = videoUrl
-    this.video.load()
+    const video = document.createElement('video')
+    video.src = videoUrl
+    video.load()
+    this.videoMap.set(index, video)
   }
 
   isUnsupportedVideoFormat(ext) {
@@ -39,6 +43,10 @@ export default class VideoManager {
   }
 
   async loadFFmpeg() {
+    if (this.ffmpeg) {
+      return
+    }
+
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
     this.ffmpeg = new FFmpeg()
     this.ffmpeg.on('log', ({message}) => {
@@ -71,28 +79,38 @@ export default class VideoManager {
     return new Blob([output.buffer], {type: 'video/mp4'})
   }
 
-  play() {
+  play(index) {
     if (this.state === this.STOPPED) {
       this.state = this.PLAYING
-      this.video.play()
+      this.currentIndex = index
+      this.videoMap.get(index).play()
     }
   }
 
-  pause() {
+  pause(index) {
     if (this.state === this.PLAYING) {
       this.state = this.PAUSED
-      this.video.pause()
+      if (index === undefined) {
+        index = this.currentIndex
+      }
+      this.videoMap.get(index).pause()
     }
   }
 
-  resume() {
+  resume(index) {
     if (this.state === this.PAUSED) {
       this.state = this.PLAYING
-      this.video.play()
+      if (index === undefined) {
+        index = this.currentIndex
+      }
+      this.videoMap.get(index).play()
     }
   }
 
   destroy() {
-    this.video.remove()
+    for (const video of this.videoMap.values()) {
+      video.remove()
+    }
+    this.videoMap.clear()
   }
 }
