@@ -166,18 +166,25 @@ class FileService(
             }
     }
 
-    fun getBmpFilePath(nodeId: Long): String {
+    fun getAvailableBmpPath(nodeId: Long, fileName: String): String {
         val bmsNode = findBmsByNodeId(nodeId)
-        val bms = read(File(bmsNode.fullPath()))
-        val bmsHeader = bmsService.parseHeaderInfo(bms)
-
-        if (StringUtils.isBlank(bmsHeader.bmp01)) {
-            // fixme
-            return ""
+        var bmpPath = Paths.get(bmsNode.rootPath, fileName)
+        if (Files.exists(bmpPath)) {
+            return bmpPath.toString()
         }
 
-        return "${bmsNode.rootPath}/${bmsHeader.bmp01}"
+        for (extension in Bms.BMP_EXTENSIONS) {
+            val extDotIndex = fileName.lastIndexOf(".")
+            val anotherName = "${fileName.substring(0, extDotIndex)}.${extension}"
+            bmpPath = Paths.get(bmsNode.rootPath, anotherName)
+            if (Files.exists(bmpPath)) {
+                return bmpPath.toString()
+            }
+        }
 
-
+        throw BaseException(
+            ErrorCode.BMS_VGA_NOT_FOUND,
+            "해당 fileName 의 VGA 파일을 찾을 수 없습니다. : $fileName"
+        )
     }
 }

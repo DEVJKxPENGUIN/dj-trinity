@@ -21,5 +21,6 @@ enum class ErrorCode(
     AUTHENTICATION_EXPIRED(HttpStatus.BAD_REQUEST, -11, "cannot find valid token"),
     AUTHENTICATION_REFRESH_FAILED(HttpStatus.BAD_REQUEST, -12, "refreshToken is invalid"),
     CHANNEL_FULL(HttpStatus.SERVICE_UNAVAILABLE, -13, "Channel is full"),
+    BMS_VGA_NOT_FOUND(HttpStatus.NOT_FOUND, -14, "BMS VGA File Not Found"),
     ;
 }

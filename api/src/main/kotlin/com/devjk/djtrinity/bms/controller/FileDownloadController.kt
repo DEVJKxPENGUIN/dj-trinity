@@ -41,13 +41,15 @@ class FileDownloadController(
         }.body(resource)
     }
 
-    @GetMapping("/bmp/{nodeId}")
-    fun downloadBmp(@PathVariable nodeId: Long): ResponseEntity<Resource> {
-        val path = fileService.getBmpFilePath(nodeId)
+    @GetMapping("/bmp/{nodeId}/{fileName}")
+    fun downloadBmp(
+        @PathVariable nodeId: Long,
+        @PathVariable fileName: String
+    ): ResponseEntity<Resource> {
+        val path = fileService.getAvailableBmpPath(nodeId, fileName)
         val resource = fileDownloadService.loadFileAsResource(path)
-
-        val contentType =
-            Files.probeContentType(Path.of(path)) ?: "application/octet-stream"
+        val contentType = Files.probeContentType(Path.of(resource.file.absolutePath))
+            ?: "application/octet-stream"
 
         return ResponseEntity.status(HttpStatus.OK).headers {
             it.add(HttpHeaders.CONTENT_TYPE, contentType)

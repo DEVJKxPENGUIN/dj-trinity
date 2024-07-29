@@ -19,7 +19,7 @@ class BmsHeader private constructor(
     var rank: Double? = null,
     var total: Double? = null,
     var stageFile: String? = null,
-    var bmp01: String? = null,
+    var bmp: Array<String?>? = null,
     var wav: Array<String?>? = null,
     var bpm: Array<Double?>? = null,
     var stop: Array<Double?>? = null,
@@ -115,6 +115,7 @@ class BmsHeader private constructor(
             wav = arrayOfNulls(36 * 36)
             bpm = arrayOfNulls(36 * 36)
             stop = arrayOfNulls(36 * 36)
+            bmp = arrayOfNulls(36 * 36)
         }
         process(header, parseWav)
     }
@@ -140,7 +141,6 @@ class BmsHeader private constructor(
             "#RANK" -> rank = value.toDouble()
             "#TOTAL" -> total = value.toDouble()
             "#STAGEFILE" -> stageFile = value
-            "#BMP01" -> bmp01 = value
             "#DIFFICULTY" -> difficulty = value.toDouble()
             else -> {
                 if (!parseWav) {
@@ -159,6 +159,11 @@ class BmsHeader private constructor(
                 if (key.startsWith("#STOP", ignoreCase = true)) {
                     val keyNo = TrinityUtils.base36ToDecimal(key.substring(5))
                     stop?.set(keyNo, value.toDouble())
+                    return
+                }
+                if (key.startsWith("#BMP", ignoreCase = true)) {
+                    val keyNo = TrinityUtils.base36ToDecimal(key.substring(4))
+                    bmp?.set(keyNo, value)
                     return
                 }
             }
