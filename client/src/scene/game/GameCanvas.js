@@ -127,15 +127,23 @@ export default class GameCanvas {
     const key = this.vue.bms.bmsHeader.keys
     const keySettings = this.uiSettings['key_' + key]
     const ui = keySettings['ui']
+
+    // render images and fonts
+
+    /** time backboard */
+    this.timeBackboard = this.drawer.timeBackboard(ui)
+    this.ctx.scene.add(this.timeBackboard)
+
+    /** elapsedTime */
+    this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
+    this.ctx.scene.add(this.elapsedTime)
+
+    // render guideline
     if (this.uiSettings['showGuideline']) {
       /** ui.gameTime */
       this.timeBox = this.drawer.timeBox(ui)
       this.ctx.scene.add(this.timeBox)
     }
-
-    // render images and fonts
-    this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
-    this.ctx.scene.add(this.elapsedTime)
   }
 
   drawVga() {

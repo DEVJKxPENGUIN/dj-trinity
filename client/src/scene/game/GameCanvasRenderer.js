@@ -235,20 +235,41 @@ export default class GameCanvasDrawer {
     const y = this.ctx.pixelToObj(timeBox['y'])
     const width = this.ctx.pixelToObj(timeBox['width'])
     const height = this.ctx.pixelToObj(timeBox['height'])
-
     const mat = new LineBasicMaterial({
       color: color,
       transparent: true
     })
-
     const points = []
     points.push(new Vector2(x, y))
     points.push(new Vector2(x + width, y))
     points.push(new Vector2(x + width, y + height))
     points.push(new Vector2(x, y + height))
     const geo = new BufferGeometry().setFromPoints(points)
-
     return new Line(geo, mat)
+  }
+
+  timeBackboard(ui) {
+    const time = ui['time']
+    const timeBox = time['box']
+    const x = this.ctx.pixelToObj(timeBox['x'])
+    const y = this.ctx.pixelToObj(timeBox['y'])
+    const width = this.ctx.pixelToObj(timeBox['width'])
+    const height = this.ctx.pixelToObj(timeBox['height'])
+    const backgroundColor = timeBox['backgroundColor']
+    const opacity = timeBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
   }
 
   elapsedTime(ui, text) {
