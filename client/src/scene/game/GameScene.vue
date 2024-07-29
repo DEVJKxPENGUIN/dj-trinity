@@ -22,6 +22,7 @@ import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
 import {Font, TTFLoader} from "three/addons";
+import VideoManager from "@/manager/videoManager";
 
 const GAME_PREPARING = 'gamePreparing'
 const GAME_READY = 'gameReady'
@@ -51,6 +52,7 @@ export default {
       fonts: new Map(),
       loadState: [],
       uiSettings: null,
+      vga: null,
 
       // in-game
       startTime: null,
@@ -131,6 +133,7 @@ export default {
       await this.loadBms()
       this.loadSounds()
       this.loadFonts()
+      this.loadVga()
     },
     async loadBms() {
       this.loadState[1] = {
@@ -216,6 +219,20 @@ export default {
         })
       })
     },
+    async loadVga() {
+      this.loadState[4] = {
+        title: 'vga',
+        count: 0,
+        size: 1,
+      }
+
+      const videoManager = new VideoManager()
+      await videoManager.load('/download/bms/bmp/' + this.bmsCurrent.id)
+
+      // fixme -> size 가져와서 쪼개서 들고오는 것으로 수정
+      this.vga = videoManager
+      this.loadState[4].count++
+    },
     switchToGameBeforeStart() {
       this.showGameLoading = false
       this.manager.canvas.switchLoadingToGame()
@@ -250,6 +267,7 @@ export default {
         }
         sound.unload()
       })
+      this.vga.destroy()
     }
   }
 }

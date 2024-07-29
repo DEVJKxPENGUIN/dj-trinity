@@ -8,7 +8,8 @@ import {
   Object3D,
   PlaneGeometry,
   TextureLoader,
-  Vector2
+  Vector2,
+  VideoTexture
 } from "three";
 import {TextGeometry} from "three/addons";
 
@@ -33,6 +34,19 @@ export default class GameCanvasDrawer {
 
     const mesh = new Mesh(geometry, material)
     mesh.position.set(0, 0, 0)
+    return mesh
+  }
+
+  vgaBackgroundMesh() {
+    const texture = new VideoTexture(this.vue.vga.video)
+    const geometry = new PlaneGeometry(14, 14)
+    const material = new MeshBasicMaterial({
+      map: texture,
+      transparent: true
+    })
+
+    const mesh = new Mesh(geometry, material)
+    mesh.position.set(0, 0, -1)
     return mesh
   }
 

@@ -33,6 +33,7 @@ export default class GameCanvas {
   }
 
   loadBackground() {
+    // background for loading
     this.loadingBackground = this.drawer.loadingBackgroundMesh()
     this.ctx.scene.add(this.loadingBackground)
   }
@@ -63,6 +64,7 @@ export default class GameCanvas {
       return
     }
 
+    this.drawVga()
     this.drawGear()
     this.drawUI()
   }
@@ -131,6 +133,11 @@ export default class GameCanvas {
     // render images and fonts
     this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
     this.ctx.scene.add(this.elapsedTime)
+  }
+
+  drawVga() {
+    this.vgaBackground = this.drawer.vgaBackgroundMesh()
+    this.ctx.scene.add(this.vgaBackground)
   }
 
   initBms() {
@@ -275,7 +282,10 @@ export default class GameCanvas {
   update() {
     const now = performance.now()
     this.updateElapsedTime(now)
-    if (this.vue.state === GAME_PLAYING) {
+    if (this.vue.state === GAME_PAUSED) {
+      this.vue.vga.pause()
+    } else if (this.vue.state === GAME_PLAYING) {
+      this.vue.vga.resume()
       this.updatePositions()
       this.updateBars()
       this.updateBlocks()
@@ -387,6 +397,8 @@ export default class GameCanvas {
               console.error(e)
             }
           })
+        } else if (bmsChannel === 'BGA' && block['value'] === 1) {
+          this.vue.vga.play()
         }
 
         block['played'] = true;
