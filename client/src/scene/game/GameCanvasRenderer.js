@@ -248,6 +248,27 @@ export default class GameCanvasDrawer {
     return new Line(geo, mat)
   }
 
+  bpmBox(ui) {
+    const bpm = ui['bpm']
+    const bpmBox = bpm['box']
+    const color = bpmBox['color']
+    const x = this.ctx.pixelToObj(bpmBox['x'])
+    const y = this.ctx.pixelToObj(bpmBox['y'])
+    const width = this.ctx.pixelToObj(bpmBox['width'])
+    const height = this.ctx.pixelToObj(bpmBox['height'])
+    const mat = new LineBasicMaterial({
+      color: color,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    return new Line(geo, mat)
+  }
+
   timeBackboard(ui) {
     const time = ui['time']
     const timeBox = time['box']
@@ -257,6 +278,30 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(timeBox['height'])
     const backgroundColor = timeBox['backgroundColor']
     const opacity = timeBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  bpmBackboard(ui) {
+    const bpm = ui['bpm']
+    const bpmBox = bpm['box']
+    const x = this.ctx.pixelToObj(bpmBox['x'])
+    const y = this.ctx.pixelToObj(bpmBox['y'])
+    const width = this.ctx.pixelToObj(bpmBox['width'])
+    const height = this.ctx.pixelToObj(bpmBox['height'])
+    const backgroundColor = bpmBox['backgroundColor']
+    const opacity = bpmBox['opacity']
     const mat = new MeshBasicMaterial({
       color: backgroundColor,
       opacity: opacity,
@@ -282,6 +327,34 @@ export default class GameCanvasDrawer {
     const font = this.vue.fonts.get(fontKey)
     const x = this.ctx.pixelToObj(timeText['x'])
     const y = this.ctx.pixelToObj(timeText['y'])
+
+    const geo = new TextGeometry(text, {
+      font: font,
+      size: size,
+      height: 0,
+      curveSegments: 12,
+      bevelEnabled: false
+    })
+    const mat = new MeshBasicMaterial({
+      color: color,
+      transparent: true
+    });
+    const mesh = new Mesh(geo, mat)
+    mesh.position.x = x
+    mesh.position.y = y
+    return mesh
+  }
+
+  bpm(ui, text) {
+    const bpm = ui['bpm']
+    const bpmText = bpm['text']
+    const color = bpmText['color']
+    const fontKey = bpmText['font']
+    const size = bpmText['size']
+    const isCenter = bpmText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(bpmText['x'])
+    const y = this.ctx.pixelToObj(bpmText['y'])
 
     const geo = new TextGeometry(text, {
       font: font,

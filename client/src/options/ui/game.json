@@ -178,19 +178,21 @@
       },
       "bpm": {
         "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
           "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
           "x": 222.5,
           "y": -130,
           "width": 200,
-          "height": 90
+          "height":30
         },
         "text": {
           "font": "Orbitron",
           "size": 0.1,
           "color": "rgb(255, 255, 255)",
-          "x": 332.5,
-          "y": -142,
-          "isCenter": true
+          "x": 232.5,
+          "y": -117,
+          "isCenter": false
         }
       }
     }

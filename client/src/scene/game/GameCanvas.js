@@ -129,20 +129,31 @@ export default class GameCanvas {
     const ui = keySettings['ui']
 
     // render images and fonts
-
     /** time backboard */
     this.timeBackboard = this.drawer.timeBackboard(ui)
     this.ctx.scene.add(this.timeBackboard)
 
+    /** bpm backboard */
+    this.bpmBackboard = this.drawer.bpmBackboard(ui)
+    this.ctx.scene.add(this.bpmBackboard)
+
     /** elapsedTime */
-    this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 0')
+    this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 00:00')
     this.ctx.scene.add(this.elapsedTime)
+
+    /** bpm */
+    this.bpm = this.drawer.bpm(ui, 'BPM: 0')
+    this.ctx.scene.add(this.bpm)
 
     // render guideline
     if (this.uiSettings['showGuideline']) {
       /** ui.gameTime */
       this.timeBox = this.drawer.timeBox(ui)
       this.ctx.scene.add(this.timeBox)
+
+      /** ui.bpmBox */
+      this.bpmBox = this.drawer.bpmBox(ui)
+      this.ctx.scene.add(this.bpmBox)
     }
   }
 
@@ -303,6 +314,7 @@ export default class GameCanvas {
       this.updateBars()
       this.updateBlocks()
       this.processBlocks()
+      this.updateText()
     }
   }
 
@@ -317,10 +329,16 @@ export default class GameCanvas {
       this.vue.pauseTime = now - this.vue.elapsedTime - this.vue.startTime
     }
     this.vue.elapsedTime = now - this.vue.startTime - this.vue.pauseTime
+  }
 
+  updateText() {
+    // update elapsed time
     const elapsed = this.getFormatTime(
         Math.round(this.vue.elapsedTime * 0.001))
     this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
+
+    // update bpm
+    this.drawer.updateText(this.bpm, 'BPM: ' + this.vue.bpm)
   }
 
   updateBars() {
