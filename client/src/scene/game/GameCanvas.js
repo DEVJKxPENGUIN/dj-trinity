@@ -72,20 +72,30 @@ export default class GameCanvas {
   drawGear() {
     const key = this.vue.bms.bmsHeader.keys
     const gear = this.getGear()
-    if (this.uiSettings['showGuideline']) {
-      /** gear.backboard */
-      this.backboard = this.drawer.backboard(gear)
-      this.ctx.scene.add(this.backboard)
 
+    // render images and fonts
+    /** gear.backboard */
+    this.backboard = this.drawer.backboard(gear)
+    this.ctx.scene.add(this.backboard)
+
+    /** gear.keyLines */
+    this.keyLines = this.drawer.keyLines(gear, key)
+    this.keyLines.forEach(line => {
+      this.ctx.scene.add(line)
+    })
+
+    /** gear.bar-pool */
+    this.barPool = []
+    for (let i = 0; i < this.bars.length; i++) {
+      this.barPool[i] = this.drawer.bar(gear)
+      this.ctx.scene.add(this.barPool[i])
+    }
+
+    // render guideline
+    if (this.uiSettings['showGuideline']) {
       /** gear.scratch */
       this.scratchLine = this.drawer.scratchLine(gear)
       this.ctx.scene.add(this.scratchLine)
-
-      /** gear.keyLines */
-      this.keyLines = this.drawer.keyLines(gear, key)
-      this.keyLines.forEach(line => {
-        this.ctx.scene.add(line)
-      })
 
       /** gear.line */
       this.line = this.drawer.gearLine(gear)
@@ -94,13 +104,6 @@ export default class GameCanvas {
       /** gear.judgeLine */
       this.judgeLine = this.drawer.judgeLine(gear)
       this.ctx.scene.add(this.judgeLine)
-
-      /** gear.bar-pool */
-      this.barPool = []
-      for (let i = 0; i < this.bars.length; i++) {
-        this.barPool[i] = this.drawer.bar(gear)
-        this.ctx.scene.add(this.barPool[i])
-      }
 
       /** gear.block-pool */
       this.blockPool = []
@@ -118,9 +121,6 @@ export default class GameCanvas {
         }
       }
     }
-
-    // render images and fonts
-
   }
 
   drawUI() {
