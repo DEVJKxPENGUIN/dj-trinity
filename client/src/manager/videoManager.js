@@ -20,7 +20,7 @@ export default class VideoManager {
     if (!response.ok) {
       throw new Error('Network response was not ok.')
     }
-    const ext = response.headers.get('Content-type').split('/')[1]
+    const ext = response.headers.get('Content-Disposition').split('.')[1]
 
     let blob
     if (this.isUnsupportedVideoFormat(ext)) {
@@ -39,7 +39,7 @@ export default class VideoManager {
 
   isUnsupportedVideoFormat(ext) {
     // todo -> 다양한 동영상 타입에 맞춰서 추가될 것.
-    return ext === 'mpeg'
+    return ext === 'mpeg' || ext === 'mpg' || ext === 'wmv'
   }
 
   async loadFFmpeg() {
