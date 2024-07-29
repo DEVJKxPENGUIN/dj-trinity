@@ -73,6 +73,10 @@ export default class GameCanvas {
     const key = this.vue.bms.bmsHeader.keys
     const gear = this.getGear()
     if (this.uiSettings['showGuideline']) {
+      /** gear.backboard */
+      this.backboard = this.drawer.backboard(gear)
+      this.ctx.scene.add(this.backboard)
+
       /** gear.scratch */
       this.scratchLine = this.drawer.scratchLine(gear)
       this.ctx.scene.add(this.scratchLine)
@@ -111,7 +115,6 @@ export default class GameCanvas {
           }
           this.blockPool[i][j] = this.drawer.block(gear, keyIndex)
           this.ctx.scene.add(this.blockPool[i][j])
-
         }
       }
     }

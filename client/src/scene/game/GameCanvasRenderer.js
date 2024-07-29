@@ -46,7 +46,7 @@ export default class GameCanvasDrawer {
     })
 
     const mesh = new Mesh(geometry, material)
-    mesh.position.set(0, 0, -1)
+    mesh.position.set(0, 0, 0)
     return mesh
   }
 
@@ -59,7 +59,8 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(outLine['height'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      transparent: true
     })
 
     const points = []
@@ -69,7 +70,35 @@ export default class GameCanvasDrawer {
     points.push(new Vector2(x + width, y + height))
     const geo = new BufferGeometry().setFromPoints(points)
 
-    return new Line(geo, mat)
+    const line = new Line(geo, mat)
+    return line
+  }
+
+  backboard(gear) {
+    const backboard = gear['backboard']
+    const opacity = backboard['opacity']
+    const color = backboard['color']
+    const x = this.ctx.pixelToObj(backboard['x'])
+    const y = this.ctx.pixelToObj(backboard['y'])
+    const width = this.ctx.pixelToObj(backboard['width'])
+    const height = this.ctx.pixelToObj(backboard['height'])
+
+    const mat = new MeshBasicMaterial({
+      color: color,
+      opacity: opacity,
+      transparent: true
+    })
+
+    const points = []
+    points.push(new Vector2(x, y + height))
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+
+    const mesh = new Mesh(geo, mat)
+    return mesh
   }
 
   scratchLine(gear) {
@@ -81,7 +110,8 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(scratchLine['height'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      transparent: true
     })
 
     const points = []
@@ -89,7 +119,8 @@ export default class GameCanvasDrawer {
     points.push(new Vector2(x, y))
     const geo = new BufferGeometry().setFromPoints(points)
 
-    return new Line(geo, mat)
+    const line = new Line(geo, mat)
+    return line
   }
 
   keyLines(gear, key) {
@@ -103,7 +134,8 @@ export default class GameCanvasDrawer {
       const height = this.ctx.pixelToObj(kLine['height'])
 
       const mat = new LineBasicMaterial({
-        color: color
+        color: color,
+        transparent: true
       })
 
       const points = []
@@ -112,7 +144,6 @@ export default class GameCanvasDrawer {
       const geo = new BufferGeometry().setFromPoints(points)
 
       const line = new Line(geo, mat)
-
       arr.push(line)
     }
     return arr
@@ -127,7 +158,8 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(judgeLine['height'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      transparent: true
     })
 
     const points = []
@@ -138,7 +170,8 @@ export default class GameCanvasDrawer {
     points.push(new Vector2(x, y - height / 2))
     const geo = new BufferGeometry().setFromPoints(points)
 
-    return new Line(geo, mat)
+    const line = new Line(geo, mat)
+    return line
   }
 
   bar(gear) {
@@ -150,7 +183,8 @@ export default class GameCanvasDrawer {
 
     const mat = new LineBasicMaterial({
       color: color,
-      linewidth: linewidth
+      linewidth: linewidth,
+      transparent: true
     })
 
     const points = []
@@ -174,7 +208,8 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(block['height'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      transparent: true
     })
 
     const points = []
@@ -202,7 +237,8 @@ export default class GameCanvasDrawer {
     const height = this.ctx.pixelToObj(timeBox['height'])
 
     const mat = new LineBasicMaterial({
-      color: color
+      color: color,
+      transparent: true
     })
 
     const points = []
@@ -233,7 +269,10 @@ export default class GameCanvasDrawer {
       curveSegments: 12,
       bevelEnabled: false
     })
-    const mat = new MeshBasicMaterial({color: color});
+    const mat = new MeshBasicMaterial({
+      color: color,
+      transparent: true
+    });
     const mesh = new Mesh(geo, mat)
     mesh.position.x = x
     mesh.position.y = y
