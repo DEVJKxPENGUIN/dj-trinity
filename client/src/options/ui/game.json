@@ -169,10 +169,10 @@
         },
         "text": {
           "font": "Orbitron",
-          "size": 0.1,
+          "size": 0.14,
           "color": "rgb(255, 255, 255)",
           "x": 232.5,
-          "y": -87,
+          "y": -67,
           "isCenter": false
         }
       },
@@ -188,10 +188,10 @@
         },
         "text": {
           "font": "Orbitron",
-          "size": 0.1,
+          "size": 0.14,
           "color": "rgb(255, 255, 255)",
           "x": 232.5,
-          "y": -117,
+          "y": -97,
           "isCenter": false
         }
       }

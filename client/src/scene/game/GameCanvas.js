@@ -248,14 +248,14 @@ export default class GameCanvas {
           continue;
         }
 
-        if (block['time'] > elapsedTime) {
+        if (block['time'] >= elapsedTime) {
           let time = lastTime
           if (isFirstShow) {
             time = elapsedTime
             isFirstShow = false
           }
 
-          if (this.vue.stop < block['time']) {
+          if (this.vue.stop <= block['time']) {
             const y = lastY + (block['time'] - Math.max(time, this.vue.stop))
                 * bpm * 0.005
                 * this.vue.speed;
@@ -283,7 +283,7 @@ export default class GameCanvas {
         }
       }
 
-      if (this.bars[i]['time'] > elapsedTime) {
+      if (this.bars[i]['time'] >= elapsedTime) {
         let time = lastTime
         if (isFirstShow) {
           time = elapsedTime
@@ -335,10 +335,18 @@ export default class GameCanvas {
     // update elapsed time
     const elapsed = this.getFormatTime(
         Math.round(this.vue.elapsedTime * 0.001))
-    this.drawer.updateText(this.elapsedTime, 'TIME: ' + elapsed)
+    this.elapsedTime.text = 'TIME : ' + elapsed
 
     // update bpm
-    this.drawer.updateText(this.bpm, 'BPM: ' + this.vue.bpm)
+    this.bpm.text = 'BPM: ' + this.formatBpm(this.vue.bpm)
+  }
+
+  formatBpm(bpm) {
+    if (Number.isInteger(bpm)) {
+      const numberStr = bpm.toString()
+      return numberStr.slice(0, 3)
+    }
+    return Math.floor(Math.random() * 900 + 100);
   }
 
   updateBars() {
@@ -349,7 +357,7 @@ export default class GameCanvas {
     for (let i = this.lastI; i < bars.length; i++) {
       const y = bars[i]['y'] * 0.01
       this.barPool[i].position.y = y + this.ctx.pixelToObj(bmsHeight)
-      if (bars[i]['time'] < elapsedTime) {
+      if (bars[i]['time'] <= elapsedTime) {
         this.barPool[i].position.y = -30
       }
 
@@ -382,7 +390,7 @@ export default class GameCanvas {
 
         this.blockPool[i][j].position.y = y - blockHeight * 0.5
             + this.ctx.pixelToObj(bmsHeight)
-        if (block['time'] < elapsedTime) {
+        if (block['time'] <= elapsedTime) {
           this.blockPool[i][j].position.y = -30
         }
 

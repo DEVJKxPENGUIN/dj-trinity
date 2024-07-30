@@ -21,8 +21,8 @@ import GameSocket from "@/scene/game/GameSocket";
 import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
-import {Font, TTFLoader} from "three/addons";
 import VideoManager from "@/manager/videoManager";
+import {preloadFont} from "troika-three-text";
 
 const GAME_PREPARING = 'gamePreparing'
 const GAME_READY = 'gameReady'
@@ -207,14 +207,15 @@ export default {
         size: 0,
       }
 
-      const loader = new TTFLoader()
       this.uiSettings['downloads']['fonts'].forEach(fontInfo => {
         const fontName = fontInfo['name']
         const fontPath = fontInfo['path']
 
         this.loadState[3].size++
-        loader.load(fontPath, json => {
-          this.fonts.set(fontName, new Font(json))
+        preloadFont({
+          font: fontPath
+        }, () => {
+          this.fonts.set(fontName, fontPath)
           this.loadState[3].count++
         })
       })

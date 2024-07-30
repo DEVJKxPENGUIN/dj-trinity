@@ -12,6 +12,7 @@ import {
   VideoTexture
 } from "three";
 import {TextGeometry} from "three/addons";
+import {Text} from "troika-three-text"
 
 export default class GameCanvasDrawer {
 
@@ -328,21 +329,15 @@ export default class GameCanvasDrawer {
     const x = this.ctx.pixelToObj(timeText['x'])
     const y = this.ctx.pixelToObj(timeText['y'])
 
-    const geo = new TextGeometry(text, {
-      font: font,
-      size: size,
-      height: 0,
-      curveSegments: 12,
-      bevelEnabled: false
-    })
-    const mat = new MeshBasicMaterial({
-      color: color,
-      transparent: true
-    });
-    const mesh = new Mesh(geo, mat)
-    mesh.position.x = x
-    mesh.position.y = y
-    return mesh
+    const textMesh = new Text()
+    textMesh.text = text
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
   }
 
   bpm(ui, text) {
@@ -356,38 +351,15 @@ export default class GameCanvasDrawer {
     const x = this.ctx.pixelToObj(bpmText['x'])
     const y = this.ctx.pixelToObj(bpmText['y'])
 
-    const geo = new TextGeometry(text, {
-      font: font,
-      size: size,
-      height: 0,
-      curveSegments: 12,
-      bevelEnabled: false
-    })
-    const mat = new MeshBasicMaterial({
-      color: color,
-      transparent: true
-    });
-    const mesh = new Mesh(geo, mat)
-    mesh.position.x = x
-    mesh.position.y = y
-    return mesh
-  }
-
-  updateText(mesh, text) {
-    const geo = mesh.geometry
-    const newGeo = new TextGeometry(text, {
-      font: geo.parameters.options.font,
-      size: geo.parameters.options.size,
-      height: geo.parameters.options.height,
-      curveSegments: geo.parameters.options.curveSegments,
-      bevelEnabled: geo.parameters.options.bevelEnabled,
-      bevelThickness: geo.parameters.options.bevelThickness,
-      bevelSize: geo.parameters.options.bevelSize,
-      bevelOffset: geo.parameters.options.bevelOffset,
-      bevelSegments: geo.parameters.options.bevelSegments
-    })
-
-    mesh.geometry.dispose()
-    mesh.geometry = newGeo
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
   }
 }
