@@ -21,6 +21,7 @@ import GameSocket from "@/scene/game/GameSocket";
 import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
+import keySettings from '../../options/ui/keyset.json'
 import VideoManager from "@/manager/videoManager";
 import {preloadFont} from "troika-three-text";
 
@@ -52,6 +53,7 @@ export default {
       fonts: new Map(),
       loadState: [],
       uiSettings: null,
+      keySettings: null,
       vga: null,
 
       // in-game
@@ -73,7 +75,7 @@ export default {
       this.user = await authenticationManager.userInfo()
       await this.manager.initScene(
           new GameCanvas(this),
-          new GameSocket(this),
+          new GameSocket(this)
       )
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
@@ -89,12 +91,14 @@ export default {
       } else if (e.key === 'ArrowLeft') {
       } else if (e.key === 'ArrowRight') {
       } else if (e.key === 'Enter' && e.shiftKey) {
-        e.preventDefault()
       } else if (e.key === 'Enter' && !e.isComposing) {
         this.handleEnter()
         e.preventDefault()
       } else if (e.key === 'Escape') {
         this.handleEsc()
+        e.preventDefault()
+      } else {
+        this.handleExtra(e)
       }
 
     },
@@ -120,6 +124,12 @@ export default {
         return
       }
     },
+    handleExtra(e) {
+      if(this.state === GAME_PREPARING) {
+        return
+      }
+      this.manager.canvas.handleKeys(e.key)
+    },
     async initGame() {
       this.showGameLoading = true
       await this.loadAll()
@@ -129,7 +139,7 @@ export default {
         throw new Error('no bmsId');
       }
 
-      await this.loadUISettings()
+      await this.loadSettings()
       await this.loadBms()
       this.loadSounds()
       this.loadFonts()
@@ -184,7 +194,7 @@ export default {
         })
       })
     },
-    async loadUISettings() {
+    async loadSettings() {
       return new Promise(resolve => {
         this.loadState[0] = {
           title: 'ui-settings',
@@ -192,9 +202,10 @@ export default {
           size: 1,
         }
 
-        // fixme -> change to get personal ui settings from server
+        // fixme -> change to get personal ui/key settings from server
         this.$nextTick(() => {
           this.uiSettings = uiSettings
+          this.keySettings = keySettings
           this.loadState[0].count++
           resolve()
         })

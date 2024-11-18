@@ -1,0 +1,36 @@
+{
+  "ingame": {
+    "play1": [
+      "s"
+    ],
+    "play2": [
+      "d"
+    ],
+    "play3": [
+      "f"
+    ],
+    "play4": [
+      " ",
+      "Spacebar",
+      "32"
+    ],
+    "play5": [
+      "j"
+    ],
+    "play6": [
+      "k"
+    ],
+    "play7": [
+      "l"
+    ],
+    "play8": [
+      "Shift"
+    ],
+    "speed-up": [
+      "1"
+    ],
+    "speed-down": [
+      "2"
+    ]
+  }
+}

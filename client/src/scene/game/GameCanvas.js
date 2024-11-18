@@ -49,6 +49,7 @@ export default class GameCanvas {
     // todo remove background, draw game UI
     this.initBms()
     this.drawGame()
+    this.setKeyMapping()
   }
 
   drawGame() {
@@ -446,6 +447,87 @@ export default class GameCanvas {
       }
     }
 
+  }
+
+  handleKeys(key) {
+    const func = this.keyMap[key]
+    if (func) {
+      func()
+    }
+  }
+
+  keyPlay1() {
+    console.log('keyPlay1')
+  }
+
+  keyPlay2() {
+    console.log('keyPlay2')
+  }
+
+  keyPlay3() {
+    console.log('keyPlay3')
+  }
+
+  keyPlay4() {
+    console.log('keyPlay4')
+  }
+
+  keyPlay5() {
+    console.log('keyPlay5')
+  }
+
+  keyPlay6() {
+    console.log('keyPlay6')
+  }
+
+  keyPlay7() {
+    console.log('keyPlay7')
+  }
+
+  keyPlay8() {
+    console.log('keyPlay8')
+  }
+
+  speedUp() {
+    console.log('speedUp')
+  }
+
+  speedDown() {
+    console.log('speedDown')
+  }
+
+  setKeyMapping() {
+    this.keySettings = this.vue.keySettings["ingame"]
+    this.keyMap = {}
+    for (const command in this.keySettings) {
+      let func
+      let keys = this.keySettings[command]
+      if (command === "play1") {
+        func = this.keyPlay1
+      } else if (command === "play2") {
+        func = this.keyPlay2
+      } else if (command === "play3") {
+        func = this.keyPlay3
+      } else if (command === "play4") {
+        func = this.keyPlay4
+      } else if (command === "play5") {
+        func = this.keyPlay5
+      } else if (command === "play6") {
+        func = this.keyPlay6
+      } else if (command === "play7") {
+        func = this.keyPlay7
+      } else if (command === "play8") {
+        func = this.keyPlay8
+      } else if (command === "speed-up") {
+        func = this.speedUp
+      } else if (command === "speed-down") {
+        func = this.speedDown
+      }
+
+      for (const key of keys) {
+        this.keyMap[key] = func
+      }
+    }
   }
 
   getGear() {
