@@ -49,7 +49,7 @@ export default class GameCanvas {
     // todo remove background, draw game UI
     this.initBms()
     this.drawGame()
-    this.setKeyMapping()
+    this.initSettings()
   }
 
   drawGame() {
@@ -121,6 +121,19 @@ export default class GameCanvas {
           this.ctx.scene.add(this.blockPool[i][j])
         }
       }
+
+      /** gear.pressEffects */
+      this.pressEffects = []
+      for (let i = 1; i <= key; i++) {
+        this.pressEffects[i] = this.drawer.pressEffect(gear, i)
+        this.pressEffects[i].visible = false
+        this.ctx.scene.add(this.pressEffects[i])
+      }
+
+      /** gear.scratchEffect */
+      this.scratchEffect = this.drawer.scratchEffect(gear)
+      this.scratchEffect.visible = false
+      this.ctx.scene.add(this.scratchEffect)
     }
   }
 
@@ -370,9 +383,10 @@ export default class GameCanvas {
 
   updateBlocks() {
     const bars = this.bars
-    const elapsedTime = this.vue.elapsedTime
+    // const elapsedTime = this.vue.elapsedTime
     const gear = this.getGear()
     const bmsHeight = gear['judgeLine']['y']
+    const outline = gear['outline']['y']
 
     for (let i = this.lastI; i < bars.length; i++) {
       for (let j = i === this.lastI ? this.lastJ : 0; j < bars[i].length; j++) {
@@ -389,9 +403,10 @@ export default class GameCanvas {
             gear[keyIndex === 0 ? 'scratch' : 'key'
                 + keyIndex]['block']['height'])
 
+        this.gearHeight = this.ctx.pixelToObj(outline) // 변수 따로 뺄 수 있다.
         this.blockPool[i][j].position.y = y - blockHeight * 0.5
             + this.ctx.pixelToObj(bmsHeight)
-        if (block['time'] <= elapsedTime) {
+        if (block['played']) { // todo
           this.blockPool[i][j].position.y = -30
         }
 
@@ -410,9 +425,9 @@ export default class GameCanvas {
           j++) {
         const block = this.bars[i][j];
         const bmsChannel = block['bmsChannel']
-        if (block['played'] === true) {
-          continue;
-        }
+        // if (block['played'] === true) {
+        //   continue;
+        // }
 
         if (bmsChannel === 'BAR_SHORTEN') {
           continue;
@@ -430,70 +445,216 @@ export default class GameCanvas {
           this.vue.stop = block['time'] + block['stop'];
         } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
             'BACKGROUND')) {
-          setImmediate(() => {
-            try {
-              this.vue.bmsSounds.get(block['value']).play();
-            } catch (e) {
-              console.error(e)
-            }
-          })
+
+          // fimxe -> 이걸 동일한 '연주' 로직으로 묶어야 할수도 있다.
+          if (this.autoPlay && !block['played']) {
+            setImmediate(() => {
+              try {
+                this.vue.bmsSounds.get(block['value']).play();
+              } catch (e) {
+                console.error(e)
+              }
+            })
+            block['played'] = true
+            // this.lastI = i
+            // this.lastJ = j
+          }
+
         } else if (bmsChannel === 'BGA') {
           this.vue.vga.play(block['value'])
         }
 
-        block['played'] = true;
-        this.lastI = i
-        this.lastJ = j
+        if (block['time'] + this.judge['miss'] <= elapsedTime) {
+          console.log(
+              `time : ${block['time']}, judge : ${this.judge['miss']} elapsed : ${elapsedTime}`)
+          block['played'] = true
+          this.lastI = i
+          this.lastJ = j
+          // todo -> draw miss effect
+        }
+
       }
     }
+  }
+
+  findCurrentTargetBlock(key) {
+
+    // this.vue.difficulty
+    // this.vue.playSettings['judge'][]
+
+    // PLAYER1_1: 1,
+    // PLAYER1_2: 2,
+    // PLAYER1_3: 3,
+    // PLAYER1_4: 4,
+    // PLAYER1_5: 5,
+    // PLAYER1_6: 0,
+    // PLAYER1_8: 6,
+    // PLAYER1_9: 7
+
+    // for (let i = this.lastI; i < this.bars.length; i++) {
+    //   for (let j = i === this.lastI ? this.lastJ : 0; j < this.bars[i].length; j++) {
+    //     const block = this.bars[i][j];
+    //     const bmsChannel = block['bmsChannel']
+    //     if (block['played'] === true) {
+    //       continue;
+    //     }
+    //
+    //     if (bmsChannel === 'BAR_SHORTEN') {
+    //       continue;
+    //     }
+    //
+    //     if (block['time'] > elapsedTime) {
+    //       return;
+    //     }
+    //
+    //     if (bmsChannel === 'BPM') {
+    //       this.vue.bpm = block['value'];
+    //     } else if (bmsChannel === 'BPM_EXTENDED') {
+    //       this.vue.bpm = this.vue.bms.bmsHeader.bpm[block['value']];
+    //     } else if (bmsChannel === "SEQUENCE_STOP") {
+    //       this.vue.stop = block['time'] + block['stop'];
+    //     } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
+    //         'BACKGROUND')) {
+    //       setImmediate(() => {
+    //         try {
+    //           this.vue.bmsSounds.get(block['value']).play();
+    //         } catch (e) {
+    //           console.error(e)
+    //         }
+    //       })
+    //     } else if (bmsChannel === 'BGA') {
+    //       this.vue.vga.play(block['value'])
+    //     }
+    //
+    //     block['played'] = true;
+    //     this.lastI = i
+    //     this.lastJ = j
+    //
+    //
+    //
+    //   }
+    // }
 
   }
 
-  handleKeys(key) {
-    const func = this.keyMap[key]
-    if (func) {
-      func()
+  handleKeys(key, isKeyDown = true) {
+    const keyAction = this.keyMap[key]
+    if (keyAction) {
+      keyAction(isKeyDown)
     }
   }
 
-  keyPlay1() {
-    console.log('keyPlay1')
+  playBlock() {
+
   }
 
-  keyPlay2() {
-    console.log('keyPlay2')
+  processKeyPlay(key) {
+    if(this.autoPlay) {
+      return
+    }
+
+    // make sound
+
+
+    // make effect
+
+    // make score
+
   }
 
-  keyPlay3() {
-    console.log('keyPlay3')
+  keyPlay1(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[1].visible = true
+      this.processKeyPlay(1)
+    } else {
+      this.pressEffects[1].visible = false
+    }
   }
 
-  keyPlay4() {
-    console.log('keyPlay4')
+  keyPlay2(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[2].visible = true
+      this.processKeyPlay(2)
+    } else {
+      this.pressEffects[2].visible = false
+    }
   }
 
-  keyPlay5() {
-    console.log('keyPlay5')
+  keyPlay3(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[3].visible = true
+      this.processKeyPlay(3)
+    } else {
+      this.pressEffects[3].visible = false
+    }
   }
 
-  keyPlay6() {
-    console.log('keyPlay6')
+  keyPlay4(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[4].visible = true
+      this.processKeyPlay(4)
+    } else {
+      this.pressEffects[4].visible = false
+    }
   }
 
-  keyPlay7() {
-    console.log('keyPlay7')
+  keyPlay5(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[5].visible = true
+      this.processKeyPlay(5)
+    } else {
+      this.pressEffects[5].visible = false
+    }
   }
 
-  keyPlay8() {
-    console.log('keyPlay8')
+  keyPlay6(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[6].visible = true
+      this.processKeyPlay(6)
+    } else {
+      this.pressEffects[6].visible = false
+    }
+  }
+
+  keyPlay7(isKeyDown) {
+    if (isKeyDown) {
+      this.pressEffects[7].visible = true
+      this.processKeyPlay(7)
+    } else {
+      this.pressEffects[7].visible = false
+    }
+  }
+
+  keyScratch(isKeyDown) {
+    if (isKeyDown) {
+      this.scratchEffect.visible = true
+      this.processKeyPlay(8)
+    } else {
+      this.scratchEffect.visible = false
+    }
   }
 
   speedUp() {
-    console.log('speedUp')
+    console.log('keypeedUp')
   }
 
   speedDown() {
     console.log('speedDown')
+  }
+
+  initSettings() {
+    this.setDifficulty()
+    this.setAutoPlay()
+    this.setKeyMapping()
+  }
+
+  setDifficulty() {
+    this.difficulty = this.vue.difficulty
+    this.judge = this.vue.playSettings['judge'][this.difficulty] // {overhit : 25, great : 50, good : 100, bad : 200}
+  }
+
+  setAutoPlay() {
+    this.autoPlay = this.vue.autoPlay
   }
 
   setKeyMapping() {
@@ -516,8 +677,8 @@ export default class GameCanvas {
         func = this.keyPlay6
       } else if (command === "play7") {
         func = this.keyPlay7
-      } else if (command === "play8") {
-        func = this.keyPlay8
+      } else if (command === "playScratch") {
+        func = this.keyScratch
       } else if (command === "speed-up") {
         func = this.speedUp
       } else if (command === "speed-down") {
@@ -525,7 +686,7 @@ export default class GameCanvas {
       }
 
       for (const key of keys) {
-        this.keyMap[key] = func
+        this.keyMap[key] = func.bind(this)
       }
     }
   }

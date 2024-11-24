@@ -11,7 +11,6 @@ import {
   Vector2,
   VideoTexture
 } from "three";
-import {TextGeometry} from "three/addons";
 import {Text} from "troika-three-text"
 
 export default class GameCanvasDrawer {
@@ -226,6 +225,56 @@ export default class GameCanvasDrawer {
     obj.add(line)
     obj.position.y = 100
     return obj
+  }
+
+  pressEffect(gear, keyIndex) {
+    const k = gear['key' + keyIndex]
+    const kPressEffect = k['pressEffect']
+    const x = this.ctx.pixelToObj(kPressEffect['x'])
+    const y = this.ctx.pixelToObj(kPressEffect['y'])
+    const width = this.ctx.pixelToObj(kPressEffect['width'])
+    const height = this.ctx.pixelToObj(kPressEffect['height'])
+
+    const mat = new MeshBasicMaterial({
+      color: 'rgb(255, 255, 255)',
+      opacity: 0.05,
+      transparent: true
+    })
+
+    const points = []
+    points.push(new Vector2(x, y + height))
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+
+    return new Mesh(geo, mat)
+  }
+
+  scratchEffect(gear) {
+    const k = gear['scratch']
+    const kScratchEffect = k['pressEffect']
+    const x = this.ctx.pixelToObj(kScratchEffect['x'])
+    const y = this.ctx.pixelToObj(kScratchEffect['y'])
+    const width = this.ctx.pixelToObj(kScratchEffect['width'])
+    const height = this.ctx.pixelToObj(kScratchEffect['height'])
+
+    const mat = new MeshBasicMaterial({
+      color: 'rgb(255, 255, 255)',
+      opacity: 0.05,
+      transparent: true
+    })
+
+    const points = []
+    points.push(new Vector2(x, y + height))
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+
+    return new Mesh(geo, mat)
   }
 
   timeBox(ui) {

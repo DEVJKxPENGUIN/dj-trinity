@@ -1,0 +1,32 @@
+{
+  "judge": {
+    "easy": {
+      "overhit": 25,
+      "great": 60,
+      "good": 120,
+      "bad": 250,
+      "miss": 350
+    },
+    "normal": {
+      "overhit": 20,
+      "great": 40,
+      "good": 100,
+      "bad": 250,
+      "miss": 350
+    },
+    "hard": {
+      "overhit": 15,
+      "great": 30,
+      "good": 80,
+      "bad": 250,
+      "miss": 350
+    },
+    "insane": {
+      "overhit": 5,
+      "great": 20,
+      "good": 40,
+      "bad": 250,
+      "miss": 350
+    }
+  }
+}

@@ -81,12 +81,15 @@ export default {
       bmsHIndex: 0,
       bmsMaxShowSize: 13,
       toUp: false,
-      toDown: false
+      toDown: false,
+
+      // todo 아래 항목들은 ui 를 통해 변경할 수 있도록 수정 필요
+      difficulty: "easy",
+      autoPlay: true
     }
   },
   methods: {
-    ...mapActions(
-        ['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange', 'setBmsCurrent']),
+    ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange', 'setBmsCurrent', 'setDifficulty', 'setAutoPlay']),
     async init() {
       this.user = await authenticationManager.userInfo()
       this.bmsList = await apiManager.get('/bms/list', {})
@@ -308,6 +311,8 @@ export default {
     },
     switchToGameScene() {
       this.setBmsCurrent(this.bmsCurrent)
+      this.setDifficulty(this.difficulty)
+      this.setAutoPlay(this.autoPlay)
       this.$emit('changeScene', 'gameScene')
     },
   },

@@ -20,7 +20,9 @@ export default createStore({
       isSceneChanging: true,
 
       // game state
-      bmsCurrent: {id: 1, bmsHeader: {}}
+      bmsCurrent: {id: 1, bmsHeader: {}},
+      difficulty: "easy",
+      autoPlay: false
     };
   },
   mutations: {
@@ -51,6 +53,12 @@ export default createStore({
     },
     setBmsCurrent(state, bmsCurrent) {
       state.bmsCurrent = bmsCurrent
+    },
+    setDifficulty(state, difficulty) {
+      state.difficulty = difficulty
+    },
+    setAutoPlay(state, autoPlay) {
+      state.autoPlay = autoPlay
     }
   },
   actions: {
@@ -94,6 +102,12 @@ export default createStore({
     },
     setBmsCurrent(context, bmsCurrent) {
       context.commit('setBmsCurrent', bmsCurrent)
+    },
+    setDifficulty(context, difficulty) {
+      context.commit('setDifficulty', difficulty)
+    },
+    setAutoPlay(context, autoPlay) {
+      context.commit('setAutoPlay', autoPlay)
     }
   }
 });

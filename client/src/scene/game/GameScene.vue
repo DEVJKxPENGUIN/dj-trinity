@@ -22,6 +22,7 @@ import {Howl} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
 import keySettings from '../../options/ui/keyset.json'
+import playSettings from '../../options/ingame/play.json'
 import VideoManager from "@/manager/videoManager";
 import {preloadFont} from "troika-three-text";
 
@@ -33,7 +34,7 @@ export default {
   name: 'GameScene',
   components: {GameLoading},
   computed: {
-    ...mapState(['isLoading', 'isSystemPopup', 'bmsCurrent']),
+    ...mapState(['isLoading', 'isSystemPopup', 'bmsCurrent', 'difficulty', 'autoPlay']),
   },
   props: {
     manager: null
@@ -54,6 +55,7 @@ export default {
       loadState: [],
       uiSettings: null,
       keySettings: null,
+      playSettings: null,
       vga: null,
 
       // in-game
@@ -78,6 +80,7 @@ export default {
           new GameSocket(this)
       )
       window.addEventListener('keydown', this.keyboard)
+      window.addEventListener('keyup', this.keyboard)
       await this.hideSceneChange()
       await this.initGame()
     },
@@ -92,11 +95,15 @@ export default {
       } else if (e.key === 'ArrowRight') {
       } else if (e.key === 'Enter' && e.shiftKey) {
       } else if (e.key === 'Enter' && !e.isComposing) {
-        this.handleEnter()
-        e.preventDefault()
+        if (e.type === 'keydown') {
+          this.handleEnter()
+          e.preventDefault()
+        }
       } else if (e.key === 'Escape') {
-        this.handleEsc()
-        e.preventDefault()
+        if (e.type === 'keydown') {
+          this.handleEsc()
+          e.preventDefault()
+        }
       } else {
         this.handleExtra(e)
       }
@@ -125,10 +132,17 @@ export default {
       }
     },
     handleExtra(e) {
-      if(this.state === GAME_PREPARING) {
+      if (this.state === GAME_PREPARING) {
         return
       }
-      this.manager.canvas.handleKeys(e.key)
+      if (e.type === 'keydown') {
+        this.manager.canvas.handleKeys(e.key, true)
+        return
+      }
+      if (e.type === 'keyup') {
+        this.manager.canvas.handleKeys(e.key, false)
+        return
+      }
     },
     async initGame() {
       this.showGameLoading = true
@@ -206,6 +220,7 @@ export default {
         this.$nextTick(() => {
           this.uiSettings = uiSettings
           this.keySettings = keySettings
+          this.playSettings = playSettings
           this.loadState[0].count++
           resolve()
         })

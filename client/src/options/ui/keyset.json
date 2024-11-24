@@ -1,13 +1,16 @@
 {
   "ingame": {
     "play1": [
-      "s"
+      "s",
+      "S"
     ],
     "play2": [
-      "d"
+      "d",
+      "D"
     ],
     "play3": [
-      "f"
+      "f",
+      "F"
     ],
     "play4": [
       " ",
@@ -15,15 +18,18 @@
       "32"
     ],
     "play5": [
-      "j"
+      "j",
+      "J"
     ],
     "play6": [
-      "k"
+      "k",
+      "K"
     ],
     "play7": [
-      "l"
+      "l",
+      "L"
     ],
-    "play8": [
+    "playScratch": [
       "Shift"
     ],
     "speed-up": [
