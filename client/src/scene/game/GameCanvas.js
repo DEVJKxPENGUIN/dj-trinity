@@ -131,9 +131,9 @@ export default class GameCanvas {
       }
 
       /** gear.scratchEffect */
-      this.scratchEffect = this.drawer.scratchEffect(gear)
-      this.scratchEffect.visible = false
-      this.ctx.scene.add(this.scratchEffect)
+      this.pressEffects[0] = this.drawer.scratchEffect(gear)
+      this.pressEffects[0].visible = false
+      this.ctx.scene.add(this.pressEffects[0])
     }
   }
 
@@ -203,6 +203,7 @@ export default class GameCanvas {
     }
 
     this.calculateBarTime()
+    this.createKeyTargetQueues()
   }
 
   calculateBarTime() {
@@ -244,7 +245,27 @@ export default class GameCanvas {
       lastTime = this.bars[i]['time']
       lastPos = 0
     }
+  }
 
+  createKeyTargetQueues() {
+    this.keyTargetQueues = []
+    for (let i = 0; i < this.bars.length; i++) {
+      for (let j = 0; j < this.bars[i].length; j++) {
+        const block = this.bars[i][j]
+        const bmsChannel = block['bmsChannel']
+
+        const keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+        if (keyIndex === null || keyIndex === undefined) {
+          continue
+        }
+
+        if (!this.keyTargetQueues[keyIndex]) {
+          this.keyTargetQueues[keyIndex] = []
+        }
+
+        this.keyTargetQueues[keyIndex].push(block)
+      }
+    }
   }
 
   updatePositions() {
@@ -366,11 +387,6 @@ export default class GameCanvas {
           effect.visibleTime = null
         }
       })
-      if (this.scratchEffect.visibleTime && this.scratchEffect.visibleTime
-          + effectTime < now) {
-        this.scratchEffect.visible = false
-        this.scratchEffect.visibleTime = null
-      }
     }
   }
 
@@ -467,8 +483,7 @@ export default class GameCanvas {
         }
 
         if (this.isExpiredBlock(block)) {
-          this.judge(block)
-          this.playBlock(block, false)
+          this.processBlockPlayed(block, false, false)
           this.lastI = i
           this.lastJ = j
         }
@@ -483,17 +498,25 @@ export default class GameCanvas {
     if (!block['played']) {
       const bmsChannel = block['bmsChannel'];
       const keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
-      if (keyIndex === 0) {
-        this.scratchEffect.visible = true
-        this.scratchEffect.visibleTime = performance.now()
-      } else {
-        this.pressEffects[keyIndex].visible = true
-        this.pressEffects[keyIndex].visibleTime = performance.now()
-      }
+      this.pressEffects[keyIndex].visible = true
+      this.pressEffects[keyIndex].visibleTime = performance.now()
     }
 
-    this.playBlock(block, true)
-    this.judge(block, 'overhit')
+    this.processBlockPlayed(block, 'overhit', true)
+  }
+
+  processBlockPlayed(block, judgement, sound) {
+    const judged = this.judge(block, judgement)
+    if (judged) {
+      this.playBlock(block, sound)
+      const keyIndex = this.BLOCK_RENDER_MAP[block['bmsChannel']]
+      if (keyIndex === null || keyIndex === undefined) {
+        return
+      }
+      if (this.keyTargetQueues[keyIndex].length > 1) {
+        this.keyTargetQueues[keyIndex].shift()
+      }
+    }
   }
 
   // block['played'] = true 가 되는 상황은 아래와 같다.
@@ -505,18 +528,20 @@ export default class GameCanvas {
     if (block['played']) {
       return
     }
-
     if (playSound) {
-      setImmediate(() => {
-        try {
-          this.vue.bmsSounds.get(block['value']).play();
-        } catch (e) {
-          console.error(e)
-        }
-      })
+      this.playSound(block)
     }
-
     block['played'] = true
+  }
+
+  playSound(block) {
+    setImmediate(() => {
+      try {
+        this.vue.bmsSounds.get(block['value']).play();
+      } catch (e) {
+        console.error(e)
+      }
+    })
   }
 
   isExpiredBlock(block) {
@@ -530,13 +555,13 @@ export default class GameCanvas {
   // todo -> return 'string' 부분을 callback 이벤트로 넘겨야 할 듯.
   judge(block, judgement) {
     if (!block['bmsChannel'].startsWith('PLAYER') || block['judge']) {
-      return
+      return false
     }
     if (judgement) {
       console.log(judgement)
       block['judge'] = judgement
       block['timeDiff'] = 0
-      return
+      return true
     }
     const elapsedTime = this.vue.elapsedTime
     // 오차
@@ -557,6 +582,8 @@ export default class GameCanvas {
     } else if (block['time'] > elapsedTime) {
       if (block['time'] > elapsedTime + this.judgement['miss']) {
         // none
+        console.log('none')
+        return false
       } else {
         console.log('miss')
         block['judge'] = 'miss'
@@ -565,66 +592,7 @@ export default class GameCanvas {
       console.log('miss')
       block['judge'] = 'miss'
     }
-  }
-
-  findCurrentTargetBlock(key) {
-
-    // this.vue.difficulty
-    // this.vue.playSettings['judge'][]
-
-    // PLAYER1_1: 1,
-    // PLAYER1_2: 2,
-    // PLAYER1_3: 3,
-    // PLAYER1_4: 4,
-    // PLAYER1_5: 5,
-    // PLAYER1_6: 0,
-    // PLAYER1_8: 6,
-    // PLAYER1_9: 7
-
-    // for (let i = this.lastI; i < this.bars.length; i++) {
-    //   for (let j = i === this.lastI ? this.lastJ : 0; j < this.bars[i].length; j++) {
-    //     const block = this.bars[i][j];
-    //     const bmsChannel = block['bmsChannel']
-    //     if (block['played'] === true) {
-    //       continue;
-    //     }
-    //
-    //     if (bmsChannel === 'BAR_SHORTEN') {
-    //       continue;
-    //     }
-    //
-    //     if (block['time'] > elapsedTime) {
-    //       return;
-    //     }
-    //
-    //     if (bmsChannel === 'BPM') {
-    //       this.vue.bpm = block['value'];
-    //     } else if (bmsChannel === 'BPM_EXTENDED') {
-    //       this.vue.bpm = this.vue.bms.bmsHeader.bpm[block['value']];
-    //     } else if (bmsChannel === "SEQUENCE_STOP") {
-    //       this.vue.stop = block['time'] + block['stop'];
-    //     } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
-    //         'BACKGROUND')) {
-    //       setImmediate(() => {
-    //         try {
-    //           this.vue.bmsSounds.get(block['value']).play();
-    //         } catch (e) {
-    //           console.error(e)
-    //         }
-    //       })
-    //     } else if (bmsChannel === 'BGA') {
-    //       this.vue.vga.play(block['value'])
-    //     }
-    //
-    //     block['played'] = true;
-    //     this.lastI = i
-    //     this.lastJ = j
-    //
-    //
-    //
-    //   }
-    // }
-
+    return true
   }
 
   handleKeys(key, isKeyDown = true) {
@@ -638,13 +606,13 @@ export default class GameCanvas {
     if (this.autoPlay) {
       return
     }
+    const targetBlock = this.keyTargetQueues[key][0]
 
     // make sound
-
-    // make effect
+    this.playSound(targetBlock)
 
     // make score
-
+    this.processBlockPlayed(targetBlock, false, false)
   }
 
   keyPlay1(isKeyDown) {
@@ -736,10 +704,10 @@ export default class GameCanvas {
       return
     }
     if (isKeyDown) {
-      this.scratchEffect.visible = true
-      this.processKeyPlay(8)
+      this.pressEffects[0].visible = true
+      this.processKeyPlay(0)
     } else {
-      this.scratchEffect.visible = false
+      this.pressEffects[0].visible = false
     }
   }
 
