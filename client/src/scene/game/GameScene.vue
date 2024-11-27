@@ -18,7 +18,7 @@ import * as authenticationManager from "@/manager/authenticationManager";
 import * as apiManager from "@/manager/apiManager";
 import GameCanvas from "@/scene/game/GameCanvas";
 import GameSocket from "@/scene/game/GameSocket";
-import {Howl} from 'howler';
+import {Howl, Howler} from 'howler';
 import GameLoading from "@/scene/game/GameLoading.vue";
 import uiSettings from '../../options/ui/game.json'
 import keySettings from '../../options/ui/keyset.json'
@@ -64,10 +64,12 @@ export default {
       elapsedTime: 0,
       lastFrameTime: null,
       initialTime: 2000,
-      speed: 0.8,
+      speed: 1.0,
       stop: 0,
       startBpm: 0,
-      bpm: 0
+      bpm: 0,
+      volume: 1.0,
+      mute: false
     }
   },
   methods: {
@@ -199,6 +201,7 @@ export default {
         );
       });
 
+      Howler.volume(this.volume)
       this.bmsSounds.forEach(sound => {
         sound.once('load', () => {
           this.loadState[2].count++
@@ -290,6 +293,44 @@ export default {
     },
     resumeGame() {
       this.state = GAME_PLAYING
+    },
+    speedUp(isKeyDown) {
+      if (!isKeyDown) {
+        return
+      }
+      if (this.speed > 1.8) {
+        return
+      }
+      this.speed += 0.1
+    },
+    speedDown(isKeyDown) {
+      if (!isKeyDown) {
+        return
+      }
+      if (this.speed < 0.2) {
+        return
+      }
+      this.speed -= 0.1
+    },
+    soundUp(isKeyDown) {
+      if (!isKeyDown) {
+        return
+      }
+      if (this.volume > 1.0) {
+        return
+      }
+      this.volume += 0.05
+      Howler.volume(this.volume)
+    },
+    soundDown(isKeyDown) {
+      if (!isKeyDown) {
+        return
+      }
+      if (this.volume < 0.0) {
+        return
+      }
+      this.volume -= 0.05
+      Howler.volume(this.volume)
     },
     handleError(title, contents) {
       this.$store.dispatch('showSystemPopup', {

@@ -185,6 +185,7 @@ export default class GameCanvas {
     this.vue.bpm = header.startBpm;
     this.lastI = 0
     this.lastJ = 0
+    this.lastY = 0
 
     this.bars = data.reduce((acc, cur) => {
       if (acc[cur.bar]) {
@@ -270,14 +271,13 @@ export default class GameCanvas {
           }
 
           if (this.vue.stop <= block['time']) {
-            const y = lastY + (block['time'] - Math.max(time, this.vue.stop))
+            block['y'] = lastY + (block['time'] - Math.max(time, this.vue.stop))
                 * bpm * 0.005
-                * this.vue.speed;
-            if (y > 1000) {
+                * this.vue.speed
+            lastY = block['y']
+            if (this.isOutofScreen(block)) {
               return
             }
-            block['y'] = y
-            lastY = block['y']
           }
         }
 
@@ -304,14 +304,13 @@ export default class GameCanvas {
           isFirstShow = false
         }
 
-        const y = lastY + (this.bars[i]['time'] - time) * bpm
+        this.bars[i]['y'] = lastY + (this.bars[i]['time'] - time) * bpm
             * 0.005
-            * this.vue.speed;
-        if (y > 1000) {
+            * this.vue.speed
+        lastY = this.bars[i]['y'];
+        if (this.isOutofScreen(this.bars[i])) {
           return
         }
-        this.bars[i]['y'] = y
-        lastY = this.bars[i]['y'];
       }
       lastTime = this.bars[i]['time']
     }
@@ -324,10 +323,10 @@ export default class GameCanvas {
       this.vue.vga.pause()
     } else if (this.vue.state === GAME_PLAYING) {
       this.vue.vga.resume()
+      this.processBlocks()
       this.updatePositions()
       this.updateBars()
       this.updateBlocks()
-      this.processBlocks()
       this.updateText()
     }
   }
@@ -381,12 +380,12 @@ export default class GameCanvas {
     }
   }
 
+  // todo -> 키음 저장해야한다.
   updateBlocks() {
     const bars = this.bars
-    // const elapsedTime = this.vue.elapsedTime
+    const elapsedTime = this.vue.elapsedTime
     const gear = this.getGear()
     const bmsHeight = gear['judgeLine']['y']
-    const outline = gear['outline']['y']
 
     for (let i = this.lastI; i < bars.length; i++) {
       for (let j = i === this.lastI ? this.lastJ : 0; j < bars[i].length; j++) {
@@ -402,11 +401,9 @@ export default class GameCanvas {
         const blockHeight = this.ctx.pixelToObj(
             gear[keyIndex === 0 ? 'scratch' : 'key'
                 + keyIndex]['block']['height'])
-
-        this.gearHeight = this.ctx.pixelToObj(outline) // 변수 따로 뺄 수 있다.
         this.blockPool[i][j].position.y = y - blockHeight * 0.5
             + this.ctx.pixelToObj(bmsHeight)
-        if (block['played']) { // todo
+        if (block['played'] || block['time'] <= elapsedTime) {
           this.blockPool[i][j].position.y = -30
         }
 
@@ -425,16 +422,13 @@ export default class GameCanvas {
           j++) {
         const block = this.bars[i][j];
         const bmsChannel = block['bmsChannel']
-        // if (block['played'] === true) {
-        //   continue;
-        // }
 
         if (bmsChannel === 'BAR_SHORTEN') {
           continue;
         }
 
         if (block['time'] > elapsedTime) {
-          return;
+          return
         }
 
         if (bmsChannel === 'BPM') {
@@ -443,37 +437,96 @@ export default class GameCanvas {
           this.vue.bpm = this.vue.bms.bmsHeader.bpm[block['value']];
         } else if (bmsChannel === "SEQUENCE_STOP") {
           this.vue.stop = block['time'] + block['stop'];
-        } else if (bmsChannel.startsWith('PLAYER') || bmsChannel.startsWith(
-            'BACKGROUND')) {
-
+        } else if (bmsChannel.startsWith('BACKGROUND')) {
+          this.playBlock(block, true)
+        } else if (bmsChannel.startsWith('PLAYER')) {
           // fimxe -> 이걸 동일한 '연주' 로직으로 묶어야 할수도 있다.
-          if (this.autoPlay && !block['played']) {
-            setImmediate(() => {
-              try {
-                this.vue.bmsSounds.get(block['value']).play();
-              } catch (e) {
-                console.error(e)
-              }
-            })
-            block['played'] = true
-            // this.lastI = i
-            // this.lastJ = j
+          if (this.autoPlay) {
+            this.judge(block, 'overhit')
+            this.playBlock(block, true)
           }
-
         } else if (bmsChannel === 'BGA') {
           this.vue.vga.play(block['value'])
         }
 
-        if (block['time'] + this.judge['miss'] <= elapsedTime) {
-          console.log(
-              `time : ${block['time']}, judge : ${this.judge['miss']} elapsed : ${elapsedTime}`)
-          block['played'] = true
+        if (this.isExpiredBlock(block)) {
+          this.judge(block)
+          this.playBlock(block, false)
           this.lastI = i
           this.lastJ = j
-          // todo -> draw miss effect
         }
-
       }
+    }
+  }
+
+  // block['played'] = true 가 되는 상황은 아래와 같다.
+  // -> block 의 유효시간은 block['time'] + this.judge['miss'] 이다.
+  // 1. 블럭의 유효시간이 지났을때, block['time'] + this.judge['miss'] <= elapsedTime
+  // 2. 블럭이 자동연주에 의해 연주되었을 때
+  // 3. 유저가 키음을 통해 해당 블럭을 연주했을 때
+  playBlock(block, playSound) {
+    if (block['played']) {
+      return
+    }
+
+    if (playSound) {
+      setImmediate(() => {
+        try {
+          this.vue.bmsSounds.get(block['value']).play();
+        } catch (e) {
+          console.error(e)
+        }
+      })
+    }
+
+    block['played'] = true
+  }
+
+  isExpiredBlock(block) {
+    return block['time'] + this.judgement['bad'] < this.vue.elapsedTime;
+  }
+
+  isOutofScreen(block) {
+    return block['y'] > 1000
+  }
+
+  // todo -> return 'string' 부분을 callback 이벤트로 넘겨야 할 듯.
+  judge(block, judgement) {
+    if (!block['bmsChannel'].startsWith('PLAYER') || block['judge']) {
+      return
+    }
+    if (judgement) {
+      console.log(judgement)
+      block['judge'] = judgement
+      block['timeDiff'] = 0
+      return
+    }
+    const elapsedTime = this.vue.elapsedTime
+    // 오차
+    const timeDiff = Math.abs(block['time'] - elapsedTime)
+    block['timeDiff'] = timeDiff
+    if (timeDiff <= this.judgement['overhit']) {
+      console.log('overhit')
+      block['judge'] = 'overhit'
+    } else if (timeDiff <= this.judgement['great']) {
+      console.log('great')
+      block['judge'] = 'great'
+    } else if (timeDiff <= this.judgement['good']) {
+      console.log('good')
+      block['judge'] = 'good'
+    } else if (timeDiff <= this.judgement['bad']) {
+      console.log('bad')
+      block['judge'] = 'bad'
+    } else if (block['time'] > elapsedTime) {
+      if (block['time'] > elapsedTime + this.judgement['miss']) {
+        // none
+      } else {
+        console.log('miss')
+        block['judge'] = 'miss'
+      }
+    } else {
+      console.log('miss')
+      block['judge'] = 'miss'
     }
   }
 
@@ -544,17 +597,12 @@ export default class GameCanvas {
     }
   }
 
-  playBlock() {
-
-  }
-
   processKeyPlay(key) {
-    if(this.autoPlay) {
+    if (this.autoPlay) {
       return
     }
 
     // make sound
-
 
     // make effect
 
@@ -634,14 +682,6 @@ export default class GameCanvas {
     }
   }
 
-  speedUp() {
-    console.log('keypeedUp')
-  }
-
-  speedDown() {
-    console.log('speedDown')
-  }
-
   initSettings() {
     this.setDifficulty()
     this.setAutoPlay()
@@ -650,7 +690,7 @@ export default class GameCanvas {
 
   setDifficulty() {
     this.difficulty = this.vue.difficulty
-    this.judge = this.vue.playSettings['judge'][this.difficulty] // {overhit : 25, great : 50, good : 100, bad : 200}
+    this.judgement = this.vue.playSettings['judge'][this.difficulty] // {overhit : 25, great : 50, good : 100, bad : 200}
   }
 
   setAutoPlay() {
@@ -680,9 +720,13 @@ export default class GameCanvas {
       } else if (command === "playScratch") {
         func = this.keyScratch
       } else if (command === "speed-up") {
-        func = this.speedUp
+        func = this.vue.speedUp
       } else if (command === "speed-down") {
-        func = this.speedDown
+        func = this.vue.speedDown
+      } else if (command === "sound-up") {
+        func = this.vue.soundUp
+      } else if (command === "sound-down") {
+        func = this.vue.soundDown
       }
 
       for (const key of keys) {

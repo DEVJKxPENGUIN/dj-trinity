@@ -37,6 +37,12 @@
     ],
     "speed-down": [
       "2"
+    ],
+    "sound-up": [
+      "3"
+    ],
+    "sound-down": [
+      "4"
     ]
   }
 }
