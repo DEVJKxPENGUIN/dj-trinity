@@ -328,6 +328,7 @@ export default class GameCanvas {
       this.updateBars()
       this.updateBlocks()
       this.updateText()
+      this.updateEffect(now)
     }
   }
 
@@ -352,6 +353,25 @@ export default class GameCanvas {
 
     // update bpm
     this.bpm.text = 'BPM: ' + this.formatBpm(this.vue.bpm)
+  }
+
+  // 반응성이 문제가 있다.
+  updateEffect(now) {
+    // update autoplay key effect
+    const effectTime = 100
+    if (this.autoPlay) {
+      this.pressEffects.forEach(effect => {
+        if (effect.visibleTime && effect.visibleTime + effectTime <= now) {
+          effect.visible = false
+          effect.visibleTime = null
+        }
+      })
+      if (this.scratchEffect.visibleTime && this.scratchEffect.visibleTime
+          + effectTime < now) {
+        this.scratchEffect.visible = false
+        this.scratchEffect.visibleTime = null
+      }
+    }
   }
 
   formatBpm(bpm) {
@@ -441,10 +461,7 @@ export default class GameCanvas {
           this.playBlock(block, true)
         } else if (bmsChannel.startsWith('PLAYER')) {
           // fimxe -> 이걸 동일한 '연주' 로직으로 묶어야 할수도 있다.
-          if (this.autoPlay) {
-            this.judge(block, 'overhit')
-            this.playBlock(block, true)
-          }
+          this.processAutoPlay(block)
         } else if (bmsChannel === 'BGA') {
           this.vue.vga.play(block['value'])
         }
@@ -457,6 +474,26 @@ export default class GameCanvas {
         }
       }
     }
+  }
+
+  processAutoPlay(block) {
+    if (!this.autoPlay) {
+      return
+    }
+    if (!block['played']) {
+      const bmsChannel = block['bmsChannel'];
+      const keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+      if (keyIndex === 0) {
+        this.scratchEffect.visible = true
+        this.scratchEffect.visibleTime = performance.now()
+      } else {
+        this.pressEffects[keyIndex].visible = true
+        this.pressEffects[keyIndex].visibleTime = performance.now()
+      }
+    }
+
+    this.playBlock(block, true)
+    this.judge(block, 'overhit')
   }
 
   // block['played'] = true 가 되는 상황은 아래와 같다.
@@ -611,6 +648,9 @@ export default class GameCanvas {
   }
 
   keyPlay1(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[1].visible = true
       this.processKeyPlay(1)
@@ -620,6 +660,9 @@ export default class GameCanvas {
   }
 
   keyPlay2(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[2].visible = true
       this.processKeyPlay(2)
@@ -629,6 +672,9 @@ export default class GameCanvas {
   }
 
   keyPlay3(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[3].visible = true
       this.processKeyPlay(3)
@@ -638,6 +684,9 @@ export default class GameCanvas {
   }
 
   keyPlay4(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[4].visible = true
       this.processKeyPlay(4)
@@ -647,6 +696,9 @@ export default class GameCanvas {
   }
 
   keyPlay5(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[5].visible = true
       this.processKeyPlay(5)
@@ -656,6 +708,9 @@ export default class GameCanvas {
   }
 
   keyPlay6(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[6].visible = true
       this.processKeyPlay(6)
@@ -665,6 +720,9 @@ export default class GameCanvas {
   }
 
   keyPlay7(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.pressEffects[7].visible = true
       this.processKeyPlay(7)
@@ -674,6 +732,9 @@ export default class GameCanvas {
   }
 
   keyScratch(isKeyDown) {
+    if (this.autoPlay) {
+      return
+    }
     if (isKeyDown) {
       this.scratchEffect.visible = true
       this.processKeyPlay(8)
