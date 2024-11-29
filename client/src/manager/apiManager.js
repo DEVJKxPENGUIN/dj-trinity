@@ -1,7 +1,5 @@
 import store from "@/store/store";
 import {_vue_app} from "@/main";
-import {FFmpeg} from "@ffmpeg/ffmpeg";
-import {toBlobURL} from "@ffmpeg/util";
 
 const apiHost = process.env.VUE_APP_API_HOST
 const gameHost = process.env.VUE_APP_GAME_HOST

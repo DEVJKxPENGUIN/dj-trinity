@@ -12,6 +12,7 @@ import {
   VideoTexture
 } from "three";
 import {Text} from "troika-three-text"
+import SpriteHolder from "@/components/SpriteHolder";
 
 export default class GameCanvasDrawer {
 
@@ -275,6 +276,21 @@ export default class GameCanvasDrawer {
     geo.setIndex([0, 1, 2, 0, 2, 3])
 
     return new Mesh(geo, mat)
+  }
+
+  judgeEffect(gear) {
+    const k = gear['judgeEffect']
+    const x = this.ctx.pixelToObj(k['x'])
+    const y = this.ctx.pixelToObj(k['y'])
+    const width = this.ctx.pixelToObj(k['width'])
+    const height = this.ctx.pixelToObj(k['height'])
+
+    const judgeMap = this.vue.textures.get('judgeEffect')
+    const sprite = new SpriteHolder(judgeMap, 2, 3, 5, width, height)
+    sprite.position.x = x
+    sprite.position.y = y
+
+    return sprite
   }
 
   timeBox(ui) {

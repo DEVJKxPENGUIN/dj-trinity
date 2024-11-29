@@ -25,6 +25,7 @@ import keySettings from '../../options/ui/keyset.json'
 import playSettings from '../../options/ingame/play.json'
 import VideoManager from "@/manager/videoManager";
 import {preloadFont} from "troika-three-text";
+import {TextureLoader} from "three";
 
 const GAME_PREPARING = 'gamePreparing'
 const GAME_READY = 'gameReady'
@@ -52,6 +53,7 @@ export default {
       bms: {},
       bmsSounds: new Map(),
       fonts: new Map(),
+      textures: new Map(),
       loadState: [],
       uiSettings: null,
       keySettings: null,
@@ -159,6 +161,7 @@ export default {
       await this.loadBms()
       this.loadSounds()
       this.loadFonts()
+      this.loadTextures()
       this.loadVga()
     },
     async loadBms() {
@@ -249,11 +252,29 @@ export default {
         })
       })
     },
+    async loadTextures() {
+      this.loadState[4] = {
+        title: 'assets',
+        count: 0,
+        size: 0,
+      }
+
+      this.uiSettings['downloads']['textures'].forEach(textureInfo => {
+        const textureName = textureInfo['name']
+        const texturePath = textureInfo['path']
+
+        this.loadState[4].size++
+        new TextureLoader().load(texturePath, texture => {
+          this.textures.set(textureName, texture)
+          this.loadState[4].count++
+        })
+      })
+    },
     async loadVga() {
       const header = this.bms.bmsHeader;
 
       // download bms vga
-      this.loadState[4] = {
+      this.loadState[5] = {
         title: 'vga',
         count: 0,
         size: 0,
@@ -263,7 +284,7 @@ export default {
         if (!bmpFile) {
           continue;
         }
-        this.loadState[4].size++
+        this.loadState[5].size++
       }
 
       const videoManager = new VideoManager()
@@ -274,7 +295,7 @@ export default {
         }
 
         await videoManager.load(i, '/download/bms/bmp/' + this.bmsCurrent.id + '/' + bmpFile)
-        this.loadState[4].count++
+        this.loadState[5].count++
       }
       this.vga = videoManager
     },

@@ -11,7 +11,12 @@
         "path": "assets/fonts/Orbitron-Regular.ttf"
       }
     ],
-    "images": []
+    "textures": [
+      {
+        "name": "judgeEffect",
+        "path": "assets/judgement/judge.png"
+      }
+    ]
   },
   "key_7": {
     "gear": {
@@ -42,6 +47,12 @@
         "y": -250,
         "width": 445,
         "height": 20
+      },
+      "judgeEffect": {
+        "x": 9,
+        "y": 0,
+        "width": 360,
+        "height":75
       },
       "scratch": {
         "line": {

@@ -66,8 +66,8 @@ export default class GameCanvas {
     }
 
     this.drawVga()
-    this.drawGear()
     this.drawUI()
+    this.drawGear()
   }
 
   drawGear() {
@@ -91,6 +91,11 @@ export default class GameCanvas {
       this.barPool[i] = this.drawer.bar(gear)
       this.ctx.scene.add(this.barPool[i])
     }
+
+    /** gear.judgeEffect */
+    this.judgeEffect = this.drawer.judgeEffect(gear)
+    this.judgeEffect.setOpacity(0)
+    this.ctx.scene.add(this.judgeEffect)
 
     // render guideline
     if (this.uiSettings['showGuideline']) {
@@ -516,7 +521,58 @@ export default class GameCanvas {
       if (this.keyTargetQueues[keyIndex].length > 1) {
         this.keyTargetQueues[keyIndex].shift()
       }
+
+      this.doJudgeEffect(block)
     }
+  }
+
+  doJudgeEffect(block) {
+    if (!block['judge']) {
+      return
+    }
+
+    // todo timediff 효과도 여기에?
+    if (block['judge'] === 'overhit') {
+      this.judgeEffect.setCurrent(0, 3)
+    } else if (block['judge'] === 'great') {
+      this.judgeEffect.setCurrent(1, 3)
+    } else if (block['judge'] === 'good') {
+      this.judgeEffect.setCurrent(0, 2)
+    } else if (block['judge'] === 'bad') {
+      this.judgeEffect.setCurrent(1, 2)
+    } else if (block['judge'] === 'miss') {
+      this.judgeEffect.setCurrent(0, 1)
+    }
+
+    const w = this.judgeEffect.scaleX
+    const h = this.judgeEffect.scaleY
+    const duration = 0.1
+    const delay = 0.7
+    gsap.killTweensOf(this.judgeEffect.scale)
+    gsap.killTweensOf(this.judgeEffect.material)
+
+    this.judgeEffect.scale.x = w
+    this.judgeEffect.scale.y = h
+    gsap.from(this.judgeEffect.scale, {
+      x: w * 1.3,
+      y: h * 1.3,
+      duration: duration * 0.75,
+      onComplete: () => {
+        gsap.to(this.judgeEffect.scale, {
+          x: w,
+          y: h,
+          duration: duration * 0.75,
+        })
+      }
+    })
+
+    this.judgeEffect.material.opacity = 0.75
+    gsap.to(this.judgeEffect.material, {
+      opacity: 0,
+      duration: duration,
+      delay: delay,
+      ease: 'power1.in'
+    })
   }
 
   // block['played'] = true 가 되는 상황은 아래와 같다.
