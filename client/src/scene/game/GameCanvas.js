@@ -554,19 +554,25 @@ export default class GameCanvas {
     this.judgeEffect.scale.x = w
     this.judgeEffect.scale.y = h
     gsap.from(this.judgeEffect.scale, {
-      x: w * 1.3,
-      y: h * 1.3,
+      x: w * 1.4,
+      y: h * 1.4,
       duration: duration * 0.75,
       onComplete: () => {
         gsap.to(this.judgeEffect.scale, {
           x: w,
           y: h,
           duration: duration * 0.75,
+          onComplete: () => {
+            gsap.to(this.judgeEffect.scale, {
+              y: 0,
+              duration: duration * 2,
+            })
+          }
         })
       }
     })
 
-    this.judgeEffect.material.opacity = 0.75
+    this.judgeEffect.material.opacity = 0.4
     gsap.to(this.judgeEffect.material, {
       opacity: 0,
       duration: duration,
