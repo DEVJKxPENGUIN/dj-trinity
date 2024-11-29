@@ -71,7 +71,8 @@ export default {
       startBpm: 0,
       bpm: 0,
       volume: 1.0,
-      mute: false
+      mute: false,
+      combo: 0
     }
   },
   methods: {
@@ -352,6 +353,15 @@ export default {
       }
       this.volume -= 0.05
       Howler.volume(this.volume)
+    },
+    soundToggle() {
+      if (this.mute) {
+        this.mute = false
+        Howler.volume(this.volume)
+      } else {
+        this.mute = true
+        Howler.volume(0)
+      }
     },
     handleError(title, contents) {
       this.$store.dispatch('showSystemPopup', {

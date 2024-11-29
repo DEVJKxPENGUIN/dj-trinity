@@ -4,8 +4,9 @@ import {gsap} from "gsap";
 export default class SpriteHolder extends Sprite {
 
   constructor(texture, tilesX, tilesY, frame, width, height) {
+    const textureClone = texture.clone()
     super(new SpriteMaterial({
-      map: texture,
+      map: textureClone,
       transparent: true,
       opacity: 1,
     }));
@@ -20,22 +21,24 @@ export default class SpriteHolder extends Sprite {
     this.scale.x = this.scaleX
     this.scale.y = this.scaleY
 
-    texture.wrapS = RepeatWrapping;
-    texture.wrapT = RepeatWrapping;
-    texture.needsUpdate = true;
+    textureClone.wrapS = RepeatWrapping;
+    textureClone.wrapT = RepeatWrapping;
+    textureClone.needsUpdate = true;
 
     this.material.map.repeat.set(1 / tilesX, 1 / tilesY / frame)
-    this.material.map.offset.x = this.offsetX
+    this.material.map.offset.x = this.offsetX / tilesX
     this.material.map.offset.y = this.offsetY / (tilesY * frame)
 
-    this.animate()
+    if (frame > 1) {
+      this.animate()
+    }
   }
 
   setCurrent(offsetX, offsetY) {
     this.offsetX = offsetX
     this.currentY = offsetY
     this.offsetY = this.currentY * this.frame - 1
-    this.material.map.offset.x = this.offsetX
+    this.material.map.offset.x = this.offsetX / this.tilesX
     this.material.map.offset.y = this.offsetY / (this.tilesY * this.frame)
   }
 
@@ -49,7 +52,7 @@ export default class SpriteHolder extends Sprite {
     tl.call(() => {
       this.nextFrame()
       gsap.set(this.material.map.offset, {
-        x: this.offsetX,
+        x: this.offsetX / this.tilesX,
         y: this.offsetY / (this.tilesY * this.frame),
       })
     })

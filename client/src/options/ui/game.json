@@ -14,7 +14,11 @@
     "textures": [
       {
         "name": "judgeEffect",
-        "path": "assets/judgement/judge.png"
+        "path": "assets/effect/judge.png"
+      },
+      {
+        "name": "comboNumber",
+        "path": "assets/effect/combo-numbers.png"
       }
     ]
   },
@@ -50,9 +54,15 @@
       },
       "judgeEffect": {
         "x": 9,
-        "y": 0,
-        "width": 360,
-        "height":75
+        "y": -100,
+        "width": 380,
+        "height": 80
+      },
+      "comboEffect": {
+        "x": 9,
+        "y": 250,
+        "width": 100,
+        "height": 100
       },
       "scratch": {
         "line": {

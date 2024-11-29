@@ -1,6 +1,7 @@
 import {gsap} from "gsap";
 import {AmbientLight} from "three";
 import GameCanvasDrawer from "@/scene/game/GameCanvasRenderer";
+import animateComboBasic from "@/animation/comboBasic";
 
 const GAME_PREPARING = 'gamePreparing'
 const GAME_READY = 'gameReady'
@@ -96,6 +97,11 @@ export default class GameCanvas {
     this.judgeEffect = this.drawer.judgeEffect(gear)
     this.judgeEffect.setOpacity(0)
     this.ctx.scene.add(this.judgeEffect)
+
+    /** gear.comboEffect */
+    this.comboEffect = this.drawer.comboEffect(gear)
+    this.comboEffect.setOpacity(0)
+    this.ctx.scene.add(this.comboEffect)
 
     // render guideline
     if (this.uiSettings['showGuideline']) {
@@ -522,8 +528,16 @@ export default class GameCanvas {
         this.keyTargetQueues[keyIndex].shift()
       }
 
+      this.doComboEffect()
       this.doJudgeEffect(block)
     }
+  }
+
+  doComboEffect() {
+    this.comboEffect.setNumber(this.vue.combo)
+
+    animateComboBasic(this.comboEffect, 0.1, 0.6, this.comboEffect.widthPerDigit,
+        this.comboEffect.heightPerDigit, 1.6, 0.4)
   }
 
   doJudgeEffect(block) {
@@ -544,48 +558,17 @@ export default class GameCanvas {
       this.judgeEffect.setCurrent(0, 1)
     }
 
-    const w = this.judgeEffect.scaleX
-    const h = this.judgeEffect.scaleY
-    const duration = 0.1
-    const delay = 0.7
-    gsap.killTweensOf(this.judgeEffect.scale)
-    gsap.killTweensOf(this.judgeEffect.material)
-
-    this.judgeEffect.scale.x = w
-    this.judgeEffect.scale.y = h
-    gsap.from(this.judgeEffect.scale, {
-      x: w * 1.4,
-      y: h * 1.4,
-      duration: duration * 0.75,
-      onComplete: () => {
-        gsap.to(this.judgeEffect.scale, {
-          x: w,
-          y: h,
-          duration: duration * 0.75,
-          onComplete: () => {
-            gsap.to(this.judgeEffect.scale, {
-              y: 0,
-              duration: duration * 2,
-            })
-          }
-        })
-      }
-    })
-
-    this.judgeEffect.material.opacity = 0.4
-    gsap.to(this.judgeEffect.material, {
-      opacity: 0,
-      duration: duration,
-      delay: delay,
-      ease: 'power1.in'
-    })
+    animateComboBasic(this.judgeEffect, 0.1, 0.3, this.judgeEffect.scaleX,
+        this.judgeEffect.scaleY, 1.4, 0.4)
   }
 
-  // block['played'] = true 가 되는 상황은 아래와 같다.
-  // -> block 의 유효시간은 block['time'] + this.judge['miss'] 이다.
-  // 1. 블럭의 유효시간이 지났을때, block['time'] + this.judge['miss'] <= elapsedTime
-  // 2. 블럭이 자동연주에 의해 연주되었을 때
-  // 3. 유저가 키음을 통해 해당 블럭을 연주했을 때
+  /**
+   * block['played'] = true 가 되는 상황은 아래와 같다.
+   * -> block 의 유효시간은 block['time'] + this.judge['miss'] 이다.
+   * 1. 블럭의 유효시간이 지났을때, block['time'] + this.judge['miss'] <= elapsedTime
+   * 2. 블럭이 자동연주에 의해 연주되었을 때
+   * 3. 유저가 키음을 통해 해당 블럭을 연주했을 때
+   */
   playBlock(block, playSound) {
     if (block['played']) {
       return
@@ -614,15 +597,14 @@ export default class GameCanvas {
     return block['y'] > 1000
   }
 
-  // todo -> return 'string' 부분을 callback 이벤트로 넘겨야 할 듯.
   judge(block, judgement) {
     if (!block['bmsChannel'].startsWith('PLAYER') || block['judge']) {
       return false
     }
     if (judgement) {
-      console.log(judgement)
       block['judge'] = judgement
       block['timeDiff'] = 0
+      this.vue.combo++
       return true
     }
     const elapsedTime = this.vue.elapsedTime
@@ -630,29 +612,28 @@ export default class GameCanvas {
     const timeDiff = Math.abs(block['time'] - elapsedTime)
     block['timeDiff'] = timeDiff
     if (timeDiff <= this.judgement['overhit']) {
-      console.log('overhit')
       block['judge'] = 'overhit'
+      this.vue.combo++
     } else if (timeDiff <= this.judgement['great']) {
-      console.log('great')
       block['judge'] = 'great'
+      this.vue.combo++
     } else if (timeDiff <= this.judgement['good']) {
-      console.log('good')
       block['judge'] = 'good'
+      this.vue.combo++
     } else if (timeDiff <= this.judgement['bad']) {
-      console.log('bad')
       block['judge'] = 'bad'
+      this.vue.combo = 0
     } else if (block['time'] > elapsedTime) {
       if (block['time'] > elapsedTime + this.judgement['miss']) {
         // none
-        console.log('none')
         return false
       } else {
-        console.log('miss')
         block['judge'] = 'miss'
+        this.vue.combo = 0
       }
     } else {
-      console.log('miss')
       block['judge'] = 'miss'
+      this.vue.combo = 0
     }
     return true
   }
@@ -818,6 +799,8 @@ export default class GameCanvas {
         func = this.vue.soundUp
       } else if (command === "sound-down") {
         func = this.vue.soundDown
+      } else if (command === "sound-toggle") {
+        func = this.vue.soundToggle
       }
 
       for (const key of keys) {

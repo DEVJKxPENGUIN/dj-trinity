@@ -13,6 +13,7 @@ import {
 } from "three";
 import {Text} from "troika-three-text"
 import SpriteHolder from "@/components/SpriteHolder";
+import ComboSprite from "@/components/ComboSprite";
 
 export default class GameCanvasDrawer {
 
@@ -287,6 +288,21 @@ export default class GameCanvasDrawer {
 
     const judgeMap = this.vue.textures.get('judgeEffect')
     const sprite = new SpriteHolder(judgeMap, 2, 3, 5, width, height)
+    sprite.position.x = x
+    sprite.position.y = y
+
+    return sprite
+  }
+
+  comboEffect(gear) {
+    const k = gear['comboEffect']
+    const x = this.ctx.pixelToObj(k['x'])
+    const y = this.ctx.pixelToObj(k['y'])
+    const width = this.ctx.pixelToObj(k['width'])
+    const height = this.ctx.pixelToObj(k['height'])
+
+    const judgeMap = this.vue.textures.get('comboNumber')
+    const sprite = new ComboSprite(judgeMap, 10, 1, 1, width, height)
     sprite.position.x = x
     sprite.position.y = y
 

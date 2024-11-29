@@ -43,6 +43,9 @@
     ],
     "sound-down": [
       "4"
+    ],
+    "sound-toggle": [
+      "5"
     ]
   }
 }
