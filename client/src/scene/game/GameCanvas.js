@@ -103,6 +103,14 @@ export default class GameCanvas {
     this.comboEffect.setOpacity(0)
     this.ctx.scene.add(this.comboEffect)
 
+    /** gear.hitEffect */
+    this.hitEffects = []
+    for (let i = 0; i <= key; i++) {
+      this.hitEffects[i] = this.drawer.hitEffect(gear, i)
+      this.hitEffects[i].setOpacity(0)
+      this.ctx.scene.add(this.hitEffects[i])
+    }
+
     // render guideline
     if (this.uiSettings['showGuideline']) {
       /** gear.scratch */
@@ -528,22 +536,46 @@ export default class GameCanvas {
         this.keyTargetQueues[keyIndex].shift()
       }
 
+      this.doHitEffect(block, keyIndex)
       this.doComboEffect()
       this.doJudgeEffect(block)
     }
   }
 
-  doComboEffect() {
-    this.comboEffect.setNumber(this.vue.combo)
+  doHitEffect(block, keyIndex) {
+    if (!block['judge']) {
+      return
+    }
 
-    animateComboBasic(this.comboEffect, 0.1, 0.6, this.comboEffect.widthPerDigit,
+    if (block['judge'] === 'overhit'
+        || block['judge'] === 'great'
+        || block['judge'] === 'good'
+    ) {
+      // this.hitEffects[keyIndex].setOpacity(1)
+
+      animateComboBasic(this.hitEffects[keyIndex], 0.32, 0,
+          this.hitEffects[keyIndex].scaleX, this.hitEffects[keyIndex].scaleY,
+          4, 0.4)
+
+      this.hitEffects[keyIndex].setCurrent(0, 1)
+    }
+  }
+
+  doComboEffect() {
+    animateComboBasic(this.comboEffect, 0.1, 0.6,
+        this.comboEffect.widthPerDigit,
         this.comboEffect.heightPerDigit, 1.6, 0.4)
+
+    this.comboEffect.setNumber(this.vue.combo)
   }
 
   doJudgeEffect(block) {
     if (!block['judge']) {
       return
     }
+
+    animateComboBasic(this.judgeEffect, 0.1, 0.3, this.judgeEffect.scaleX,
+        this.judgeEffect.scaleY, 1.4, 0.4)
 
     // todo timediff 효과도 여기에?
     if (block['judge'] === 'overhit') {
@@ -557,9 +589,6 @@ export default class GameCanvas {
     } else if (block['judge'] === 'miss') {
       this.judgeEffect.setCurrent(0, 1)
     }
-
-    animateComboBasic(this.judgeEffect, 0.1, 0.3, this.judgeEffect.scaleX,
-        this.judgeEffect.scaleY, 1.4, 0.4)
   }
 
   /**

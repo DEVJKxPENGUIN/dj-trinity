@@ -3,15 +3,14 @@ import {gsap} from "gsap";
 
 export default class SpriteHolder extends Sprite {
 
-  constructor(texture, tilesX, tilesY, frame, width, height) {
+  constructor(texture, tilesX, tilesY, frame, width, height, repeatDelay = 0.05,
+      autoAnimate = true) {
     const textureClone = texture.clone()
     super(new SpriteMaterial({
       map: textureClone,
       transparent: true,
       opacity: 1,
     }));
-    this.tilesX = tilesX
-    this.tilesY = tilesY
     this.frame = frame
     this.currentY = tilesY
     this.offsetX = 0
@@ -20,6 +19,9 @@ export default class SpriteHolder extends Sprite {
     this.scaleY = height
     this.scale.x = this.scaleX
     this.scale.y = this.scaleY
+    this.tilesX = tilesX
+    this.tilesY = tilesY
+    this.repeatDelay = repeatDelay
 
     textureClone.wrapS = RepeatWrapping;
     textureClone.wrapT = RepeatWrapping;
@@ -29,9 +31,7 @@ export default class SpriteHolder extends Sprite {
     this.material.map.offset.x = this.offsetX / tilesX
     this.material.map.offset.y = this.offsetY / (tilesY * frame)
 
-    if (frame > 1) {
-      this.animate()
-    }
+    this.animate(autoAnimate)
   }
 
   setCurrent(offsetX, offsetY) {
@@ -46,10 +46,18 @@ export default class SpriteHolder extends Sprite {
     this.material.opacity = opacity
   }
 
-  animate() {
-    const tl = gsap.timeline({repeat: -1, repeatDelay: 0.05})
+  animate(repeat) {
+    if (this.tl) {
+      this.tl.kill()
+      return
+    }
 
-    tl.call(() => {
+    this.tl = gsap.timeline({
+      repeat: repeat ? -1 : this.frame,
+      repeatDelay: this.repeatDelay,
+    })
+
+    this.tl.call(() => {
       this.nextFrame()
       gsap.set(this.material.map.offset, {
         x: this.offsetX / this.tilesX,

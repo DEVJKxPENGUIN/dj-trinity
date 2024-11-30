@@ -309,6 +309,22 @@ export default class GameCanvasDrawer {
     return sprite
   }
 
+  hitEffect(gear, keyIndex) {
+    const k = keyIndex === 0 ? gear['scratch'] : gear['key' + keyIndex]
+    const khitEffect = k['hitEffect']
+    const x = this.ctx.pixelToObj(khitEffect['x'])
+    const y = this.ctx.pixelToObj(khitEffect['y'])
+    const width = this.ctx.pixelToObj(khitEffect['width'])
+    const height = this.ctx.pixelToObj(khitEffect['height'])
+
+    const hitMap = this.vue.textures.get('hitEffect')
+    const sprite = new SpriteHolder(hitMap, 1, 1, 16, width, height, 0.02)
+    sprite.position.x = x
+    sprite.position.y = y
+
+    return sprite
+  }
+
   timeBox(ui) {
     const time = ui['time']
     const timeBox = time['box']
