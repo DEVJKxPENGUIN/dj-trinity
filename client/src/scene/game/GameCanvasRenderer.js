@@ -1,7 +1,9 @@
 import {
   BufferGeometry,
+  InstancedMesh,
   Line,
   LineBasicMaterial,
+  Matrix4,
   Mesh,
   MeshBasicMaterial,
   MeshLambertMaterial,
@@ -9,6 +11,7 @@ import {
   PlaneGeometry,
   TextureLoader,
   Vector2,
+  Vector3,
   VideoTexture
 } from "three";
 import {Text} from "troika-three-text"
@@ -227,6 +230,49 @@ export default class GameCanvasDrawer {
     obj.add(line)
     obj.position.y = 100
     return obj
+  }
+
+  blockTextures(gear, key) {
+    // make texture set
+    const block = key === 0 ? gear['scratch']['block'] : gear['key'
+    + key]['block']
+    return this.vue.textures.get(block['spriteName'])
+  }
+
+  blockPosition(gear, key) {
+    const block = key === 0 ? gear['scratch']['block'] : gear['key'
+    + key]['block']
+    const x = this.ctx.pixelToObj(block['x'])
+    const y = this.ctx.pixelToObj(block['y'])
+    return {x: x, y: 10, z: 0}
+  }
+
+  blockSprite(gear, key, positions) {
+    const block = key === 0 ? gear['scratch']['block'] : gear['key'
+    + key]['block']
+    const x = this.ctx.pixelToObj(block['x'])
+    const width = this.ctx.pixelToObj(block['width'])
+    const height = this.ctx.pixelToObj(block['height'])
+
+    const geo = new PlaneGeometry(width, height)
+    const mat = new MeshBasicMaterial({
+      map: this.blockTextures(gear, key),
+      transparent: true
+    })
+
+    const instancedSprites = new InstancedMesh(geo, mat, positions.length)
+
+    const dummyMatrix = new Matrix4()
+    const dummyPosition = new Vector3()
+    for (let i = 0; i < positions.length; i++) {
+      dummyPosition.set(positions[i].x, positions[i].y, positions[i].z)
+      dummyMatrix.setPosition(dummyPosition)
+      instancedSprites.setMatrixAt(i, dummyMatrix)
+    }
+
+    instancedSprites.frustumCulled = false
+    instancedSprites.instanceMatrix.needsUpdate = true
+    return instancedSprites
   }
 
   pressEffect(gear, keyIndex) {

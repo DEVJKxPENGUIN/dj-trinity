@@ -23,6 +23,22 @@
       {
         "name": "hitEffect",
         "path": "assets/effect/hit.png"
+      },
+      {
+        "name": "block_0",
+        "path": "assets/effect/block_0.png"
+      },
+      {
+        "name": "block_1",
+        "path": "assets/effect/block_1.png"
+      },
+      {
+        "name": "block_2",
+        "path": "assets/effect/block_2.png"
+      },
+      {
+        "name": "block_3",
+        "path": "assets/effect/block_3.png"
       }
     ]
   },
@@ -54,7 +70,7 @@
         "x": -200,
         "y": -250,
         "width": 400,
-        "height": 20
+        "height": 50
       },
       "judgeEffect": {
         "x": 0,
@@ -77,9 +93,10 @@
         },
         "block": {
           "color": "rgb(255, 0, 128)",
-          "x": -200,
+          "x": -175,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_0"
         },
         "pressEffect": {
           "x": -200,
@@ -103,9 +120,10 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": -150,
+          "x": -125,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_1"
         },
         "pressEffect": {
           "x": -150,
@@ -129,9 +147,10 @@
         },
         "block": {
           "color": "rgb(0, 0, 255)",
-          "x": -100,
+          "x": -75,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_3"
         },
         "pressEffect": {
           "x": -100,
@@ -155,9 +174,10 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": -50,
+          "x": -25,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_1"
         },
         "pressEffect": {
           "x": -50,
@@ -181,9 +201,10 @@
         },
         "block": {
           "color": "rgb(57, 255, 20)",
-          "x": 0,
+          "x": 25,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_2"
         },
         "pressEffect": {
           "x": 0,
@@ -207,9 +228,10 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": 50,
+          "x": 75,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_1"
         },
         "pressEffect": {
           "x": 50,
@@ -233,9 +255,10 @@
         },
         "block": {
           "color": "rgb(0, 0, 255)",
-          "x": 100,
+          "x": 125,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_3"
         },
         "pressEffect": {
           "x": 100,
@@ -259,9 +282,10 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": 150,
+          "x": 175,
           "width": 50,
-          "height": 20
+          "height": 50,
+          "spriteName": "block_1"
         },
         "pressEffect": {
           "x": 150,

@@ -15,6 +15,7 @@ import commonResources from "./common/commonResources.json";
 import ResourceLoader from "./common/resourceLoader";
 import BackgroundSoundHandler from "./common/backgroundSoundHandler";
 import {GUI} from 'dat.gui'
+import WebGPURenderer from "three/addons/renderers/webgpu/WebGPURenderer";
 
 export default class Context {
   constructor(isDebug, sceneManager) {
@@ -24,7 +25,11 @@ export default class Context {
     this.scene = new Scene()
     this.scene.background = new Color(0x111111)
 
-    this.renderer = new WebGLRenderer({
+    // this.renderer = new WebGLRenderer({
+    //   antialias: true,
+    //   powerPreference: "high-performance",
+    // })
+    this.renderer = new WebGPURenderer({
       antialias: true,
       powerPreference: "high-performance",
     })

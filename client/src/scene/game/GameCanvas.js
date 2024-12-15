@@ -1,5 +1,5 @@
 import {gsap} from "gsap";
-import {AmbientLight} from "three";
+import {AmbientLight, Matrix4} from "three";
 import GameCanvasDrawer from "@/scene/game/GameCanvasRenderer";
 import animateComboBasic from "@/animation/comboBasic";
 
@@ -83,6 +83,7 @@ export default class GameCanvas {
     /** gear.keyLines */
     this.keyLines = this.drawer.keyLines(gear, key)
     this.keyLines.forEach(line => {
+      line.opacity = 0
       this.ctx.scene.add(line)
     })
 
@@ -91,6 +92,38 @@ export default class GameCanvas {
     for (let i = 0; i < this.bars.length; i++) {
       this.barPool[i] = this.drawer.bar(gear)
       this.ctx.scene.add(this.barPool[i])
+    }
+
+    /** gear.block-pool */
+    this.blockPool = []
+    for (let i = 0; i < key + 1; i++) {
+      this.blockPool[i] = []
+    }
+    for (let i = 0; i < this.bars.length; i++) {
+      for (let j = 0; j < this.bars[i].length; j++) {
+        const block = this.bars[i][j]
+        const bmsChannel = block['bmsChannel'];
+        let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+        if (keyIndex === null || keyIndex === undefined) {
+          continue
+        }
+
+        this.blockPool[keyIndex].push(this.drawer.blockPosition(gear, keyIndex))
+        this.bars[i][j]['poolIndex'] = this.blockPool[keyIndex].length - 1
+      }
+    }
+
+    this.instancedSprite = []
+    for (let keyIndex = 0; keyIndex < key + 1; keyIndex++) {
+      this.instancedSprite[keyIndex] = this.drawer.blockSprite(gear, keyIndex,
+          this.blockPool[keyIndex])
+
+      // fixme - print matrix
+      // const matrix = new Matrix4()
+      // this.instancedSprite[keyIndex].getMatrixAt(0, matrix)
+      // console.log(`matrix[${keyIndex}][0] : `, matrix)
+
+      this.ctx.scene.add(this.instancedSprite[keyIndex])
     }
 
     /** gear.judgeEffect */
@@ -126,20 +159,21 @@ export default class GameCanvas {
       this.ctx.scene.add(this.judgeLine)
 
       /** gear.block-pool */
-      this.blockPool = []
-      for (let i = 0; i < this.bars.length; i++) {
-        this.blockPool[i] = []
-        for (let j = 0; j < this.bars[i].length; j++) {
-          const block = this.bars[i][j]
-          const bmsChannel = block['bmsChannel'];
-          let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
-          if (keyIndex === null || keyIndex === undefined) {
-            continue
-          }
-          this.blockPool[i][j] = this.drawer.block(gear, keyIndex)
-          this.ctx.scene.add(this.blockPool[i][j])
-        }
-      }
+      // this.blockPool = []
+      // for (let i = 0; i < this.bars.length; i++) {
+      //   this.blockPool[i] = []
+      //   for (let j = 0; j < this.bars[i].length; j++) {
+      //     const block = this.bars[i][j]
+      //     const bmsChannel = block['bmsChannel'];
+      //     let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
+      //     if (keyIndex === null || keyIndex === undefined) {
+      //       continue
+      //     }
+      //     this.blockPool[i][j] = this.drawer.block(gear, keyIndex)
+      //     this.blockPool[i][j].opacity = 0.4
+      //     this.ctx.scene.add(this.blockPool[i][j])
+      //   }
+      // }
 
       /** gear.pressEffects */
       this.pressEffects = []
@@ -435,7 +469,6 @@ export default class GameCanvas {
     }
   }
 
-  // todo -> 키음 저장해야한다.
   updateBlocks() {
     const bars = this.bars
     const elapsedTime = this.vue.elapsedTime
@@ -453,20 +486,43 @@ export default class GameCanvas {
         }
 
         const y = block.y * 0.01
-        const blockHeight = this.ctx.pixelToObj(
-            gear[keyIndex === 0 ? 'scratch' : 'key'
-                + keyIndex]['block']['height'])
-        this.blockPool[i][j].position.y = y - blockHeight * 0.5
-            + this.ctx.pixelToObj(bmsHeight)
+        // const blockHeight = this.ctx.pixelToObj(
+        //     gear[keyIndex === 0 ? 'scratch' : 'key'
+        //         + keyIndex]['block']['height'])
+
+        const pos = this.blockPool[keyIndex][block['poolIndex']]
+        const dummyMatrix = new Matrix4()
+        this.instancedSprite[keyIndex].getMatrixAt(block['poolIndex'],
+            dummyMatrix)
+        dummyMatrix.setPosition(pos.x,
+            y + this.ctx.pixelToObj(bmsHeight)
+            , pos.z)
+
         if (block['played'] || block['time'] <= elapsedTime) {
-          this.blockPool[i][j].position.y = -30
+          dummyMatrix.setPosition(pos.x, -30, pos.z)
         }
+
+        this.instancedSprite[keyIndex].setMatrixAt(block['poolIndex'],
+            dummyMatrix)
+        this.instancedSprite[keyIndex].instanceMatrix.needsUpdate = true
 
         if (block['y'] === undefined) {
           return
         }
       }
     }
+
+    // console.log('this.instancedSprite : ', this.instancedSprite)
+    //
+    // for (let keyIndex = 0; keyIndex < this.instancedSprite.length; keyIndex++) {
+    //
+    //   // fixme - print matrix
+    //   const matrix = new Matrix4()
+    //   this.instancedSprite[keyIndex].getMatrixAt(0, matrix)
+    //   console.log(`updated matrix[${keyIndex}][0] : `, matrix)
+    //
+    //   this.instancedSprite[keyIndex].instanceMatrix.needsUpdate = true
+    // }
   }
 
   processBlocks() {
