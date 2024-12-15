@@ -17,7 +17,12 @@ export default class ComboSprite extends Group {
   }
 
   setNumber(number) {
-    // todo
+    if(number === 0) {
+      this.setOpacity(0)
+    } else {
+      this.setOpacity(0.8)
+    }
+
     const digits = String(number).split('').map(Number)
 
     this.clear()

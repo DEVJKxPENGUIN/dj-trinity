@@ -85,7 +85,7 @@ export default {
 
       // todo 아래 항목들은 ui 를 통해 변경할 수 있도록 수정 필요
       difficulty: "easy",
-      autoPlay: true
+      autoPlay: false
     }
   },
   methods: {

@@ -80,13 +80,6 @@ export default class GameCanvas {
     this.backboard = this.drawer.backboard(gear)
     this.ctx.scene.add(this.backboard)
 
-    /** gear.keyLines */
-    this.keyLines = this.drawer.keyLines(gear, key)
-    this.keyLines.forEach(line => {
-      line.opacity = 0
-      this.ctx.scene.add(line)
-    })
-
     /** gear.bar-pool */
     this.barPool = []
     for (let i = 0; i < this.bars.length; i++) {
@@ -107,22 +100,14 @@ export default class GameCanvas {
         if (keyIndex === null || keyIndex === undefined) {
           continue
         }
-
         this.blockPool[keyIndex].push(this.drawer.blockPosition(gear, keyIndex))
         this.bars[i][j]['poolIndex'] = this.blockPool[keyIndex].length - 1
       }
     }
-
     this.instancedSprite = []
     for (let keyIndex = 0; keyIndex < key + 1; keyIndex++) {
       this.instancedSprite[keyIndex] = this.drawer.blockSprite(gear, keyIndex,
           this.blockPool[keyIndex])
-
-      // fixme - print matrix
-      // const matrix = new Matrix4()
-      // this.instancedSprite[keyIndex].getMatrixAt(0, matrix)
-      // console.log(`matrix[${keyIndex}][0] : `, matrix)
-
       this.ctx.scene.add(this.instancedSprite[keyIndex])
     }
 
@@ -144,8 +129,27 @@ export default class GameCanvas {
       this.ctx.scene.add(this.hitEffects[i])
     }
 
+    /** gear.pressEffects */
+    this.pressEffects = []
+    for (let i = 1; i <= key; i++) {
+      this.pressEffects[i] = this.drawer.pressEffect(gear, i)
+      this.pressEffects[i].visible = false
+      this.ctx.scene.add(this.pressEffects[i])
+    }
+
+    /** gear.scratchEffect */
+    this.pressEffects[0] = this.drawer.scratchEffect(gear)
+    this.pressEffects[0].visible = false
+    this.ctx.scene.add(this.pressEffects[0])
+
     // render guideline
     if (this.uiSettings['showGuideline']) {
+      /** gear.keyLines */
+      this.keyLines = this.drawer.keyLines(gear, key)
+      this.keyLines.forEach(line => {
+        this.ctx.scene.add(line)
+      })
+
       /** gear.scratch */
       this.scratchLine = this.drawer.scratchLine(gear)
       this.ctx.scene.add(this.scratchLine)
@@ -157,36 +161,6 @@ export default class GameCanvas {
       /** gear.judgeLine */
       this.judgeLine = this.drawer.judgeLine(gear)
       this.ctx.scene.add(this.judgeLine)
-
-      /** gear.block-pool */
-      // this.blockPool = []
-      // for (let i = 0; i < this.bars.length; i++) {
-      //   this.blockPool[i] = []
-      //   for (let j = 0; j < this.bars[i].length; j++) {
-      //     const block = this.bars[i][j]
-      //     const bmsChannel = block['bmsChannel'];
-      //     let keyIndex = this.BLOCK_RENDER_MAP[bmsChannel]
-      //     if (keyIndex === null || keyIndex === undefined) {
-      //       continue
-      //     }
-      //     this.blockPool[i][j] = this.drawer.block(gear, keyIndex)
-      //     this.blockPool[i][j].opacity = 0.4
-      //     this.ctx.scene.add(this.blockPool[i][j])
-      //   }
-      // }
-
-      /** gear.pressEffects */
-      this.pressEffects = []
-      for (let i = 1; i <= key; i++) {
-        this.pressEffects[i] = this.drawer.pressEffect(gear, i)
-        this.pressEffects[i].visible = false
-        this.ctx.scene.add(this.pressEffects[i])
-      }
-
-      /** gear.scratchEffect */
-      this.pressEffects[0] = this.drawer.scratchEffect(gear)
-      this.pressEffects[0].visible = false
-      this.ctx.scene.add(this.pressEffects[0])
     }
   }
 
@@ -486,10 +460,6 @@ export default class GameCanvas {
         }
 
         const y = block.y * 0.01
-        // const blockHeight = this.ctx.pixelToObj(
-        //     gear[keyIndex === 0 ? 'scratch' : 'key'
-        //         + keyIndex]['block']['height'])
-
         const pos = this.blockPool[keyIndex][block['poolIndex']]
         const dummyMatrix = new Matrix4()
         this.instancedSprite[keyIndex].getMatrixAt(block['poolIndex'],
@@ -511,18 +481,6 @@ export default class GameCanvas {
         }
       }
     }
-
-    // console.log('this.instancedSprite : ', this.instancedSprite)
-    //
-    // for (let keyIndex = 0; keyIndex < this.instancedSprite.length; keyIndex++) {
-    //
-    //   // fixme - print matrix
-    //   const matrix = new Matrix4()
-    //   this.instancedSprite[keyIndex].getMatrixAt(0, matrix)
-    //   console.log(`updated matrix[${keyIndex}][0] : `, matrix)
-    //
-    //   this.instancedSprite[keyIndex].instanceMatrix.needsUpdate = true
-    // }
   }
 
   processBlocks() {
@@ -607,11 +565,10 @@ export default class GameCanvas {
         || block['judge'] === 'great'
         || block['judge'] === 'good'
     ) {
-      // this.hitEffects[keyIndex].setOpacity(1)
 
       animateComboBasic(this.hitEffects[keyIndex], 0.32, 0,
           this.hitEffects[keyIndex].scaleX, this.hitEffects[keyIndex].scaleY,
-          4, 0.4)
+          4, 0.8)
 
       this.hitEffects[keyIndex].setCurrent(0, 1)
     }
@@ -620,7 +577,7 @@ export default class GameCanvas {
   doComboEffect() {
     animateComboBasic(this.comboEffect, 0.1, 0.6,
         this.comboEffect.widthPerDigit,
-        this.comboEffect.heightPerDigit, 1.6, 0.4)
+        this.comboEffect.heightPerDigit, 1.6, 0.8)
 
     this.comboEffect.setNumber(this.vue.combo)
   }
@@ -631,7 +588,7 @@ export default class GameCanvas {
     }
 
     animateComboBasic(this.judgeEffect, 0.1, 0.3, this.judgeEffect.scaleX,
-        this.judgeEffect.scaleY, 1.4, 0.4)
+        this.judgeEffect.scaleY, 1.4, 0.8)
 
     // todo timediff 효과도 여기에?
     if (block['judge'] === 'overhit') {
