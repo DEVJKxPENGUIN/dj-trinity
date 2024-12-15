@@ -47,30 +47,30 @@
       "backboard": {
         "color": "rgb(0, 0, 0)",
         "opacity": 0.9,
-        "x": -200,
+        "x": -220,
         "y": -300,
-        "width": 400,
+        "width": 440,
         "height": 4000
       },
       "outline": {
         "color": "rgb(255, 255, 255)",
-        "x": -200,
+        "x": -220,
         "y": -300,
-        "width": 400,
+        "width": 440,
         "height": 4000
       },
       "bar": {
         "color": "rgb(100, 100, 100)",
-        "x": -200,
-        "width": 400,
+        "x": -220,
+        "width": 440,
         "linewidth": 2
       },
       "judgeLine": {
         "color": "rgb(100, 100, 100)",
-        "x": -200,
+        "x": -220,
         "y": -250,
-        "width": 400,
-        "height": 50
+        "width": 440,
+        "height": 55
       },
       "judgeEffect": {
         "x": 0,
@@ -93,22 +93,22 @@
         },
         "block": {
           "color": "rgb(255, 0, 128)",
-          "x": -175,
-          "width": 50,
-          "height": 50,
+          "x": -192.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_0"
         },
         "pressEffect": {
-          "x": -200,
+          "x": -220,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": -175,
+          "x": -192.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key1": {
@@ -120,22 +120,22 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": -125,
-          "width": 50,
-          "height": 50,
+          "x": -137.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_1"
         },
         "pressEffect": {
-          "x": -150,
+          "x": -165,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": -125,
+          "x": -137.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key2": {
@@ -147,22 +147,22 @@
         },
         "block": {
           "color": "rgb(0, 0, 255)",
-          "x": -75,
-          "width": 50,
-          "height": 50,
+          "x": -82.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_3"
         },
         "pressEffect": {
-          "x": -100,
+          "x": -110,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": -75,
+          "x": -82.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key3": {
@@ -174,22 +174,22 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": -25,
-          "width": 50,
-          "height": 50,
+          "x": -27.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_1"
         },
         "pressEffect": {
-          "x": -50,
+          "x": -55,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": -25,
+          "x": -27.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key4": {
@@ -201,22 +201,22 @@
         },
         "block": {
           "color": "rgb(57, 255, 20)",
-          "x": 25,
-          "width": 50,
-          "height": 50,
+          "x": 27.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_2"
         },
         "pressEffect": {
           "x": 0,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": 25,
+          "x": 27.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key5": {
@@ -228,22 +228,22 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": 75,
-          "width": 50,
-          "height": 50,
+          "x": 82.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_1"
         },
         "pressEffect": {
-          "x": 50,
+          "x": 55,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": 75,
+          "x": 82.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key6": {
@@ -255,22 +255,22 @@
         },
         "block": {
           "color": "rgb(0, 0, 255)",
-          "x": 125,
-          "width": 50,
-          "height": 50,
+          "x": 137.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_3"
         },
         "pressEffect": {
-          "x": 100,
+          "x": 110,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": 125,
+          "x": 137.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       },
       "key7": {
@@ -282,22 +282,22 @@
         },
         "block": {
           "color": "rgb(255, 255, 0)",
-          "x": 175,
-          "width": 50,
-          "height": 50,
+          "x": 192.5,
+          "width": 55,
+          "height": 55,
           "spriteName": "block_1"
         },
         "pressEffect": {
-          "x": 150,
+          "x": 165,
           "y": -250,
-          "width": 50,
+          "width": 55,
           "height": 500
         },
         "hitEffect": {
-          "x": 175,
+          "x": 192.5,
           "y": -250,
-          "width": 100,
-          "height": 100
+          "width": 110,
+          "height": 110
         }
       }
     },
@@ -307,7 +307,7 @@
           "backgroundColor": "rgb(0, 0, 0)",
           "color": "rgb(255, 255, 255)",
           "opacity": 0.9,
-          "x": 200,
+          "x": 220,
           "y": -100,
           "width": 200,
           "height": 30
@@ -316,7 +316,7 @@
           "font": "Orbitron",
           "size": 0.14,
           "color": "rgb(255, 255, 255)",
-          "x": 210,
+          "x": 230,
           "y": -67,
           "isCenter": false
         }
@@ -326,7 +326,7 @@
           "backgroundColor": "rgb(0, 0, 0)",
           "color": "rgb(255, 255, 255)",
           "opacity": 0.9,
-          "x": 200,
+          "x": 220,
           "y": -130,
           "width": 200,
           "height": 30
@@ -335,7 +335,7 @@
           "font": "Orbitron",
           "size": 0.14,
           "color": "rgb(255, 255, 255)",
-          "x": 210,
+          "x": 230,
           "y": -97,
           "isCenter": false
         }
