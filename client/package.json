@@ -13,9 +13,6 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@ffmpeg/core": "^0.12.6",
-    "@ffmpeg/ffmpeg": "^0.12.10",
-    "@ffmpeg/util": "^0.12.1",
     "core-js": "^3.8.3",
     "gsap": "^3.12.5",
     "howler": "^2.2.4",
