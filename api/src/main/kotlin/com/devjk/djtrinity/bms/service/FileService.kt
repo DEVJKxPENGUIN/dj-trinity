@@ -168,15 +168,11 @@ class FileService(
 
     fun getAvailableBmpPath(nodeId: Long, fileName: String): String {
         val bmsNode = findBmsByNodeId(nodeId)
-        var bmpPath = Paths.get(bmsNode.rootPath, fileName)
-        if (Files.exists(bmpPath)) {
-            return bmpPath.toString()
-        }
 
         for (extension in Bms.BMP_EXTENSIONS) {
             val extDotIndex = fileName.lastIndexOf(".")
             val anotherName = "${fileName.substring(0, extDotIndex)}.${extension}"
-            bmpPath = Paths.get(bmsNode.rootPath, anotherName)
+            val bmpPath = Paths.get(bmsNode.rootPath, anotherName)
             if (Files.exists(bmpPath)) {
                 return bmpPath.toString()
             }

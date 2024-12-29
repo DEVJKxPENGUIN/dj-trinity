@@ -14,7 +14,8 @@ class Bms private constructor(header: String, data: String) {
         val MAIN_DATA_FIELD = "*---------------------- MAIN DATA FIELD"
         val SOUND_EXTENSIONS = arrayOf("wav", "ogg")
         val BMS_EXTENSIONS = arrayOf("bms", "bme")
-        val BMP_EXTENSIONS = arrayOf("mp4", "mpg", "wmv")
+        val BMP_EXTENSIONS = arrayOf("mp4")
+        val BMP_UNSUPPORTED_EXTENSIONS = arrayOf("mpg", "wmv", "mpeg")
         fun parse(header: String, data: String): Bms {
             return Bms(header, data)
         }
