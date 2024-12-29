@@ -46,4 +46,10 @@ class BmsNode(
         result = 31 * result + rootPath.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "BmsNode(id=$id, fileName='$fileName', rootPath='$rootPath')"
+    }
+
+
 }
