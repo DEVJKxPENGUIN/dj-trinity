@@ -646,6 +646,7 @@ export default class GameCanvas {
     if (judgement) {
       block['judge'] = judgement
       block['timeDiff'] = 0
+      this.vue.judge.cool++
       this.addCombo()
       return true
     }
@@ -655,15 +656,21 @@ export default class GameCanvas {
     block['timeDiff'] = timeDiff
     if (timeDiff <= this.judgement['cool']) {
       block['judge'] = 'cool'
+      this.vue.judge.cool++
+      this.vue.judge.score += 2
       this.addCombo()
     } else if (timeDiff <= this.judgement['great']) {
       block['judge'] = 'great'
+      this.vue.judge.great++
+      this.vue.judge.score += 1
       this.addCombo()
     } else if (timeDiff <= this.judgement['good']) {
       block['judge'] = 'good'
+      this.vue.judge.good++
       this.addCombo()
     } else if (timeDiff <= this.judgement['bad']) {
       block['judge'] = 'bad'
+      this.vue.judge.bad++
       this.removeCombo()
     } else if (block['time'] > inputTime) {
       if (block['time'] > inputTime + this.judgement['miss']) {
@@ -671,19 +678,21 @@ export default class GameCanvas {
         return false
       } else {
         block['judge'] = 'miss'
+        this.vue.judge.miss++
         this.removeCombo()
       }
     } else {
       block['judge'] = 'miss'
+      this.vue.judge.miss++
       this.removeCombo()
     }
     return true
   }
 
   addCombo() {
-    this.vue.combo++
-    if (this.vue.combo > this.vue.maxCombo) {
-      this.vue.maxCombo = this.vue.combo
+    this.vue.judge.combo++
+    if (this.vue.judge.combo > this.vue.judge.maxCombo) {
+      this.vue.judge.maxCombo = this.vue.judge.combo
     }
   }
 
