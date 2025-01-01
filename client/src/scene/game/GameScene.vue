@@ -72,7 +72,11 @@ export default {
       bpm: 0,
       volume: 1.0,
       mute: false,
-      combo: 0
+      combo: 0,
+      maxCombo: 0,
+      score: {
+
+      }
     }
   },
   methods: {

@@ -535,7 +535,7 @@ export default class GameCanvas {
       this.pressEffects[keyIndex].visibleTime = performance.now()
     }
 
-    this.processBlockPlayed(block, 'overhit', true)
+    this.processBlockPlayed(block, 'cool', true)
   }
 
   processBlockPlayed(block, judgement, sound) {
@@ -561,7 +561,7 @@ export default class GameCanvas {
       return
     }
 
-    if (block['judge'] === 'overhit'
+    if (block['judge'] === 'cool'
         || block['judge'] === 'great'
         || block['judge'] === 'good'
     ) {
@@ -591,7 +591,7 @@ export default class GameCanvas {
         this.judgeEffect.scaleY, 1.4, 0.8)
 
     // todo timediff 효과도 여기에?
-    if (block['judge'] === 'overhit') {
+    if (block['judge'] === 'cool') {
       this.judgeEffect.setCurrent(0, 3)
     } else if (block['judge'] === 'great') {
       this.judgeEffect.setCurrent(1, 3)
@@ -653,15 +653,15 @@ export default class GameCanvas {
     // 오차
     const timeDiff = Math.abs(block['time'] - elapsedTime)
     block['timeDiff'] = timeDiff
-    if (timeDiff <= this.judgement['overhit']) {
-      block['judge'] = 'overhit'
-      this.vue.combo++
+    if (timeDiff <= this.judgement['cool']) {
+      block['judge'] = 'cool'
+      this.addCombo()
     } else if (timeDiff <= this.judgement['great']) {
       block['judge'] = 'great'
-      this.vue.combo++
+      this.addCombo()
     } else if (timeDiff <= this.judgement['good']) {
       block['judge'] = 'good'
-      this.vue.combo++
+      this.addCombo()
     } else if (timeDiff <= this.judgement['bad']) {
       block['judge'] = 'bad'
       this.vue.combo = 0
@@ -678,6 +678,13 @@ export default class GameCanvas {
       this.vue.combo = 0
     }
     return true
+  }
+
+  addCombo() {
+    this.vue.combo++
+    if (this.vue.combo > this.vue.maxCombo) {
+      this.vue.maxCombo = this.vue.combo
+    }
   }
 
   handleKeys(key, isKeyDown = true) {
@@ -804,7 +811,7 @@ export default class GameCanvas {
 
   setDifficulty() {
     this.difficulty = this.vue.difficulty
-    this.judgement = this.vue.playSettings['judge'][this.difficulty] // {overhit : 25, great : 50, good : 100, bad : 200}
+    this.judgement = this.vue.playSettings['judge'][this.difficulty] // {cool : 25, great : 50, good : 100, bad : 200}
   }
 
   setAutoPlay() {
