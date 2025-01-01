@@ -4,12 +4,12 @@
     <div class="top-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
     </div>
     <div class="avatar w-28 h-28 m-1">
-      <img :src="user.profile"/>
+      <img :src="user?.['profile']" alt=""/>
     </div>
     <div class="nickname text-lg m-1 w-48">
-      <span>{{ user.nickname }}</span>
+      <span>{{ user['nickname'] }}</span>
       <div class="nickname-detail text-center">
-        Lv&nbsp;{{ user.level ? user.level : 0 }}
+        Lv&nbsp;{{ user['level'] ? user['level'] : 0 }}
       </div>
     </div>
     <div class="bottom-bar flex flex-row w-full h-6 anta-regular text-sm backdrop-blur-3xl">
@@ -17,15 +17,17 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "LobbyProfile",
   props: {
     user: {
       type: Object
     }
   }
-}
+})
 </script>
 
 <style scoped>

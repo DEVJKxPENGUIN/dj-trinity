@@ -42,23 +42,28 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
 import IntroSceneLogin from "@/scene/intro/IntroSceneLogin.vue";
 import {mapActions, mapState} from "vuex";
 import IntroCanvas from "@/scene/intro/IntroCanvas";
+import {defineComponent} from "vue";
+import AppManager from "@/manager/AppManager";
 
 const PRESS_ENTER = 'pressEnter'
 const MENU_SELECT = 'menuSelect'
 const LOGIN = 'LOGIN'
-export default {
+export default defineComponent({
   name: 'IntroScene',
   components: {IntroSceneLogin},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup'])
   },
   props: {
-    manager: null
+    manager: {
+      type: AppManager,
+      required: true
+    }
   },
   created() {
     this.init()
@@ -86,11 +91,11 @@ export default {
   methods: {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading', 'hideSceneChange']),
     async init() {
-      await this.manager.initScene(new IntroCanvas(), null)
+      await this.manager.initScene(new IntroCanvas(this), undefined)
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
     },
-    keyboard(e) {
+    keyboard(e: KeyboardEvent) {
       if (this.isLoading || this.isSystemPopup) {
         return
       }
@@ -122,7 +127,7 @@ export default {
         return
       }
       if (this.state === LOGIN) {
-
+        // todo
       }
     },
     handleArrowDown() {
@@ -185,8 +190,7 @@ export default {
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)
   }
-}
-
+})
 </script>
 
 <style scoped>

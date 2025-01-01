@@ -4,7 +4,8 @@
       CHATTING
     </div>
     <div class="list flex flex-1 flex-col" ref="chatList">
-      <div v-for="(chat, index) in chats" class="item flex flex-row w-full items-center kode-mono p-2"
+      <div v-for="(chat, index) in chats"
+           class="item flex flex-row w-full items-center kode-mono p-2"
            v-bind:key="index">
         <div v-if="chat.nickname" class="nickname flex w-28">
           <p class="truncate underline decoration-amber-200 decoration-8">{{ chat.nickname }}</p>
@@ -28,8 +29,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "LobbyChat",
   props: {
     chats: {
@@ -45,7 +48,7 @@ export default {
     chats: {
       handler() {
         this.$nextTick(() => {
-          const elem = this.$refs.chatList
+          const elem = this.$refs.chatList as HTMLDivElement
           elem.scrollTo(0, 999999)
         })
       },
@@ -58,19 +61,22 @@ export default {
     }
   },
   methods: {
-    formatTime(time) {
+    formatTime(time: number | string) {
       const date = new Date(time);
       return date.toLocaleTimeString('en-GB',
           {hour: '2-digit', minute: '2-digit', second: '2-digit'});
     },
     focus() {
-      this.$refs.chatInputRef.focus()
+      const ref = this.$refs.chatInputRef as HTMLTextAreaElement
+      ref.focus()
     },
     blur() {
-      this.$refs.chatInputRef.blur()
+      const ref = this.$refs.chatInputRef as HTMLTextAreaElement
+      ref.blur()
     },
-    onInput(e) {
-      this.$emit('update:chat-input', e.target.value)
+    onInput(e: InputEvent) {
+      const target = e.target as HTMLTextAreaElement
+      this.$emit('update:chat-input', target.value)
     },
     onFocus() {
       this.placeHolder = 'type message..'
@@ -81,7 +87,7 @@ export default {
       this.$emit('inputFocus', false)
     }
   }
-}
+})
 </script>
 
 

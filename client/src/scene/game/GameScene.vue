@@ -55,7 +55,7 @@ export default {
       fonts: new Map(),
       textures: new Map(),
       loadState: [],
-      uiSettings: null,
+      uiSettings: {} as Record<string, any>,
       keySettings: null,
       playSettings: null,
       vga: null,

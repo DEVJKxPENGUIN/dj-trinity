@@ -3,12 +3,13 @@
     <div class="top-bar flex h-10p"></div>
     <div class="center-bar flex h-60p justify-center w-full">
       <div class="record flex">
-        <img class="opacity-50" :src="'http://localhost:5002/download/bms/stage/' + bmsCurrent.id"/>
+        <img class="opacity-50"
+             :src="'http://localhost:5002/download/bms/stage/' + bmsCurrent['id']"/>
       </div>
       <div
           class="title flex orbitron-regular w-full text-center items-end p-5 justify-center h-full">
         <b class="text-3xl line-clamp-1 ">
-          <span>{{ bmsCurrent.bmsHeader.title }}</span>
+          <span>{{ bmsCurrent['bmsHeader'].title }}</span>
         </b>
       </div>
       <div class="arrow-box flex w-full h-full absolute items-center">
@@ -22,51 +23,51 @@
       <div
           class="current-bms flex flex-col w-full h-full overflow-hidden backdrop-blur-lg anta-regular backdrop-brightness-125">
         <div class="top-bar flex flex-row h-6 text-sm backdrop-blur-3xl">
-          [&nbsp;{{ bmsHIndex + 1 }}&nbsp;/&nbsp;{{ bmsVCurrent.length }}&nbsp;]&nbsp;{{
+          [&nbsp;{{ bmsHIndex + 1 }}&nbsp;/&nbsp;{{ bmsVCurrent['length'] }}&nbsp;]&nbsp;{{
             bmsDirCurrent
           }}
         </div>
         <div class="flex flex-row">
           <div class="w-32">TITLE</div>
           <div class="flex">
-            {{ bmsCurrent.bmsHeader.title }}
+            {{ bmsCurrent['bmsHeader'].title }}
           </div>
         </div>
         <div class="flex flex-row">
           <div class="w-32">ARTIST</div>
           <div class="flex">
-            {{ bmsCurrent.bmsHeader.artist }}
+            {{ bmsCurrent['bmsHeader'].artist }}
           </div>
         </div>
         <div class="flex flex-row">
           <div class="w-32">GENRE</div>
           <div class="flex">
-            {{ bmsCurrent.bmsHeader.genre }}
+            {{ bmsCurrent['bmsHeader'].genre }}
           </div>
         </div>
         <div class="flex flex-wrap">
           <div class="flex flex-row w-1/2">
             <div class="w-32">DIFFICULTY</div>
             <div class="flex">
-              {{ bmsCurrent.bmsHeader.difficulty }}
+              {{ bmsCurrent['bmsHeader'].difficulty }}
             </div>
           </div>
           <div class="flex flex-row w-1/2">
             <div class="w-32">LEVEL</div>
             <div class="flex">
-              {{ bmsCurrent.bmsHeader.playLevel }}
+              {{ bmsCurrent['bmsHeader'].playLevel }}
             </div>
           </div>
           <div class="flex flex-row w-1/2">
             <div class="w-32">BPM</div>
             <div class="flex">
-              {{ bmsCurrent.bmsHeader.startBpm }}
+              {{ bmsCurrent['bmsHeader'].startBpm }}
             </div>
           </div>
           <div class="flex flex-row w-1/2">
             <div class="w-32">TOTAL</div>
             <div class="flex">
-              {{ bmsCurrent.bmsHeader.total }}
+              {{ bmsCurrent['bmsHeader'].total }}
             </div>
           </div>
         </div>
@@ -77,10 +78,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {gsap} from "gsap";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
   name: "LobbyMusicSelect",
   props: {
     bmsCurrent: {
@@ -120,11 +122,11 @@ export default {
     }
   },
   methods: {
-    isVCurrentChanged(before) {
-      return !this.bmsVCurrent.some(bms => bms.id === before.id)
+    isVCurrentChanged(before: any) {
+      return !this.bmsVCurrent.some((bms: any) => bms.id === before.id)
     },
-    isRightChanged(current, before) {
-      for (const bms of this.bmsVCurrent) {
+    isRightChanged(current: any, before: any) {
+      for (const bms of this.bmsVCurrent as any) {
         if (bms.id === current.id) {
           // moved left
           return false
@@ -136,7 +138,7 @@ export default {
       }
       throw new Error('unreachable')
     },
-    animateArrow(isRight) {
+    animateArrow(isRight: boolean) {
       let arrow = '#arrow-left'
       let x = -5
       if (isRight) {
@@ -144,22 +146,22 @@ export default {
         x = 5
       }
 
-      this.tl = gsap.timeline({paused: true});
-      this.tl.to(arrow, {
+      const tl = gsap.timeline({paused: true});
+      tl.to(arrow, {
         duration: 0.1,
         x: x,
         borderColor: 'rgba(255,255,255, 1)',
         scale: 1.2,
         ease: 'power2.inOut'
       });
-      this.tl.to(arrow, {
+      tl.to(arrow, {
         duration: 0.1,
         x: 0,
         borderColor: 'rgba(255, 255, 255, 0.5)',
         scale: 1.2,
         ease: 'power2.inOut'
       });
-      this.tl.play()
+      tl.play()
     },
     handleArrowShowing() {
       this.showLeft = true
@@ -175,12 +177,12 @@ export default {
     }
   },
   created() {
-    window.addEventListener('keydown', this.keyboard)
+    // window.addEventListener('keydown', this.keyboard)
   },
   beforeUnmount() {
-    window.removeEventListener('keydown', this.keyboard)
+    // window.removeEventListener('keydown', this.keyboard)
   }
-}
+})
 </script>
 
 

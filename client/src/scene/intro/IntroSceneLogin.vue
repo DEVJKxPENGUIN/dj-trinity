@@ -13,7 +13,7 @@
       <!-- ALREADY LOGIN -->
       <div v-if="this.state === 'hasSession'" class="flex flex-col w-4/6 orbitron-regular">
         <div class="flex flex-col color-main w-full">
-          <p class="color-desc">SEE AGAIN!<br>[&nbsp;{{ user.nickname }}&nbsp;]</p>
+          <p class="color-desc">SEE AGAIN!<br>[&nbsp;{{ user['nickname'] }}&nbsp;]</p>
           <p class="color-desc font-desc orbitron-thin">If you want to continue playing with the
             current account, press Enter.</p>
         </div>
@@ -43,7 +43,7 @@
       <!-- CHECK PASSWORD -->
       <div v-if="this.state === 'checkPassword'" class="flex flex-col w-4/6 orbitron-regular">
         <div class="flex flex-col color-main w-full">
-          <p class="color-desc">[&nbsp;{{ user.nickname }}&nbsp;]</p>
+          <p class="color-desc">[&nbsp;{{ user['nickname'] }}&nbsp;]</p>
           <p class="color-desc font-desc orbitron-thin">Enter your password when you're ready to
             enjoy it</p>
         </div>
@@ -96,18 +96,19 @@
   </Popup>
 </template>
 
-<script>
+<script lang="ts">
 
 import Popup from "@/scene/common/popup.vue";
 import * as apiHelper from "@/manager/apiManager";
 import * as authenticationManager from "@/manager/authenticationManager";
 import {mapActions, mapState} from "vuex";
+import {defineComponent, nextTick} from "vue";
 
 const HAS_SESSION = 'hasSession'
 const INIT = 'init'
 const CHECK_PASSWORD = 'checkPassword'
 const SIGNUP = 'signup'
-export default {
+export default defineComponent({
   name: 'IntroSceneLogin',
   components: {Popup},
   computed: {
@@ -120,17 +121,13 @@ export default {
     // has session
     if (hasSession) {
       this.state = HAS_SESSION
-      await this.$nextTick(() => {
-        this.$refs.enterLobby.focus()
-      })
+      await this.focusRef('enterLobby')
       return
     }
 
     // init
     this.state = INIT
-    await this.$nextTick(() => {
-      this.$refs.id.focus()
-    })
+    await this.focusRef('id')
   },
   data() {
     return {
@@ -152,7 +149,12 @@ export default {
   },
   methods: {
     ...mapActions(['showSystemPopup', 'showLoading', 'hideLoading']),
-    keyboard(e) {
+    async focusRef(refName: string) {
+      await nextTick()
+      const element = this.$refs[refName] as HTMLInputElement | null
+      element?.focus()
+    },
+    keyboard(e: KeyboardEvent) {
       if (this.isLoading || this.isSystemPopup) {
         return
       }
@@ -188,26 +190,26 @@ export default {
       if (this.state === HAS_SESSION) {
         const active = document.activeElement
         if (this.$refs.switchAccount === active) {
-          this.$refs.enterLobby.focus()
+          this.focusRef('enterLobby')
         } else {
-          this.$refs.enterLobby.focus()
+          this.focusRef('enterLobby')
         }
         return
       }
       if (this.state === INIT) {
-        this.$refs.id.focus()
+        this.focusRef('id')
         return
       }
       if (this.state === SIGNUP) {
         const active = document.activeElement
         if (this.$refs.signupId === active) {
-          this.$refs.signupId.focus()
+          this.focusRef('signupId')
         } else if (this.$refs.signupPassword === active) {
-          this.$refs.signupId.focus()
+          this.focusRef('signupId')
         } else if (this.$refs.signupPasswordCheck === active) {
-          this.$refs.signupPassword.focus()
+          this.focusRef('signupPassword')
         } else {
-          this.$refs.signupId.focus()
+          this.focusRef('signupId')
         }
         return
       }
@@ -216,26 +218,26 @@ export default {
       if (this.state === HAS_SESSION) {
         const active = document.activeElement
         if (this.$refs.enterLobby === active) {
-          this.$refs.switchAccount.focus()
+          this.focusRef('switchAccount')
         } else {
-          this.$refs.switchAccount.focus()
+          this.focusRef('switchAccount')
         }
         return
       }
       if (this.state === INIT) {
-        this.$refs.newbie.focus()
+        this.focusRef('newbie')
         return
       }
       if (this.state === SIGNUP) {
         const active = document.activeElement
         if (this.$refs.signupId === active) {
-          this.$refs.signupPassword.focus()
+          this.focusRef('signupPassword')
         } else if (this.$refs.signupPassword === active) {
-          this.$refs.signupPasswordCheck.focus()
+          this.focusRef('signupPasswordCheck')
         } else if (this.$refs.signupPasswordCheck === active) {
-          this.$refs.signupPasswordCheck.focus()
+          this.focusRef('signupPasswordCheck')
         } else {
-          this.$refs.signupPasswordCheck.focus()
+          this.focusRef('signupPasswordCheck')
         }
         return
       }
@@ -294,45 +296,38 @@ export default {
     },
     async checkHasSession() {
       try {
-        this.showLoading()
+        await this.showLoading()
         this.user = await authenticationManager.userInfo(() => {
         })
-        if (this.user) {
-          return true
-        }
-        return false
+        return !!this.user;
+
       } catch (e) {
         return false
       } finally {
-        this.hideLoading()
+        await this.hideLoading()
       }
     },
-    async checkUserId(callback) {
+    async checkUserId(callback: Function) {
       try {
-        this.showLoading()
+        await this.showLoading()
         if (!this.id) {
           throw new Error('ID is empty')
         }
         const result = await apiHelper.get('/auth/user/' + this.id)
         this.user = result
         callback()
-      } catch (e) {
+      } catch (e: any) {
         this.idCheckMsg = ''
-        this.$nextTick(() => {
-          this.idCheckMsg = e.message.toUpperCase()
-        })
+        await this.$nextTick()
+        this.idCheckMsg = e.message.toUpperCase()
       } finally {
-        this.hideLoading()
-        this.$nextTick(() => {
-          if (this.$refs.id) {
-            this.$refs.id.focus()
-          }
-        })
+        await this.hideLoading()
+        await this.focusRef('id')
       }
     },
-    async checkPassword(callback) {
+    async checkPassword(callback: Function) {
       try {
-        this.showLoading()
+        await this.showLoading()
         if (!this.password) {
           throw new Error('Password is empty')
         }
@@ -341,24 +336,19 @@ export default {
           password: this.password
         })
         callback()
-      } catch (e) {
+      } catch (e: any) {
         this.passwordCheckMsg = ''
-        this.$nextTick(() => {
-          this.passwordCheckMsg = e.message.toUpperCase()
-        })
+        await this.$nextTick()
+        this.passwordCheckMsg = e.message.toUpperCase()
       } finally {
-        this.hideLoading()
-        this.$nextTick(() => {
-          if (this.$refs.password) {
-            this.$refs.password.focus()
-          }
-        })
+        await this.hideLoading()
+        await this.focusRef('password')
       }
     },
-    async signup(callback) {
-      const active = document.activeElement
+    async signup(callback: Function) {
+      const active = document.activeElement as HTMLInputElement
       try {
-        this.showLoading()
+        await this.showLoading()
         if (!this.signupId) {
           throw new Error('id is empty')
         }
@@ -374,18 +364,16 @@ export default {
           passwordCheck: this.signupPasswordCheck
         })
         callback()
-      } catch (e) {
+      } catch (e: any) {
         this.signupCheckMsg = ''
-        this.$nextTick(() => {
-          this.signupCheckMsg = e.message.toUpperCase()
-        })
+        await this.$nextTick()
+        this.signupCheckMsg = e.message.toUpperCase()
       } finally {
-        this.hideLoading()
-        this.$nextTick(() => {
-          if (active) {
-            active.focus()
-          }
-        })
+        await this.hideLoading()
+        await this.$nextTick()
+        if (active) {
+          active.focus()
+        }
       }
 
     },
@@ -406,29 +394,23 @@ export default {
       this.signupId = ''
       this.signupPassword = ''
       this.signupPasswordCheck = ''
-      this.$nextTick(() => {
-        this.$refs.id.focus()
-      })
+      this.focusRef('id')
     },
     switchToPassword() {
       this.idCheckMsg = ''
       this.state = CHECK_PASSWORD
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+      this.focusRef('password')
     },
     switchToSignup() {
       this.idCheckMsg = ''
       this.state = SIGNUP
-      this.$nextTick(() => {
-        this.$refs.signupId.focus()
-      })
+      this.focusRef('signupId')
     },
     switchToEnterChannel() {
       this.passwordCheckMsg = ''
       this.$emit('loginSuccess')
     },
-    shake(el, done) {
+    shake(el: Element, done: Function) {
       el.classList.add('shake')
       done()
     }
@@ -437,7 +419,7 @@ export default {
     window.removeEventListener('keydown', this.keyboard)
   }
 
-}
+})
 </script>
 
 <style scoped>

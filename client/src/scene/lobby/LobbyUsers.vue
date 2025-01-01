@@ -5,13 +5,13 @@
       ONLINE
     </div>
     <div class="list flex flex-1 flex-col">
-      <div v-for="(user) in users"  class="item flex w-full h-12 items-center" v-bind:key="user.id">
+      <div v-for="(user) in users" class="item flex w-full h-12 items-center" v-bind:key="user.id">
         <div class="avatar w-10 h-10 m-2">
-          <img :src="user.profile"/>
+          <img :src="user.profile" alt=""/>
         </div>
         <div class="flex flex-col">
           <p class="text-xs h-fit">{{ user.nickname }}</p>
-          <p class="nickname-detail h-fit">Lv&nbsp;{{user.level ? user.level : 0}}</p>
+          <p class="nickname-detail h-fit">Lv&nbsp;{{ user.level ? user.level : 0 }}</p>
         </div>
       </div>
     </div>
@@ -20,8 +20,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "LobbyUsers",
   props: {
     users: {
@@ -29,7 +31,7 @@ export default {
       default: () => []
     }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -41,6 +43,7 @@ export default {
   clip-path: polygon(0 0, calc(100% - 25px) 0, 100% 25px, 100% 0, 100% 100%, 25px 100%, 0 calc(100% - 25px), 0 0);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
 .list {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -51,6 +54,7 @@ export default {
   overflow: hidden;
   border-radius: 50%;
 }
+
 .item {
   opacity: 60%;
 }

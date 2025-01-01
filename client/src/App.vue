@@ -15,8 +15,7 @@
   <LoadingScene v-if="isSceneChanging"/>
 </template>
 
-<script>
-
+<script lang="ts">
 import IntroScene from "@/scene/intro/IntroScene.vue";
 import LobbyScene from "@/scene/lobby/LobbyScene.vue";
 import GameScene from "@/scene/game/GameScene.vue";
@@ -24,8 +23,9 @@ import AppManager from "@/manager/AppManager";
 import SystemPopup from "@/scene/common/SystemPopup.vue";
 import {mapState} from "vuex";
 import LoadingScene from "@/scene/common/LoadingScene.vue";
+import {defineComponent} from "vue";
 
-export default {
+export default defineComponent({
   name: 'App',
   components: {
     LoadingScene,
@@ -58,7 +58,7 @@ export default {
 
       window.document.addEventListener('keydown', this.keyboard)
     },
-    async changeScene(nextScene) {
+    async changeScene(nextScene: string) {
       this.closeScene()
       await this.manager.removeScene()
 
@@ -76,7 +76,7 @@ export default {
       this.lobbyScene = false
       this.gameScene = false
     },
-    keyboard(e) {
+    keyboard(e: KeyboardEvent) {
       if (e.key === 'Enter' && (e.altKey || e.metaKey)) {
         e.stopPropagation()
         this.toggleScreen()
@@ -95,7 +95,7 @@ export default {
   beforeUnmount() {
     window.document.addEventListener('keydown', this.keyboard)
   }
-}
+})
 </script>
 
 <style>

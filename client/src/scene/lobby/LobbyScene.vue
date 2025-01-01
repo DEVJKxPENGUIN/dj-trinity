@@ -34,7 +34,7 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import {mapActions, mapState} from "vuex";
 import LobbyCanvas from "@/scene/lobby/LobbyCanvas";
 import LobbySocket from "@/scene/lobby/LobbySocket";
@@ -45,17 +45,22 @@ import LobbyUsers from "@/scene/lobby/LobbyUsers.vue";
 import LobbyChat from "@/scene/lobby/LobbyChat.vue";
 import LobbyGameList from "@/scene/lobby/LobbyGameList.vue";
 import LobbyMusicSelect from "@/scene/lobby/LobbyMusicSelect.vue";
+import {defineComponent} from "vue";
+import AppManager from "@/manager/AppManager";
 
 const STANDBY = 'standby'
 const CHATINPUT = 'chatinput'
-export default {
+export default defineComponent({
   name: 'LobbyScene',
   components: {LobbyMusicSelect, LobbyGameList, LobbyChat, LobbyUsers, LobbyProfile},
   computed: {
     ...mapState(['isLoading', 'isSystemPopup']),
   },
   props: {
-    manager: null
+    manager: {
+      type: AppManager,
+      default: null
+    }
   },
   created() {
     this.init()
@@ -68,13 +73,13 @@ export default {
 
       // view
       channelId: '',
-      user: {},
+      user: {} as any,
       channelUsers: [],
-      channelChats: [],
-      chatInput: '',
-      bmsList: [],
-      bmsShowList: [],
-      bmsDirCurrent: {},
+      channelChats: [] as Array<any>,
+      chatInput: '' as string,
+      bmsList: [] as Array<any>,
+      bmsShowList: [] as Array<any>,
+      bmsDirCurrent: {} as any,
       bmsCurrent: {id: 1, bmsHeader: {}},
       bmsVCurrent: [],
       bmsVIndex: 0,
@@ -101,7 +106,7 @@ export default {
       window.addEventListener('keydown', this.keyboard)
       await this.hideSceneChange()
     },
-    keyboard(e) {
+    keyboard(e: KeyboardEvent) {
       if (this.isLoading || this.isSystemPopup) {
         return
       }
@@ -173,7 +178,7 @@ export default {
       }
 
     },
-    handleChatInputFocus(focus) {
+    handleChatInputFocus(focus: boolean) {
       if (focus) {
         this.openChat()
         return
@@ -181,32 +186,35 @@ export default {
 
       this.outChat()
     },
-    async enterChannel(channelInfo) {
+    async enterChannel(channelInfo: any) {
       this.channelId = channelInfo['channelId']
       await this.updateChannel(channelInfo)
     },
-    async updateChannel(channelInfo) {
+    async updateChannel(channelInfo: any) {
       this.channelUsers = (await apiManager.get('/users', {userIds: channelInfo['users'].join(',')}))
-      .filter(user => user.id !== this.user.id)
+      .filter((user: any) => user.id !== this.user.id)
     },
-    async updateChatBox(receivedChat) {
+    async updateChatBox(receivedChat: any) {
       this.channelChats.push(receivedChat)
     },
     openChat() {
       this.state = CHATINPUT
-      this.$refs.chat.focus()
+      const chat = this.$refs.chat as HTMLDivElement
+      chat.focus()
     },
     sendChat() {
       if (!this.chatInput) {
         return
       }
 
-      this.manager.socket.sendChat(this.user.nickname, this.chatInput)
+      const socket = this.manager.socket as LobbySocket
+      socket.sendChat(this.user.nickname, this.chatInput)
       this.chatInput = ''
     },
     outChat() {
       this.state = STANDBY
-      this.$refs.chat.blur()
+      const chat = this.$refs.chat as HTMLDivElement
+      chat.blur()
       this.chatInput = ''
     },
     bmsUp() {
@@ -227,7 +235,7 @@ export default {
       }
       this.bmsShowList.unshift({
         name: Object.keys(this.bmsList)[index],
-        item: this.bmsList[Object.keys(this.bmsList)[index]]
+        item: this.bmsList[parseInt(Object.keys(this.bmsList)[index])]
       })
 
       this.toUp = true
@@ -241,7 +249,7 @@ export default {
       }
       this.bmsHIndex = 0
       this.bmsDirCurrent = Object.keys(this.bmsList)[this.bmsVIndex]
-      this.bmsVCurrent = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]]
+      this.bmsVCurrent = this.bmsList[parseInt(Object.keys(this.bmsList)[this.bmsVIndex])]
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
 
       this.bmsShowList.shift()
@@ -251,7 +259,7 @@ export default {
       }
       this.bmsShowList.push({
         name: Object.keys(this.bmsList)[index],
-        item: this.bmsList[Object.keys(this.bmsList)[index]]
+        item: this.bmsList[parseInt(Object.keys(this.bmsList)[index])]
       })
 
       this.toUp = false
@@ -262,7 +270,7 @@ export default {
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
     },
     bmsRight() {
-      const length = this.bmsList[Object.keys(this.bmsList)[this.bmsVIndex]].length
+      const length = this.bmsList[parseInt(Object.keys(this.bmsList)[this.bmsVIndex])].length
       this.bmsHIndex = (this.bmsHIndex + 1) > length - 1 ? length - 1 : this.bmsHIndex + 1
       this.bmsCurrent = this.bmsVCurrent[this.bmsHIndex]
     },
@@ -284,14 +292,14 @@ export default {
         }
         this.bmsShowList.push({
           name: list[index],
-          item: this.bmsList[list[index]]
+          item: this.bmsList[parseInt(list[index])]
         })
       }
 
       //current
       this.bmsShowList.push({
         name: list[this.bmsVIndex],
-        item: this.bmsList[list[this.bmsVIndex]]
+        item: this.bmsList[parseInt(list[this.bmsVIndex])]
       })
       this.bmsDirCurrent = list[this.bmsVIndex]
       this.bmsVCurrent = this.bmsList[this.bmsDirCurrent]
@@ -305,7 +313,7 @@ export default {
         }
         this.bmsShowList.push({
           name: list[index],
-          item: this.bmsList[list[index]]
+          item: this.bmsList[parseInt(list[index])]
         })
       }
     },
@@ -319,8 +327,7 @@ export default {
   beforeUnmount() {
     window.removeEventListener('keydown', this.keyboard)
   }
-}
-
+})
 </script>
 
 <style scoped>

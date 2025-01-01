@@ -27,8 +27,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
   name: "LobbyGameList",
   props: {
     bmsShowList: {
@@ -52,25 +54,27 @@ export default {
   },
   watch: {},
   mounted() {
-    this.$refs.list.addEventListener('wheel', this.prevent)
-    this.$refs.list.addEventListener('mousedown', this.prevent)
+    const list = this.$refs.list as HTMLDivElement
+    list.addEventListener('wheel', this.prevent)
+    list.addEventListener('mousedown', this.prevent)
   },
   data() {
 
   },
   methods: {
-    prevent(e) {
+    prevent(e: Event) {
       e.preventDefault()
     },
-    isCurrentItem(index) {
+    isCurrentItem(index: number) {
       return (this.bmsShowList.length - 1) / 2 === index
     }
   },
   beforeUnmount() {
-    this.$refs.list.removeEventListener('wheel', this.prevent)
-    this.$refs.list.removeEventListener('mousedown', this.prevent)
+    const list = this.$refs.list as HTMLDivElement
+    list.removeEventListener('wheel', this.prevent)
+    list.removeEventListener('mousedown', this.prevent)
   }
-}
+})
 </script>
 
 
