@@ -538,8 +538,8 @@ export default class GameCanvas {
     this.processBlockPlayed(block, 'cool', true)
   }
 
-  processBlockPlayed(block, judgement, sound) {
-    const judged = this.judge(block, judgement)
+  processBlockPlayed(block, judgement, sound, inputTime) {
+    const judged = this.judge(block, judgement, inputTime)
     if (judged) {
       this.playBlock(block, sound)
       const keyIndex = this.BLOCK_RENDER_MAP[block['bmsChannel']]
@@ -579,7 +579,7 @@ export default class GameCanvas {
         this.comboEffect.widthPerDigit,
         this.comboEffect.heightPerDigit, 1.6, 0.8)
 
-    this.comboEffect.setNumber(this.vue.combo)
+    this.comboEffect.setNumber(this.vue.judge.combo)
   }
 
   doJudgeEffect(block) {
@@ -639,19 +639,19 @@ export default class GameCanvas {
     return block['y'] > 1000
   }
 
-  judge(block, judgement) {
+  judge(block, judgement, inputTime) {
     if (!block['bmsChannel'].startsWith('PLAYER') || block['judge']) {
       return false
     }
     if (judgement) {
       block['judge'] = judgement
       block['timeDiff'] = 0
-      this.vue.combo++
+      this.addCombo()
       return true
     }
-    const elapsedTime = this.vue.elapsedTime
+
     // 오차
-    const timeDiff = Math.abs(block['time'] - elapsedTime)
+    const timeDiff = Math.abs(block['time'] - parseInt(inputTime))
     block['timeDiff'] = timeDiff
     if (timeDiff <= this.judgement['cool']) {
       block['judge'] = 'cool'
@@ -664,18 +664,18 @@ export default class GameCanvas {
       this.addCombo()
     } else if (timeDiff <= this.judgement['bad']) {
       block['judge'] = 'bad'
-      this.vue.combo = 0
-    } else if (block['time'] > elapsedTime) {
-      if (block['time'] > elapsedTime + this.judgement['miss']) {
+      this.removeCombo()
+    } else if (block['time'] > inputTime) {
+      if (block['time'] > inputTime + this.judgement['miss']) {
         // none
         return false
       } else {
         block['judge'] = 'miss'
-        this.vue.combo = 0
+        this.removeCombo()
       }
     } else {
       block['judge'] = 'miss'
-      this.vue.combo = 0
+      this.removeCombo()
     }
     return true
   }
@@ -687,14 +687,24 @@ export default class GameCanvas {
     }
   }
 
-  handleKeys(key, isKeyDown = true) {
-    const keyAction = this.keyMap[key]
+  removeCombo() {
+    this.vue.judge.combo = 0
+  }
+
+  handleKeys(e, isKeyDown = true) {
+    const keyAction = this.keyMap[e.key]
+
+    let inputTime = 0
+    if (this.vue.startTime !== 0) {
+      inputTime = e.timeStamp - this.vue.startTime - this.vue.pauseTime
+    }
+
     if (keyAction) {
-      keyAction(isKeyDown)
+      keyAction(isKeyDown, inputTime)
     }
   }
 
-  processKeyPlay(key) {
+  processKeyPlay(key, inputTime) {
     if (this.autoPlay) {
       return
     }
@@ -704,100 +714,100 @@ export default class GameCanvas {
     this.playSound(targetBlock)
 
     // make score
-    this.processBlockPlayed(targetBlock, false, false)
+    this.processBlockPlayed(targetBlock, false, false, inputTime)
   }
 
-  keyPlay1(isKeyDown) {
+  keyPlay1(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[1].visible = true
-      this.processKeyPlay(1)
+      this.processKeyPlay(1, inputTime)
     } else {
       this.pressEffects[1].visible = false
     }
   }
 
-  keyPlay2(isKeyDown) {
+  keyPlay2(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[2].visible = true
-      this.processKeyPlay(2)
+      this.processKeyPlay(2, inputTime)
     } else {
       this.pressEffects[2].visible = false
     }
   }
 
-  keyPlay3(isKeyDown) {
+  keyPlay3(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[3].visible = true
-      this.processKeyPlay(3)
+      this.processKeyPlay(3, inputTime)
     } else {
       this.pressEffects[3].visible = false
     }
   }
 
-  keyPlay4(isKeyDown) {
+  keyPlay4(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[4].visible = true
-      this.processKeyPlay(4)
+      this.processKeyPlay(4, inputTime)
     } else {
       this.pressEffects[4].visible = false
     }
   }
 
-  keyPlay5(isKeyDown) {
+  keyPlay5(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[5].visible = true
-      this.processKeyPlay(5)
+      this.processKeyPlay(5, inputTime)
     } else {
       this.pressEffects[5].visible = false
     }
   }
 
-  keyPlay6(isKeyDown) {
+  keyPlay6(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[6].visible = true
-      this.processKeyPlay(6)
+      this.processKeyPlay(6, inputTime)
     } else {
       this.pressEffects[6].visible = false
     }
   }
 
-  keyPlay7(isKeyDown) {
+  keyPlay7(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[7].visible = true
-      this.processKeyPlay(7)
+      this.processKeyPlay(7, inputTime)
     } else {
       this.pressEffects[7].visible = false
     }
   }
 
-  keyScratch(isKeyDown) {
+  keyScratch(isKeyDown, inputTime) {
     if (this.autoPlay) {
       return
     }
     if (isKeyDown) {
       this.pressEffects[0].visible = true
-      this.processKeyPlay(0)
+      this.processKeyPlay(0, inputTime)
     } else {
       this.pressEffects[0].visible = false
     }

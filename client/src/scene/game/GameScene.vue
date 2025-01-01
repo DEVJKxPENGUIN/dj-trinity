@@ -72,10 +72,17 @@ export default {
       bpm: 0,
       volume: 1.0,
       mute: false,
-      combo: 0,
-      maxCombo: 0,
-      score: {
-
+      // combo: 0,
+      // maxCombo: 0,
+      judge: {
+        combo: 0,
+        maxCombo: 0,
+        score: 0,
+        cool: 0,
+        great: 0,
+        good: 0,
+        bad: 0,
+        miss: 0,
       }
     }
   },
@@ -145,11 +152,11 @@ export default {
         return
       }
       if (e.type === 'keydown') {
-        this.manager.canvas.handleKeys(e.key, true)
+        this.manager.canvas.handleKeys(e, true)
         return
       }
       if (e.type === 'keyup') {
-        this.manager.canvas.handleKeys(e.key, false)
+        this.manager.canvas.handleKeys(e, false)
         return
       }
     },
