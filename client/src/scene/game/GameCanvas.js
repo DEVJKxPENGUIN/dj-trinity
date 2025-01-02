@@ -178,6 +178,30 @@ export default class GameCanvas {
     this.bpmBackboard = this.drawer.bpmBackboard(ui)
     this.ctx.scene.add(this.bpmBackboard)
 
+    /** score backboard */
+    this.scoreBackboard = this.drawer.scoreBackboard(ui)
+    this.ctx.scene.add(this.scoreBackboard)
+
+    /** cool backboard */
+    this.coolBackboard = this.drawer.coolBackboard(ui)
+    this.ctx.scene.add(this.coolBackboard)
+
+    /** great backboard */
+    this.greatBackboard = this.drawer.greatBackboard(ui)
+    this.ctx.scene.add(this.greatBackboard)
+
+    /** good backboard */
+    this.goodBackboard = this.drawer.goodBackboard(ui)
+    this.ctx.scene.add(this.goodBackboard)
+
+    /** bad backboard */
+    this.badBackboard = this.drawer.badBackboard(ui)
+    this.ctx.scene.add(this.badBackboard)
+
+    /** miss backboard */
+    this.missBackboard = this.drawer.missBackboard(ui)
+    this.ctx.scene.add(this.missBackboard)
+
     /** elapsedTime */
     this.elapsedTime = this.drawer.elapsedTime(ui, 'TIME: 00:00')
     this.ctx.scene.add(this.elapsedTime)
@@ -185,6 +209,30 @@ export default class GameCanvas {
     /** bpm */
     this.bpm = this.drawer.bpm(ui, 'BPM: 0')
     this.ctx.scene.add(this.bpm)
+
+    /** score */
+    this.score = this.drawer.score(ui, 'SCORE: 0')
+    this.ctx.scene.add(this.score)
+
+    /** cool */
+    this.cool = this.drawer.cool(ui, 'COOL: 0')
+    this.ctx.scene.add(this.cool)
+
+    /** great */
+    this.great = this.drawer.great(ui, 'GREAT: 0')
+    this.ctx.scene.add(this.great)
+
+    /** good */
+    this.good = this.drawer.good(ui, 'GOOD: 0')
+    this.ctx.scene.add(this.good)
+
+    /** bad */
+    this.bad = this.drawer.bad(ui, 'BAD: 0')
+    this.ctx.scene.add(this.bad)
+
+    /** miss */
+    this.miss = this.drawer.miss(ui, 'MISS: 0')
+    this.ctx.scene.add(this.miss)
 
     // render guideline
     if (this.uiSettings['showGuideline']) {
@@ -401,6 +449,14 @@ export default class GameCanvas {
 
     // update bpm
     this.bpm.text = 'BPM: ' + this.formatBpm(this.vue.bpm)
+
+    // update score
+    this.score.text = 'SCORE: ' + this.vue.judge.score
+    this.cool.text = 'COOL: ' + this.vue.judge.cool
+    this.great.text = 'GREAT: ' + this.vue.judge.great
+    this.good.text = 'GOOD: ' + this.vue.judge.good
+    this.bad.text = 'BAD: ' + this.vue.judge.bad
+    this.miss.text = 'MISS: ' + this.vue.judge.miss
   }
 
   // 반응성이 문제가 있다.

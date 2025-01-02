@@ -461,6 +461,150 @@ export default class GameCanvasDrawer {
     return new Mesh(geo, mat)
   }
 
+  scoreBackboard(ui) {
+    const score = ui['score']
+    const scoreBox = score['box']
+    const x = this.ctx.pixelToObj(scoreBox['x'])
+    const y = this.ctx.pixelToObj(scoreBox['y'])
+    const width = this.ctx.pixelToObj(scoreBox['width'])
+    const height = this.ctx.pixelToObj(scoreBox['height'])
+    const backgroundColor = scoreBox['backgroundColor']
+    const opacity = scoreBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  coolBackboard(ui) {
+    const cool = ui['cool']
+    const coolBox = cool['box']
+    const x = this.ctx.pixelToObj(coolBox['x'])
+    const y = this.ctx.pixelToObj(coolBox['y'])
+    const width = this.ctx.pixelToObj(coolBox['width'])
+    const height = this.ctx.pixelToObj(coolBox['height'])
+    const backgroundColor = coolBox['backgroundColor']
+    const opacity = coolBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  greatBackboard(ui) {
+    const great = ui['great']
+    const greatBox = great['box']
+    const x = this.ctx.pixelToObj(greatBox['x'])
+    const y = this.ctx.pixelToObj(greatBox['y'])
+    const width = this.ctx.pixelToObj(greatBox['width'])
+    const height = this.ctx.pixelToObj(greatBox['height'])
+    const backgroundColor = greatBox['backgroundColor']
+    const opacity = greatBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  goodBackboard(ui) {
+    const good = ui['good']
+    const goodBox = good['box']
+    const x = this.ctx.pixelToObj(goodBox['x'])
+    const y = this.ctx.pixelToObj(goodBox['y'])
+    const width = this.ctx.pixelToObj(goodBox['width'])
+    const height = this.ctx.pixelToObj(goodBox['height'])
+    const backgroundColor = goodBox['backgroundColor']
+    const opacity = goodBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  badBackboard(ui) {
+    const bad = ui['bad']
+    const badBox = bad['box']
+    const x = this.ctx.pixelToObj(badBox['x'])
+    const y = this.ctx.pixelToObj(badBox['y'])
+    const width = this.ctx.pixelToObj(badBox['width'])
+    const height = this.ctx.pixelToObj(badBox['height'])
+    const backgroundColor = badBox['backgroundColor']
+    const opacity = badBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
+  missBackboard(ui) {
+    const miss = ui['miss']
+    const missBox = miss['box']
+    const x = this.ctx.pixelToObj(missBox['x'])
+    const y = this.ctx.pixelToObj(missBox['y'])
+    const width = this.ctx.pixelToObj(missBox['width'])
+    const height = this.ctx.pixelToObj(missBox['height'])
+    const backgroundColor = missBox['backgroundColor']
+    const opacity = missBox['opacity']
+    const mat = new MeshBasicMaterial({
+      color: backgroundColor,
+      opacity: opacity,
+      transparent: true
+    })
+    const points = []
+    points.push(new Vector2(x, y))
+    points.push(new Vector2(x + width, y))
+    points.push(new Vector2(x + width, y + height))
+    points.push(new Vector2(x, y + height))
+    const geo = new BufferGeometry().setFromPoints(points)
+    geo.setIndex([0, 1, 2, 0, 2, 3])
+    return new Mesh(geo, mat)
+  }
+
   elapsedTime(ui, text) {
     const time = ui['time']
     const timeText = time['text']
@@ -493,6 +637,144 @@ export default class GameCanvasDrawer {
     const font = this.vue.fonts.get(fontKey)
     const x = this.ctx.pixelToObj(bpmText['x'])
     const y = this.ctx.pixelToObj(bpmText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  score(ui, text) {
+    const score = ui['score']
+    const scoreText = score['text']
+    const color = scoreText['color']
+    const fontKey = scoreText['font']
+    const size = scoreText['size']
+    const isCenter = scoreText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(scoreText['x'])
+    const y = this.ctx.pixelToObj(scoreText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  cool(ui, text) {
+    const cool = ui['cool']
+    const coolText = cool['text']
+    const color = coolText['color']
+    const fontKey = coolText['font']
+    const size = coolText['size']
+    const isCenter = coolText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(coolText['x'])
+    const y = this.ctx.pixelToObj(coolText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  great(ui, text) {
+    const great = ui['great']
+    const greatText = great['text']
+    const color = greatText['color']
+    const fontKey = greatText['font']
+    const size = greatText['size']
+    const isCenter = greatText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(greatText['x'])
+    const y = this.ctx.pixelToObj(greatText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  good(ui, text) {
+    const good = ui['good']
+    const goodText = good['text']
+    const color = goodText['color']
+    const fontKey = goodText['font']
+    const size = goodText['size']
+    const isCenter = goodText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(goodText['x'])
+    const y = this.ctx.pixelToObj(goodText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  bad(ui, text) {
+    const bad = ui['bad']
+    const badText = bad['text']
+    const color = badText['color']
+    const fontKey = badText['font']
+    const size = badText['size']
+    const isCenter = badText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(badText['x'])
+    const y = this.ctx.pixelToObj(badText['y'])
+
+    const textMesh = new Text()
+    textMesh.text = text
+    // textMesh.fontFamily = font
+    textMesh.fontSize = size
+    textMesh.font = font
+    textMesh.position.x = x
+    textMesh.position.y = y
+    textMesh.color = color
+    textMesh.sync()
+    return textMesh
+  }
+
+  miss(ui, text) {
+    const miss = ui['miss']
+    const missText = miss['text']
+    const color = missText['color']
+    const fontKey = missText['font']
+    const size = missText['size']
+    const isCenter = missText['isCenter']
+    const font = this.vue.fonts.get(fontKey)
+    const x = this.ctx.pixelToObj(missText['x'])
+    const y = this.ctx.pixelToObj(missText['y'])
 
     const textMesh = new Text()
     textMesh.text = text

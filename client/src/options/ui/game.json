@@ -339,6 +339,120 @@
           "y": -97,
           "isCenter": false
         }
+      },
+      "score": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -160,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -127,
+          "isCenter": false
+        }
+      },
+      "cool": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -190,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -157,
+          "isCenter": false
+        }
+      },
+      "great": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -220,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -187,
+          "isCenter": false
+        }
+      },
+      "good": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -250,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -217,
+          "isCenter": false
+        }
+      },
+      "bad": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -280,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -247,
+          "isCenter": false
+        }
+      },
+      "miss": {
+        "box": {
+          "backgroundColor": "rgb(0, 0, 0)",
+          "color": "rgb(255, 255, 255)",
+          "opacity": 0.9,
+          "x": 220,
+          "y": -310,
+          "width": 200,
+          "height": 30
+        },
+        "text": {
+          "font": "Orbitron",
+          "size": 0.14,
+          "color": "rgb(255, 255, 255)",
+          "x": 230,
+          "y": -277,
+          "isCenter": false
+        }
       }
     }
   }
